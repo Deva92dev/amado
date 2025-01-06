@@ -8,7 +8,11 @@ import {
   BreadcrumbSeparator,
 } from "../ui/breadcrumb";
 
-const BreadCrumbs = ({ name }: { name: string }) => {
+type BreadCrumbsProps = {
+  name: string;
+};
+
+const BreadCrumbs = ({ name }: BreadCrumbsProps) => {
   return (
     <Breadcrumb>
       <BreadcrumbList>

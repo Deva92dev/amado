@@ -7,13 +7,15 @@ import { Separator } from "../ui/separator";
 import ProductsGrid from "./ProductsGrid";
 import ProductsList from "./ProductsList";
 
+type ProductContainerProps = {
+  layout?: string;
+  search?: string;
+};
+
 const ProductsContainer = async ({
-  layout,
-  search,
-}: {
-  layout: string;
-  search: string;
-}) => {
+  layout = "grid",
+  search = "",
+}: ProductContainerProps) => {
   const products = await fetchAllProducts({ search });
   const totalProducts = products.length;
   const searchTerm = search ? `&search=${search}` : "";

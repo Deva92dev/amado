@@ -2,7 +2,11 @@
 
 import { FaStar } from "react-icons/fa";
 
-const ProductRating = ({ productId }: { productId: string }) => {
+type ProductRatingProps = {
+  productId: string;
+};
+
+const ProductRating = ({ productId }: ProductRatingProps) => {
   // change them programmatically later
   const rating = 4.2;
   const count = 20;
