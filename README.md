@@ -1239,7 +1239,6 @@ function ProductsList({ products }: { products: Product[] }) {
                       className="w-full rounded-md object-cover"
                     />
                   </div>
-
                   <div>
                     <h2 className="text-xl font-semibold capitalize">{name}</h2>
                     <h4 className="text-muted-foreground">{company}</h4>

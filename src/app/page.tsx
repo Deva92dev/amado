@@ -1,7 +1,15 @@
+import LoadingContainer from "@/components/global/LoadingContainer";
+import FeaturedProducts from "@/components/home/FeaturedProducts";
+import Hero from "@/components/home/Hero";
+import { Suspense } from "react";
+
 export default function Home() {
   return (
-    <main className="px-2 sm:px-4 md:px-8 lg:px-12 xl:px-24">
-      <h1 className="text-3xl">Home Page</h1>
-    </main>
+    <>
+      <Hero />
+      <Suspense fallback={<LoadingContainer />}>
+        <FeaturedProducts />
+      </Suspense>
+    </>
   );
 }
