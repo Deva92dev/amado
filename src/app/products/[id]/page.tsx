@@ -6,7 +6,13 @@ import { fetchSingleProduct } from "@/utils/actions";
 import { formatCurrency } from "@/utils/format";
 import Image from "next/image";
 
-const SingleProductPage = async ({ params }: { params: { id: string } }) => {
+type SingleProductPageProps = {
+  params: Promise<{
+    id: string;
+  }>;
+};
+
+const SingleProductPage = async ({ params }: SingleProductPageProps) => {
   const { id } = await params;
   const product = await fetchSingleProduct(id);
   const { category, description, image, price, name } = product;
