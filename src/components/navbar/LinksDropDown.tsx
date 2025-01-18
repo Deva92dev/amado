@@ -7,13 +7,17 @@ import {
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
 import { LuAlignLeft } from "react-icons/lu";
-import { navLinks } from "@/utils/links";
+import { navLinks, publicNavLinks } from "@/utils/links";
 import Link from "next/link";
 import { SignedIn, SignedOut, SignInButton, SignUpButton } from "@clerk/nextjs";
 import SignOutLink from "./SignOutLink";
 import UserIcon from "./UserIcon";
+import { auth } from "@clerk/nextjs/server";
 
-const LinksDropDown = () => {
+const LinksDropDown = async () => {
+  const { userId } = await auth();
+  const isAdmin = userId === process.env.ADMIN_USER_ID;
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -35,9 +39,21 @@ const LinksDropDown = () => {
               <button className="w-full text-left">Register</button>
             </SignUpButton>
           </DropdownMenuItem>
+          {/* Show other pages here */}
+          <DropdownMenuSeparator />
+          {publicNavLinks.map((link) => {
+            return (
+              <DropdownMenuItem key={link.href}>
+                <Link href={link.href} className="capitalize w-full">
+                  {link.label}
+                </Link>
+              </DropdownMenuItem>
+            );
+          })}
         </SignedOut>
         <SignedIn>
           {navLinks.map((link) => {
+            if (link.label === "dashboard" && !isAdmin) return null;
             return (
               <DropdownMenuItem key={link.href}>
                 <Link href={link.href} className="capitalize w-full">

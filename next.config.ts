@@ -8,6 +8,11 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "images.pexels.com",
       },
+      // change following hostname(url) for client
+      {
+        protocol: "https",
+        hostname: "bxjlbovqqpknnamezbpx.supabase.co",
+      },
     ],
   },
   eslint: {

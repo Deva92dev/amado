@@ -13,6 +13,12 @@ export const navLinks: NavLinks[] = [
   { href: "/admin/sales", label: "dashboard" },
 ];
 
+export const publicNavLinks: NavLinks[] = [
+  { href: "/", label: "Home" },
+  { href: "/about", label: "About" },
+  { href: "/products", label: "Products" },
+];
+
 export const adminLinks: NavLinks[] = [
   { href: "/admin/sales", label: "sales" },
   { href: "/admin/products", label: "my products" },
