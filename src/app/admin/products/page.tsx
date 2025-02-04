@@ -64,7 +64,9 @@ const ProductAdminPage = async () => {
 
 export default ProductAdminPage;
 
-const DeleteProduct = ({ productId }: { productId: string }) => {
+type DeleteProductProps = { productId: string };
+
+const DeleteProduct = ({ productId }: DeleteProductProps) => {
   const deleteProduct = deleteProductAction.bind(null, { productId });
 
   return (

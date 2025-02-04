@@ -12,9 +12,15 @@ import {
   updateProductImageAction,
 } from "@/utils/actions";
 
-const EditProductPage = async ({ params }: { params: { id: string } }) => {
-  const { id } = await params;
-  const product = await fetchAdminProductDetails(id);
+type EditPageProps = {
+  params: Promise<{
+    productId: string;
+  }>;
+};
+
+const EditProductPage = async ({ params }: EditPageProps) => {
+  const { productId } = await params;
+  const product = await fetchAdminProductDetails(productId);
   const { category, name, price, featured, description } = product;
 
   return (
@@ -27,12 +33,12 @@ const EditProductPage = async ({ params }: { params: { id: string } }) => {
           image={product.image}
           text="update image"
         >
-          <input type="hidden" name="id" value={id} />
+          <input type="hidden" name="id" value={productId} />
           <input type="hidden" name="url" value={product.image} />
         </ImageInputContainer>
         <FormContainer action={updateProductAction}>
           <div className="grid gap-4 md:grid-cols-2 my-4">
-            <input type="hidden" name="id" value={id} />
+            <input type="hidden" name="id" value={productId} />
             <FormInput
               type="text"
               name="name"

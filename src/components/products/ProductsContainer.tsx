@@ -1,4 +1,4 @@
-import { fetchAllProducts } from "@/utils/actions";
+import { fetchAllProducts, fetchFavoriteIdsForProducts } from "@/utils/actions";
 import React from "react";
 import { Button } from "../ui/button";
 import Link from "next/link";
@@ -17,7 +17,15 @@ const ProductsContainer = async ({
   search = "",
 }: ProductContainerProps) => {
   const products = await fetchAllProducts({ search });
-  const totalProducts = products.length;
+  const productIds = products.map((product) => product.id);
+  const favorites = await fetchFavoriteIdsForProducts(productIds);
+  // mapping favorites to products
+  const productsWithFavorites = products.map((product) => ({
+    ...product,
+    favoriteId:
+      favorites.find((fav) => fav.productId === product.id)?.id || null,
+  }));
+  const totalProducts = productsWithFavorites.length;
   const searchTerm = search ? `&search=${search}` : "";
 
   return (
@@ -58,9 +66,9 @@ const ProductsContainer = async ({
             Sorry No products found matched your search...
           </h5>
         ) : layout === "grid" ? (
-          <ProductsGrid products={products} />
+          <ProductsGrid products={productsWithFavorites} />
         ) : (
-          <ProductsList products={products} />
+          <ProductsList products={productsWithFavorites} />
         )}
       </div>
     </>

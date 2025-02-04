@@ -1,17 +1,20 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { FaHeart } from "react-icons/fa";
-import { Button } from "../ui/button";
+import { auth } from "@clerk/nextjs/server";
+import { CardSignInButton } from "../form/Buttons";
+import FavoriteToggleForm from "./FavoriteToggleForm";
 
 type FavoriteToggleButtonProps = {
   productId: string;
+  favoriteId: string | null;
 };
 
-const FavoriteToggleButton = ({ productId }: FavoriteToggleButtonProps) => {
-  return (
-    <Button size="icon" variant="outline" className="p-2 cursor-pointer">
-      <FaHeart />
-    </Button>
-  );
+const FavoriteToggleButton = async ({
+  productId,
+  favoriteId,
+}: FavoriteToggleButtonProps) => {
+  const { userId } = await auth();
+  if (!userId) return <CardSignInButton />;
+
+  return <FavoriteToggleForm favoriteId={favoriteId} productId={productId} />;
 };
 
 export default FavoriteToggleButton;

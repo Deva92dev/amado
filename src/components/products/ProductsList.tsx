@@ -5,15 +5,19 @@ import Link from "next/link";
 import Image from "next/image";
 import FavoriteToggleButton from "./FavoriteToggleButton";
 
+interface ProductWithFavorite extends Product {
+  favoriteId?: string | null;
+}
+
 interface ProductListProps {
-  products: Product[];
+  products: ProductWithFavorite[];
 }
 
 const ProductsList = ({ products }: ProductListProps) => {
   return (
     <div className="pt-12 grid  gap-y-8">
       {products.map((product) => {
-        const { name, price, image, category } = product;
+        const { name, price, image, category, favoriteId } = product;
         const productId = product.id;
         const formattedPrice = formatCurrency(price);
         const formattedCategory = category.join(", ");
@@ -46,7 +50,10 @@ const ProductsList = ({ products }: ProductListProps) => {
               </Card>
             </Link>
             <div className="absolute bottom-8 right-8 z-50">
-              <FavoriteToggleButton productId={productId} />
+              <FavoriteToggleButton
+                favoriteId={favoriteId ?? null}
+                productId={productId}
+              />
             </div>
           </article>
         );

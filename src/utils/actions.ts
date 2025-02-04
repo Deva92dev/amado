@@ -1,9 +1,7 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 import { redirect } from "next/navigation";
 import db from "./db";
-import { currentUser } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { imageSchema, productSchema, ValidateWithZodSchema } from "./schemas";
 import { deleteImage, uploadImage } from "./supabase";
 import { revalidatePath } from "next/cache";
@@ -32,12 +30,23 @@ const getAdminUser = async () => {
 };
 
 export const fetchFeaturedProducts = async () => {
+  const { userId } = await auth();
   const products = await db.product.findMany({
     where: {
       featured: true,
     },
+    include: {
+      favorites: {
+        select: { id: true, clerkId: true },
+      },
+    },
   });
-  return products;
+
+  return products.map((product) => ({
+    ...product,
+    favoriteId:
+      product.favorites.find((fav) => fav.clerkId === userId)?.id || null,
+  }));
 };
 
 export const fetchAllProducts = async ({ search = "" }: { search: string }) => {
@@ -59,6 +68,11 @@ export const fetchSingleProduct = async (productId: string) => {
   const product = await db.product.findUnique({
     where: {
       id: productId,
+    },
+    include: {
+      favorites: {
+        select: { id: true, clerkId: true },
+      },
     },
   });
   if (!product) {
@@ -209,3 +223,128 @@ export const updateProductImageAction = async (
     return renderError(error);
   }
 };
+
+export const fetchFavoriteIdsForProducts = async (productIds: string[]) => {
+  const user = await getAuthUser().catch(() => null);
+  if (!user) return [];
+
+  const favorites = await db.favorite.findMany({
+    where: {
+      productId: { in: productIds },
+      clerkId: user.id,
+    },
+    select: {
+      id: true,
+      productId: true,
+    },
+  });
+
+  return favorites;
+};
+
+export const fetchFavoriteId = async ({
+  productId,
+}: {
+  productId: string;
+}): Promise<string | null> => {
+  const user = await getAuthUser();
+  if (!user || !user.id) {
+    return null;
+  }
+
+  const favorite = await db.favorite.findFirst({
+    where: {
+      productId,
+      clerkId: user?.id,
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  return favorite?.id || null;
+};
+
+export const toggleFavoriteAction = async (prevState: {
+  productId: string;
+  favoriteId: string | null;
+  pathname: string;
+}): Promise<{ message: string; favoriteId?: string | null }> => {
+  const user = await getAuthUser();
+  const { productId, favoriteId, pathname } = prevState;
+
+  try {
+    let newFavoriteId: string | null = null;
+    if (favoriteId) {
+      await db.favorite.delete({
+        where: {
+          id: favoriteId,
+        },
+      });
+    } else {
+      const newFavorite = await db.favorite.create({
+        data: {
+          productId,
+          clerkId: user.id,
+        },
+      });
+      newFavoriteId = newFavorite.id;
+    }
+
+    revalidatePath("/");
+    revalidatePath("/products");
+    revalidatePath(`/products/${productId}`);
+    revalidatePath("/favorites");
+
+    return {
+      message: favoriteId ? "Removed from favorites" : "Added to favorites",
+      favoriteId: newFavoriteId,
+    };
+  } catch (error) {
+    return renderError(error);
+  }
+};
+
+export const fetchUserFavorites = async () => {
+  const user = await getAuthUser();
+  const favorites = await db.favorite.findMany({
+    where: {
+      clerkId: user.id,
+    },
+    include: {
+      product: {
+        include: {
+          favorites: {
+            select: {
+              id: true,
+            },
+            where: {
+              clerkId: user.id,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  return favorites.map((fav) => ({
+    ...fav,
+    product: {
+      ...fav.product,
+      favoriteId: fav.id,
+    },
+  }));
+};
+
+export const createReviewAction = async (
+  prevState: any,
+  formData: FormData
+) => {
+  return { message: "Review Submitted Successfully" };
+};
+
+export const fetchProductReviews = async () => {};
+export const fetchProductReviewsByUser = async () => {};
+export const deleteReviewAction = async () => {};
+export const findExistingReview = async () => {};
+export const fetchProductRating = async () => {};

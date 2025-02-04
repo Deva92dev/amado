@@ -6,15 +6,19 @@ import { Card, CardContent } from "../ui/card";
 import Image from "next/image";
 import FavoriteToggleButton from "./FavoriteToggleButton";
 
+interface ProductWithFavorite extends Product {
+  favoriteId: string | null;
+}
+
 interface ProductsGridProps {
-  products: Product[];
+  products: ProductWithFavorite[];
 }
 
 const ProductsGrid = ({ products }: ProductsGridProps) => {
   return (
     <div className="pt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {products.map((product) => {
-        const { name, price, image } = product;
+        const { name, price, image, favoriteId } = product;
         const productId = product.id;
         const formattedPrice = formatCurrency(price);
         return (
@@ -42,7 +46,10 @@ const ProductsGrid = ({ products }: ProductsGridProps) => {
               </Card>
             </Link>
             <div className="absolute top-7 right-7 z-50">
-              <FavoriteToggleButton productId={productId} />
+              <FavoriteToggleButton
+                productId={productId}
+                favoriteId={favoriteId ?? null}
+              />
             </div>
           </article>
         );

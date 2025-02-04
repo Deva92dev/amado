@@ -1,12 +1,14 @@
 import { cn } from "@/lib/utils";
 
+type EmptyListProps = {
+  heading?: string;
+  className?: string;
+};
+
 const EmptyList = ({
   heading = "No Items Found",
   className,
-}: {
-  heading?: string;
-  className?: string;
-}) => {
+}: EmptyListProps) => {
   return <h2 className={cn("text-xl", className)}>{heading}</h2>;
 };
 

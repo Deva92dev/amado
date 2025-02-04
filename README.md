@@ -3463,7 +3463,7 @@ model Review {
 npx prisma db push
 ```
 
-- restar the server
+- restart the server
 
 ### Review Components and Actions
 
