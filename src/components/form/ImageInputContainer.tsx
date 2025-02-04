@@ -12,7 +12,7 @@ type ImageInputContainerProps = {
   image: string;
   text: string;
   name: string;
-  action: actionFunction;
+  action: (prevState: any, formData: FormData) => Promise<{ message: string }>;
   children?: React.ReactNode;
 };
 
