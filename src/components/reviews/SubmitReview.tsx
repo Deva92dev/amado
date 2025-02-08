@@ -27,7 +27,11 @@ const SubmitReview = ({ productId }: { productId: string }) => {
         <Card className="p-8 mt-8">
           <FormContainer action={createReviewAction}>
             <input type="hidden" name="productId" value={productId} />
-            <input type="hidden" name="authorName" value={user?.id || "user"} />
+            <input
+              type="hidden"
+              name="authorName"
+              value={user?.firstName || "user"}
+            />
             <input
               type="hidden"
               name="authorImageUrl"

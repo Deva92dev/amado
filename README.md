@@ -4625,13 +4625,13 @@ export default ThirdColumn;
 - actions.ts
 
 ```ts
-eexport const removeCartItemAction = async (
+export const removeCartItemAction = async (
   prevState: any,
   formData: FormData
 ) => {
   const user = await getAuthUser();
   try {
-    const cartItemId = formData.get('id') as string;
+    const cartItemId = formData.get("id") as string;
     const cart = await fetchOrCreateCart({
       userId: user.id,
       errorOnFailure: true,
@@ -4644,8 +4644,8 @@ eexport const removeCartItemAction = async (
     });
 
     await updateCart(cart);
-    revalidatePath('/cart');
-    return { message: 'Item removed from cart' };
+    revalidatePath("/cart");
+    return { message: "Item removed from cart" };
   } catch (error) {
     return renderError(error);
   }

@@ -50,3 +50,24 @@ export const productSchema = z.object({
 export const imageSchema = z.object({
   image: validateImageFile(),
 });
+
+export const reviewSchema = z.object({
+  productId: z
+    .string()
+    .refine((value) => value !== "", { message: "ProductId cannot be empty" }),
+  authorName: z.string().refine((value) => value !== "", {
+    message: "Author Name cannot be empty",
+  }),
+  authorImageUrl: z.string().refine((value) => value !== "", {
+    message: "Author Image Url cannot be empty",
+  }),
+  rating: z.coerce
+    .number()
+    .int()
+    .min(1, { message: "rating must be at least 1" })
+    .max(5, { message: "Rating must be at most  5" }),
+  comment: z
+    .string()
+    .min(10, { message: "Comment must be at least 10 characters long" })
+    .max(1000, { message: "Comment must be at most 1000 characters long" }),
+});
