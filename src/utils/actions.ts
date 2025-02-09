@@ -19,19 +19,11 @@ type FormState = {
   message: string;
 };
 
-export const renderError = (error: any): FormState => {
-  let message = "An unexpected error occurred.";
-
-  if (error instanceof Error) {
-    message = error.message;
-  } else if (typeof error === "string") {
-    message = error;
-  }
-  //  add more error instances if needed
-
-  console.error("Action error:", error);
-
-  return { message }; // Return a FormState object
+const renderError = (error: unknown): { message: string } => {
+  console.log(error);
+  return {
+    message: error instanceof Error ? error.message : "an error occurred",
+  };
 };
 
 const getAuthUser = async () => {
