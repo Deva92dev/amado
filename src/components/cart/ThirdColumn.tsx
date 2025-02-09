@@ -11,7 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 
 const ThirdColumn = ({ id, quantity }: { id: string; quantity: number }) => {
   const [amount, setAmount] = useState(quantity);
-  const [isLoading, setIsLoading] = useState(false);
+  const [, setIsLoading] = useState(false);
   const { toast } = useToast();
 
   const handleAmountChange = async (value: number) => {

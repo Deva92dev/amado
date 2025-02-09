@@ -1,7 +1,6 @@
 "use client";
 
 import { toggleFavoriteAction } from "@/utils/actions";
-import { usePathname, useRouter } from "next/navigation";
 import FormContainer from "../form/FormContainer";
 import { CardSubmitButton } from "../form/Buttons";
 import { useState, useTransition } from "react";
@@ -17,7 +16,7 @@ const FavoriteToggleForm = ({
 }: FavoriteToggleFormProps) => {
   const [optimisticFavoriteId, setOptimisticFavoriteId] =
     useState(initialFavoriteId);
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   const action = async (_prevState: any): Promise<{ message: string }> => {
     const currentFavoriteId = optimisticFavoriteId;

@@ -1,7 +1,9 @@
 "use server";
+
+// @typescript-eslint/no-unused-vars
 import { redirect } from "next/navigation";
 import db from "./db";
-import { auth, currentUser, getAuth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import {
   imageSchema,
   productSchema,

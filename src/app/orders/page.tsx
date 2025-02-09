@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/table";
 import { fetchUserOrders } from "@/utils/actions";
 import { formatCurrency, formatDate } from "@/utils/format";
-import React from "react";
 
 const Orders = async () => {
   const orders = await fetchUserOrders();
@@ -35,7 +34,7 @@ const Orders = async () => {
               const { id, orderTotal, tax, shipping, createdAt, products } =
                 order;
               return (
-                <TableRow key={order.id}>
+                <TableRow key={id}>
                   <TableCell>{products}</TableCell>
                   <TableCell>{formatCurrency(orderTotal)}</TableCell>
                   <TableCell>{formatCurrency(tax)}</TableCell>
