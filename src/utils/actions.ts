@@ -1,5 +1,4 @@
 "use server";
-/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { redirect } from "next/navigation";
 import db from "./db";
