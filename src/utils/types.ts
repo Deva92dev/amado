@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { Prisma } from "@prisma/client";
 
 export type actionFunction = (
