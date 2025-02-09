@@ -1,6 +1,5 @@
 "use client";
 
-import { type actionFunction } from "@/utils/types";
 import Image from "next/image";
 import { useState } from "react";
 import { Button } from "../ui/button";
@@ -8,11 +7,18 @@ import FormContainer from "./FormContainer";
 import ImageInput from "./ImageInput";
 import { SubmitButton } from "./Buttons";
 
+type FormState = {
+  message: string;
+};
+
 type ImageInputContainerProps = {
   image: string;
   text: string;
   name: string;
-  action: (prevState: any, formData: FormData) => Promise<{ message: string }>;
+  action: (
+    prevState: FormState | undefined,
+    formData: FormData
+  ) => Promise<{ message: string }>;
   children?: React.ReactNode;
 };
 

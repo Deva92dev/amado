@@ -1,6 +1,6 @@
 "use server";
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
-// @typescript-eslint/no-unused-vars
 import { redirect } from "next/navigation";
 import db from "./db";
 import { auth, currentUser } from "@clerk/nextjs/server";
@@ -16,11 +16,23 @@ import { Cart } from "@prisma/client";
 
 const folder = "Amado";
 
-const renderError = (error: unknown): { message: string } => {
-  console.log(error);
-  return {
-    message: error instanceof Error ? error.message : " An error Occurred",
-  };
+type FormState = {
+  message: string;
+};
+
+export const renderError = (error: any): FormState => {
+  let message = "An unexpected error occurred.";
+
+  if (error instanceof Error) {
+    message = error.message;
+  } else if (typeof error === "string") {
+    message = error;
+  }
+  //  add more error instances if needed
+
+  console.error("Action error:", error);
+
+  return { message }; // Return a FormState object
 };
 
 const getAuthUser = async () => {
@@ -90,7 +102,7 @@ export const fetchSingleProduct = async (productId: string) => {
 };
 
 export const createProductAction = async (
-  prevState: any,
+  prevState: FormState | undefined,
   formData: FormData
 ): Promise<{ message: string }> => {
   const user = await getAuthUser();
@@ -167,7 +179,7 @@ export const fetchAdminProductDetails = async (productId: string) => {
 };
 
 export const updateProductAction = async (
-  prevState: any,
+  prevState: FormState | undefined,
   formData: FormData
 ) => {
   await getAdminUser();
@@ -201,7 +213,7 @@ export const updateProductAction = async (
 };
 
 export const updateProductImageAction = async (
-  prevState: any,
+  prevState: FormState | undefined,
   formData: FormData
 ) => {
   await getAdminUser();
@@ -345,7 +357,7 @@ export const fetchUserFavorites = async () => {
 };
 
 export const createReviewAction = async (
-  prevState: any,
+  prevState: FormState | undefined,
   formData: FormData
 ) => {
   const user = await getAuthUser();
@@ -609,7 +621,7 @@ export const addToCartAction = async (prevState: any, formData: FormData) => {
 };
 
 export const removeCartItemAction = async (
-  prevState: any,
+  prevState: FormState | undefined,
   formData: FormData
 ) => {
   const user = await getAuthUser();

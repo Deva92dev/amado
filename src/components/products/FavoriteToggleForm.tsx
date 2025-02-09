@@ -5,6 +5,10 @@ import FormContainer from "../form/FormContainer";
 import { CardSubmitButton } from "../form/Buttons";
 import { useState, useTransition } from "react";
 
+type FormState = {
+  message: string;
+};
+
 type FavoriteToggleFormProps = {
   favoriteId: string | null;
   productId: string;
@@ -16,9 +20,11 @@ const FavoriteToggleForm = ({
 }: FavoriteToggleFormProps) => {
   const [optimisticFavoriteId, setOptimisticFavoriteId] =
     useState(initialFavoriteId);
-  const [, startTransition] = useTransition();
+  const startTransition = useTransition()[1];
 
-  const action = async (_prevState: any): Promise<{ message: string }> => {
+  const action = async (
+    _prevState: FormState | undefined
+  ): Promise<{ message: string }> => {
     const currentFavoriteId = optimisticFavoriteId;
 
     // Optimistic update
@@ -37,8 +43,8 @@ const FavoriteToggleForm = ({
       setOptimisticFavoriteId(result.favoriteId || null);
       return { message: result.message };
     } catch (error) {
-      // Rollback on error
       setOptimisticFavoriteId(initialFavoriteId);
+      console.error("Error updating favorite:", error);
       return { message: "Failed to update favorite" };
     }
   };

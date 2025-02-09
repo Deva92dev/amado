@@ -1,5 +1,4 @@
 import { fetchAllProducts, fetchFavoriteIdsForProducts } from "@/utils/actions";
-import React from "react";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { LuLayoutGrid, LuLayoutList } from "react-icons/lu";

@@ -1,7 +1,6 @@
 import SectionTitle from "@/components/global/SectionTitle";
 import ReviewCard from "@/components/reviews/ReviewCard";
 import { fetchProductReviewsByUser } from "@/utils/actions";
-import React from "react";
 import { deleteReviewAction } from "../../utils/actions";
 import FormContainer from "@/components/form/FormContainer";
 import { IconButton } from "@/components/form/Buttons";

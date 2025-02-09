@@ -4,12 +4,19 @@
 import { useToast } from "@/hooks/use-toast";
 import { useActionState, useEffect } from "react";
 
+type FormState = {
+  message: string;
+};
+
 const initialState = {
   message: "",
 };
 
 type FormContainerProps = {
-  action: (prevState: any, formData: FormData) => Promise<{ message: string }>;
+  action: (
+    prevState: FormState,
+    formData: FormData
+  ) => Promise<{ message: string }>;
   children: React.ReactNode;
 };
 
