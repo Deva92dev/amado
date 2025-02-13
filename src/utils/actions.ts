@@ -690,11 +690,15 @@ export const createOrderAction = async (prevState: any, formData: FormData) => {
     const order = await db.order.create({
       data: {
         clerkId: user.id,
+        cart: { connect: { id: cart.id } },
         products: cart.numItemsInCart,
         orderTotal: cart.orderTotal,
         tax: cart.tax,
         shipping: cart.shipping,
         email: user.emailAddresses[0].emailAddress,
+      },
+      include: {
+        cart: true, // Include cart relation
       },
     });
 

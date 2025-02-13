@@ -26,6 +26,7 @@ export const POST = async (req: NextRequest) => {
       const payment = event.payload.payment.entity;
       const razorpayOrderId = payment.order_id;
       const razorpayPaymentId = payment.id;
+      const currency = payment.currency;
       const orderNotes = payment.notes;
       const cartIdFromNotes = orderNotes?.cartId;
 
@@ -42,6 +43,7 @@ export const POST = async (req: NextRequest) => {
           where: {
             razorpayOrderId: razorpayOrderId,
           },
+          include: { cart: true },
         });
 
         if (!existingOrder) {
@@ -77,30 +79,18 @@ export const POST = async (req: NextRequest) => {
           );
         }
 
-        // delete cart after successful payment
-        if (cartIdFromNotes) {
-          console.log(
-            "Webhook: Attempting to delete cart with cartId:",
-            cartIdFromNotes
-          );
-          try {
-            await db.cart.delete({
-              where: { id: cartIdFromNotes },
-            });
-            console.log(
-              `Webhook: Cart and associated CartItems deleted for cartId: ${cartIdFromNotes}`
-            );
-          } catch (cartDeleteError) {
-            console.error(
-              "Webhook: Error deleting cart in database:",
-              cartDeleteError
-            );
-          }
-        } else {
-          console.warn(
-            "Webhook: No cartId found in payment notes, skipping cart deletion."
-          );
-        }
+        console.log("Full payment entity:", payment);
+        console.log("Payment notes:", payment.notes);
+        console.log("Order notes:", event.payload.order?.entity?.notes);
+
+        await db.$transaction([
+          db.order.update({
+            where: { id: existingOrder.id },
+            data: { isPaid: true, paymentStatus: "COMPLETED" },
+          }),
+          db.cartItem.deleteMany({ where: { cartId: existingOrder.cart?.id } }),
+          db.cart.delete({ where: { id: existingOrder.cart?.id } }),
+        ]);
       } catch (error) {
         console.error("Database error during webhook processing:", error);
         return Response.json(
