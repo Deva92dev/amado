@@ -2,10 +2,10 @@
 
 import RazorpayButton from "@/components/global/RazorpayButton";
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 
-const CheckoutPage = () => {
+const CheckoutContent = () => {
   const searchParams = useSearchParams();
-
   const orderId = searchParams.get("orderId");
   const cartId = searchParams.get("cartId");
 
@@ -16,6 +16,14 @@ const CheckoutPage = () => {
       <p>Cart ID: {cartId}</p>
       <RazorpayButton orderId={orderId} cartId={cartId} />
     </div>
+  );
+};
+
+const CheckoutPage = () => {
+  return (
+    <Suspense fallback={<div>Loading checkout details...</div>}>
+      <CheckoutContent />
+    </Suspense>
   );
 };
 
