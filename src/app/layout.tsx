@@ -7,6 +7,8 @@ import Providers from "./providers";
 import { ClerkProvider } from "@clerk/nextjs";
 import Footer from "@/components/global/Footer";
 
+// remove node-options from package.json
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
