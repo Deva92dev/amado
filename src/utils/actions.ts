@@ -60,13 +60,20 @@ export const fetchFeaturedProducts = async () => {
   }));
 };
 
+export const fetchAllProductsForSitemap = async () => {
+  const products = await db.product.findMany({
+    select: { id: true, updatedAt: true },
+  });
+  return products;
+};
+
 export const fetchAllProducts = async ({ search = "" }: { search: string }) => {
   const normalizedSearch = search.toLowerCase();
   return db.product.findMany({
     where: {
       OR: [
         { name: { contains: search, mode: "insensitive" } },
-        { category: { has: normalizedSearch } }, // category is an array
+        { category: { hasSome: [normalizedSearch] } }, // category is an array
       ],
     },
     orderBy: {
@@ -86,6 +93,8 @@ export const fetchSingleProduct = async (productId: string) => {
       },
     },
   });
+
+  // redirect may break ISR caching.
   if (!product) {
     redirect("/products");
   }
@@ -385,23 +394,22 @@ export const fetchProductReviews = async (productId: string) => {
 };
 
 export const fetchProductRating = async (productId: string) => {
-  const result = await db.review.groupBy({
-    by: ["productId"],
+  const result = await db.review.aggregate({
+    where: {
+      productId,
+    },
     _avg: {
       rating: true,
     },
     _count: {
       rating: true,
     },
-    where: {
-      productId,
-    },
   });
 
   // return empty array if no review
   return {
-    rating: result[0]?._avg.rating?.toFixed(1) ?? 0,
-    count: result[0]?._count.rating ?? 0,
+    rating: result._avg.rating || 0,
+    count: result._count.rating || 0,
   };
 };
 
@@ -631,6 +639,7 @@ export const removeCartItemAction = async (
 
     await updateCart(cart);
     revalidatePath("/cart");
+    revalidatePath("/");
     return { message: "Item removed from Cart" };
   } catch (error) {
     return renderError(error);
@@ -690,15 +699,12 @@ export const createOrderAction = async (prevState: any, formData: FormData) => {
     const order = await db.order.create({
       data: {
         clerkId: user.id,
-        cart: { connect: { id: cart.id } },
         products: cart.numItemsInCart,
         orderTotal: cart.orderTotal,
         tax: cart.tax,
         shipping: cart.shipping,
         email: user.emailAddresses[0].emailAddress,
-      },
-      include: {
-        cart: true, // Include cart relation
+        isPaid: false,
       },
     });
 
@@ -738,4 +744,29 @@ export const fetchAdminOrders = async () => {
   });
 
   return orders;
+};
+
+export const checkProductPurchase = async ({
+  userId,
+  productId,
+}: {
+  userId: string;
+  productId: string;
+}) => {
+  const purchaseExists = await db.order.findFirst({
+    where: {
+      clerkId: userId,
+      isPaid: true,
+      orderItems: {
+        some: {
+          productId: productId,
+        },
+      },
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  return !!purchaseExists;
 };

@@ -8,101 +8,92 @@ const razorpay = new Razorpay({
 });
 
 export const POST = async (req: NextRequest) => {
-  const requestHeaders = new Headers(req.headers);
-  const origin = requestHeaders.get("origin");
-
-  const { orderId, cartId } = await req.json();
-  console.log("Received orderId:", orderId, "cartId:", cartId);
-  const existingOrder = await db.order.findUnique({
-    where: {
-      id: orderId,
-    },
-  });
-
-  const cart = await db.cart.findUnique({
-    where: {
-      id: cartId,
-    },
-    include: {
-      cartItems: {
-        include: {
-          product: true,
-        },
-      },
-    },
-  });
-
-  if (!existingOrder || !cart) {
-    return Response.json(null, {
-      status: 404,
-      statusText: "Order or cart Not Found",
-    });
-  }
-
-  if (existingOrder.isPaid) {
-    return Response.json({ error: "Order already paid." }, { status: 400 });
-  }
-
-  // Calculate total amount from cartItems
-  let orderAmountInPaise = 0;
-  cart.cartItems.map((cartItem) => {
-    orderAmountInPaise += cartItem.product.price * 100 * cartItem.amount;
-  });
-  if (orderAmountInPaise <= 0) {
-    console.error(
-      "Error: Order Amount is invalid, Amount in paise:",
-      orderAmountInPaise,
-      "OrderID:",
-      orderId
-    );
-    return Response.json({ error: "Order Amount is invalid" }, { status: 400 });
-  }
-
   try {
-    const razorpayOrder = await razorpay.orders.create({
-      amount: orderAmountInPaise,
-      currency: "INR",
-      receipt: `receipt_order_${orderId.slice(-6)}`,
-      notes: {
-        orderId: orderId,
-        cartId: cartId,
-      },
-    });
+    const { orderId, cartId } = await req.json();
 
-    if (!razorpayOrder || !razorpayOrder.id) {
+    if (!orderId || !cartId) {
       return Response.json(
-        { error: "Failed to create Razorpay order" },
-        { status: 500 }
+        { success: false, message: "Missing orderId or cartId" },
+        { status: 400 }
       );
     }
 
-    // UPDATE existing Order with razorpayOrderId
-    const updatedOrder = await db.order.update({
-      where: {
-        id: orderId,
-      },
-      data: {
-        razorpayOrderId: razorpayOrder.id,
-      },
-    });
+    // Transaction for atomic operations
+    const result = await db.$transaction(async (tx) => {
+      const existingOrder = await tx.order.findUnique({
+        where: { id: orderId },
+      });
 
-    if (!updatedOrder) {
-      return Response.json(
-        {
-          error: "Payment gateway order created, but database update failed.",
+      if (!existingOrder) {
+        throw new Error("Order not found");
+      }
+      if (existingOrder.isPaid) {
+        throw new Error("Order already paid");
+      }
+
+      const cart = await tx.cart.findUnique({
+        where: { id: cartId },
+        include: {
+          cartItems: {
+            include: {
+              product: true,
+            },
+          },
         },
-        { status: 500 }
-      );
-    }
+      });
+
+      if (!cart) throw new Error("Cart not found");
+      if (!cart.cartItems?.length) throw new Error("Empty cart");
+
+      // 3. Calculate total amount
+      const orderAmountInPaise = cart.cartItems.reduce((total, item) => {
+        return total + item.product.price * 100 * item.amount;
+      }, 0);
+
+      if (orderAmountInPaise <= 0) {
+        throw new Error("Invalid order amount");
+      }
+
+      // Create Razorpay order
+      const razorpayOrder = await razorpay.orders.create({
+        amount: orderAmountInPaise,
+        currency: "INR",
+        receipt: `receipt_${orderId.slice(-6)}`,
+        notes: {
+          orderId: orderId,
+          cartId: cartId,
+        },
+      });
+
+      if (!razorpayOrder?.id) {
+        throw new Error("Failed to create Razorpay order");
+      }
+
+      // 5. Update order with Razorpay ID
+      const updatedOrder = await tx.order.update({
+        where: { id: orderId },
+        data: { razorpayOrderId: razorpayOrder.id },
+      });
+
+      return {
+        razorpayOrderId: razorpayOrder.id,
+        amount: razorpayOrder.amount,
+      };
+    });
 
     return Response.json({
-      order_Id: razorpayOrder.id,
-      amount: razorpayOrder.amount,
+      success: true,
+      order_Id: result.razorpayOrderId,
+      amount: result.amount,
     });
-  } catch (error) {
-    console.error("Error creating order:", error);
+  } catch (error: any) {
+    console.error("Payment initialization error:", error);
     return Response.json(
-      { error: "Internal Server Error: Razorpay payment gateway error" },
+      {
+        success: false,
+        message: error.message || "Payment processing failed",
+        error: process.env.NODE_ENV === "development" ? error.stack : undefined,
+      },
       { status: 500 }
     );
   }

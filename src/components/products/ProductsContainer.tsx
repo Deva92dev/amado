@@ -41,7 +41,10 @@ const ProductsContainer = async ({
               size="icon"
               variant={layout === "grid" ? "default" : "ghost"}
             >
-              <Link href={`/products?layout=grid${searchTerm}`}>
+              <Link
+                href={`/products?layout=grid${searchTerm}`}
+                aria-label="grid-layout"
+              >
                 <LuLayoutGrid />
               </Link>
             </Button>
@@ -50,7 +53,10 @@ const ProductsContainer = async ({
               size="icon"
               variant={layout === "list" ? "default" : "ghost"}
             >
-              <Link href={`/products?layout=list${searchTerm}`}>
+              <Link
+                href={`/products?layout=list${searchTerm}`}
+                aria-label="list-layout"
+              >
                 <LuLayoutList />
               </Link>
             </Button>

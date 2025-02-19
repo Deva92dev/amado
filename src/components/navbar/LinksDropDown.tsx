@@ -21,7 +21,11 @@ const LinksDropDown = async () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="flex gap-4 max-w-[100px]">
+        <Button
+          variant="outline"
+          className="flex gap-4 max-w-[100px]"
+          aria-label="User options"
+        >
           <LuAlignLeft className="w-6 h-6" />
           <UserIcon />
         </Button>
@@ -39,7 +43,6 @@ const LinksDropDown = async () => {
               <button className="w-full text-left">Register</button>
             </SignUpButton>
           </DropdownMenuItem>
-          {/* Show other pages here */}
           <DropdownMenuSeparator />
           {publicNavLinks.map((link) => {
             return (

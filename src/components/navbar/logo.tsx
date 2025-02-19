@@ -5,7 +5,7 @@ import { VscCode } from "react-icons/vsc";
 const Logo = () => {
   return (
     <Button size="icon" asChild>
-      <Link href="/">
+      <Link href="/" aria-label="Go to homepage">
         <VscCode className="w-6 h-6" />
       </Link>
     </Button>

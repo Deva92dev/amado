@@ -7,8 +7,7 @@ const ProductReviews = async ({ productId }: { productId: string }) => {
 
   return (
     <div className="mt-16">
-      <SectionTitle text="Product Reviews" />
-
+      {reviews.length > 0 && <SectionTitle text="Product Reviews" />}
       <div className="grid md:grid-cols-2 gap-8 my-8">
         {reviews.map((review) => {
           const { authorImageUrl, authorName, comment, rating } = review;

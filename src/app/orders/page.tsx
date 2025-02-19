@@ -10,6 +10,11 @@ import {
 } from "@/components/ui/table";
 import { fetchUserOrders } from "@/utils/actions";
 import { formatCurrency, formatDate } from "@/utils/format";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Orders",
+};
 
 const Orders = async () => {
   const orders = await fetchUserOrders();

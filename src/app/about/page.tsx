@@ -1,8 +1,14 @@
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "About",
+};
+
 const AboutPage = () => {
   return (
     <section>
       <h1 className="flex flex-wrap gap-2 sm:gap-x-6 items-center justify-center text-4xl font-bold leading-none tracking-wide sm:text-6xl">
-        We love{" "}
+        We love
         <span className="bg-primary py-2 px-4 rounded-lg tracking-widest text-white">
           Shopping
         </span>

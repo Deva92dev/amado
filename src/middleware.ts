@@ -6,7 +6,6 @@ const isPublicRoute = createRouteMatcher([
   "/products(.*)",
   "/about",
   "/api/payment",
-  "/api/webhook",
 ]);
 const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
 

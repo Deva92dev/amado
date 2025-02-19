@@ -98,6 +98,13 @@ export const CardSubmitButton = ({ isFavorite }: CardSubmitButtonProps) => {
       size="icon"
       variant="outline"
       className="p-2 cursor-pointer"
+      aria-label={
+        pending
+          ? "Submitting form"
+          : isFavorite
+          ? "Remove from favorites"
+          : "Add to favorites"
+      }
     >
       {pending ? (
         <ReloadIcon className="animate-spin" />

@@ -5,6 +5,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
+import { fetchCartItems } from "@/utils/actions";
 
 type RazorpayButtonProps = {
   orderId: string | null;
@@ -22,9 +23,7 @@ const RazorpayButton = ({ cartId, orderId }: RazorpayButtonProps) => {
     const loadRazorpay = async () => {
       const script = document.createElement("script");
       script.src = "https://checkout.razorpay.com/v1/checkout.js";
-      script.onload = () => {
-        setRazorpayLoaded(true);
-      };
+      script.onload = () => setRazorpayLoaded(true);
       script.onerror = () => {
         setPaymentStatusMessage(
           "Razorpay SDK failed to load. Please try again later."
@@ -37,13 +36,10 @@ const RazorpayButton = ({ cartId, orderId }: RazorpayButtonProps) => {
     loadRazorpay();
 
     return () => {
-      // Cleanup script if component unmounts (optional but good practice)
       const script = document.querySelector(
         'script[src="https://checkout.razorpay.com/v1/checkout.js"]'
       );
-      if (script) {
-        document.body.removeChild(script);
-      }
+      if (script) document.body.removeChild(script);
     };
   }, []);
 
@@ -56,52 +52,69 @@ const RazorpayButton = ({ cartId, orderId }: RazorpayButtonProps) => {
     setPaymentStatusMessage("Processing Payment...");
 
     try {
-      const response = await axios.post("/api/payment", {
-        orderId: orderId,
-        cartId: cartId,
-      });
+      const response = await axios.post("/api/payment", { orderId, cartId });
+      const { order_Id, amount } = response.data;
 
-      const razorpayOrderId = response.data.order_Id;
-      const responseAmount = response.data.amount;
-      if (razorpayOrderId) {
-        const options = {
-          key_id: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
-          order_Id: razorpayOrderId,
-          amount: responseAmount * 100,
-          currency: "INR",
-          name: "Amado",
-          handler: async function (response: any) {
-            setPaymentStatusMessage(
-              "Payment is Successful! Order is being Processed"
-            );
-            setIsLoading(false);
-            router.push("/"); // send to home page
-          },
-          prefill: {
-            name: user?.fullName,
-            email: user?.emailAddresses[0].emailAddress,
-          },
-          theme: {
-            color: "#3399cc",
-          },
-        };
-
-        try {
-          const rzp1 = new window.Razorpay(options);
-          rzp1.on("payment.failed", function (error: any) {
-            setPaymentStatusMessage("Payment Failed. Please try again.");
-            setIsLoading(false);
-          });
-          rzp1.open();
-        } catch (sdkError: any) {
-          setPaymentStatusMessage("Error opening payment widget.");
-          setIsLoading(false);
-        }
-      } else {
+      if (!order_Id) {
         setPaymentStatusMessage("Error creating payment order.");
         setIsLoading(false);
+        return;
       }
-    } catch (error) {
+
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
+        order_id: order_Id,
+        amount: amount * 100, // Razorpay already returns amount in paise
+        currency: "INR",
+        name: "Amado",
+        handler: async function (response: any) {
+          setPaymentStatusMessage("Verifying Payment...");
+          setIsLoading(true);
+
+          try {
+            const verifyRes = await axios.post("/api/verify", {
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature,
+              cartId: cartId,
+            });
+
+            if (verifyRes.data.success) {
+              setPaymentStatusMessage("Payment Verified! Cart cleared.");
+              router.push("/orders");
+            } else {
+              setPaymentStatusMessage(
+                "Payment verification failed. Please contact support."
+              );
+            }
+          } catch (error) {
+            setPaymentStatusMessage(
+              "Payment verification error. Please try again."
+            );
+          }
+          setIsLoading(false);
+        },
+        prefill: {
+          name: user?.fullName,
+          email: user?.emailAddresses[0].emailAddress,
+        },
+        theme: {
+          color: "#3399cc",
+        },
+      };
+
+      try {
+        const rzp1 = new window.Razorpay(options);
+        rzp1.on("payment.failed", function () {
+          setPaymentStatusMessage("Payment Failed. Please try again.");
+          setIsLoading(false);
+        });
+        rzp1.open();
+      } catch {
+        setPaymentStatusMessage("Error opening payment widget.");
+        setIsLoading(false);
+      }
+    } catch {
       setPaymentStatusMessage("Failed to initiate payment. Please try again.");
       setIsLoading(false);
     }

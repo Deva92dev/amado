@@ -6,12 +6,14 @@ import Link from "next/link";
 function Footer() {
   return (
     <footer className="border-b bg-slate-700">
-      <Container className="flex flex-col sm:flex-row sm:justify-between sm:items-center flex-wrap gap-4 py-8">
+      <Container className="flex flex-col py-4 justify-between sm:flex-row items-center gap-4">
         <Logo />
-        <div className="flex gap-4 items-center">
+        <div className="flex flex-col sm:flex-row gap-4 items-center ">
           {footerLinks.map((link, index) => (
             <div key={index}>
-              <Link href={link.url}>{link.label}</Link>
+              <Link href={link.url} className="text-white hover:text-gray-300">
+                {link.label}
+              </Link>
             </div>
           ))}
         </div>

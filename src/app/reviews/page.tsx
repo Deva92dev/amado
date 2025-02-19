@@ -4,6 +4,11 @@ import { fetchProductReviewsByUser } from "@/utils/actions";
 import { deleteReviewAction } from "../../utils/actions";
 import FormContainer from "@/components/form/FormContainer";
 import { IconButton } from "@/components/form/Buttons";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Reviews",
+};
 
 const ReviewPage = async () => {
   const reviews = await fetchProductReviewsByUser();

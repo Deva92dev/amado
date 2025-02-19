@@ -4,6 +4,11 @@ import SectionTitle from "@/components/global/SectionTitle";
 import { fetchOrCreateCart, updateCart } from "@/utils/actions";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Cart",
+};
 
 const CartPage = async () => {
   const { userId } = await auth();
