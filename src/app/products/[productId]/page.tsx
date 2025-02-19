@@ -113,7 +113,7 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
             </div>
           </div>
           <ProductRating productId={productId} />
-          <h4 className="text-xl mt-2">{category.join(", ")}</h4>
+          <h2 className="text-xl mt-2">{category.join(", ")}</h2>
           <p className="mt-3 text-md bg-muted inline-block p-2 rounded-md">
             {formattedPrice}
           </p>

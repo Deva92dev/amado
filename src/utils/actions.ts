@@ -12,6 +12,7 @@ import {
 import { deleteImage, uploadImage } from "./supabase";
 import { revalidatePath } from "next/cache";
 import { Cart } from "@prisma/client";
+import { env } from "../../env";
 
 const folder = "Amado";
 
@@ -36,7 +37,7 @@ const getAuthUser = async () => {
 
 const getAdminUser = async () => {
   const user = await currentUser();
-  if (user?.id !== process.env.ADMIN_USER_ID) redirect("/");
+  if (user?.id !== env.ADMIN_USER_ID) redirect("/");
   return user;
 };
 
@@ -96,7 +97,7 @@ export const fetchSingleProduct = async (productId: string) => {
 
   // redirect may break ISR caching.
   if (!product) {
-    redirect("/products");
+    return null;
   }
   return product;
 };

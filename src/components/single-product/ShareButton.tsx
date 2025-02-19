@@ -26,8 +26,13 @@ const ShareButton = ({ name, productId }: ShareButtonProps) => {
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="outline" size="icon" className="p-2">
-          <LuShare2 />
+        <Button
+          variant="outline"
+          size="icon"
+          className="p-2"
+          aria-label="Share"
+        >
+          <LuShare2 title="Share" />
         </Button>
       </PopoverTrigger>
       <PopoverContent

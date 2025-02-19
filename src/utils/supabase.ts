@@ -1,12 +1,10 @@
 import { createClient } from "@supabase/supabase-js";
+import { env } from "../../env";
 
 const bucket = "amado-bucket";
 
 // Create a single supabase client for interacting with your database
-export const supabase = createClient(
-  process.env.SUPABASE_URL as string,
-  process.env.SUPABASE_KEY as string
-);
+export const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_KEY);
 
 export const uploadImage = async (image: File, folder: string) => {
   const timestamp = Date.now();
