@@ -97,7 +97,7 @@ export const fetchSingleProduct = async (productId: string) => {
 
   // redirect may break ISR caching.
   if (!product) {
-    return null;
+    redirect("/products");
   }
   return product;
 };
