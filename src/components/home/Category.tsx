@@ -10,7 +10,6 @@ const images = [
   "/images/Winter.webp",
 ];
 
-// py-8 lg:my-16
 const Category = () => {
   return (
     <section className="pt-24">
