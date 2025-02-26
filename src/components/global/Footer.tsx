@@ -5,7 +5,7 @@ import Link from "next/link";
 
 function Footer() {
   return (
-    <footer className="border-b bg-slate-700">
+    <footer className="border-b bg-black">
       <Container className="flex flex-col py-4 justify-between sm:flex-row items-center gap-4">
         <Logo />
         <div className="flex flex-col sm:flex-row gap-4 items-center ">

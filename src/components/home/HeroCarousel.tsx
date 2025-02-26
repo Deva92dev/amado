@@ -1,9 +1,3 @@
-import Image from "next/image";
-import Hero1 from "../../../public/images/Hero1.jpg";
-import Hero2 from "../../../public/images/Hero2.jpg";
-import Hero3 from "../../../public/images/Hero3.jpg";
-import Hero4 from "../../../public/images/Hero4.jpg";
-import { Card, CardContent } from "../ui/card";
 import {
   Carousel,
   CarouselContent,
@@ -11,38 +5,44 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "../ui/carousel";
+import Image from "next/image";
 
-// change ui for more stunning look
+const images = [
+  "/images/Hero.webp",
+  "/images/Hero2.webp",
+  "/images/Hero3.webp",
+  "/images/Hero4.webp",
+];
 
-const carouselImages = [Hero1, Hero2, Hero3, Hero4];
-
-const HeroCarousel = () => {
+function HeroCarousel() {
   return (
-    <div className="hidden lg:block">
-      <Carousel>
+    <div className="relative group">
+      <Carousel opts={{ loop: true }}>
         <CarouselContent>
-          {carouselImages.map((image, index) => {
-            return (
-              <CarouselItem key={index}>
-                <Card>
-                  <CardContent className="p-2">
-                    <Image
-                      src={image}
-                      alt="hero image"
-                      priority
-                      className="w-full h-[24rem] rounded-md object-cover"
-                    />
-                  </CardContent>
-                </Card>
-              </CarouselItem>
-            );
-          })}
+          {images.map((image, index) => (
+            <CarouselItem key={index}>
+              <div className="relative aspect-video">
+                <Image
+                  src={image}
+                  alt={`Hero image ${index + 1}`}
+                  fill
+                  priority={index === 0}
+                  className="rounded-lg object-cover"
+                  sizes="(max-width: 768px) 100vw, 75vw"
+                />
+                {/* Gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent rounded-lg" />
+              </div>
+            </CarouselItem>
+          ))}
         </CarouselContent>
-        <CarouselPrevious />
-        <CarouselNext />
+
+        {/* Navigation buttons */}
+        <CarouselPrevious className="absolute left-2 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white/30 hover:bg-white/50 backdrop-blur-sm transition-all duration-300 group-hover:opacity-100 opacity-0 hover:scale-110" />
+        <CarouselNext className="absolute right-2 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white/30 hover:bg-white/50 backdrop-blur-sm transition-all duration-300 group-hover:opacity-100 opacity-0 hover:scale-110" />
       </Carousel>
     </div>
   );
-};
+}
 
 export default HeroCarousel;

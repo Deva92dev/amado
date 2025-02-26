@@ -1,75 +1,89 @@
+/* globals.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 0 0% 100%; /* Pure white background */
-    --foreground: 240 10% 10%; /* Deep navy for text */
+    /* Light Mode - White & Gray */
+    --background: 0 0% 100%; /* Pure White */
+    --foreground: 0 0% 13%; /* Dark Charcoal */
 
-    --card: 0 0% 98%; /* Soft off-white for cards */
-    --card-foreground: 240 10% 10%; /* Deep navy for card text */
+    --card: 0 0% 100%; /* White */
+    --card-foreground: 0 0% 13%;
 
-    --popover: 0 0% 98%; /* Soft off-white for popovers */
-    --popover-foreground: 240 10% 10%; /* Deep navy for popover text */
+    --popover: 0 0% 100%; /* White */
+    --popover-foreground: 0 0% 13%;
 
-    --primary: 260 85% 60%; /* Vibrant neon purple for primary actions */
-    --primary-foreground: 0 0% 100%; /* White for text on primary buttons */
+    --primary: 0 0% 0%; /* Black */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 200 85% 60%; /* Vibrant aqua blue for secondary actions */
-    --secondary-foreground: 0 0% 100%; /* White for text on secondary buttons */
+    --secondary: 0 0% 96%; /* Light Gray */
+    --secondary-foreground: 0 0% 13%;
 
-    --muted: 220 25% 90%; /* Soft cool gray for muted backgrounds */
-    --muted-foreground: 220 15% 40%; /* Muted blue-gray for muted text */
+    --muted: 0 0% 98%; /* Off-White */
+    --muted-foreground: 0 0% 45%; /* Medium Gray */
 
-    --accent: 50 85% 60%; /* Bright lime yellow for accents */
-    --accent-foreground: 0 0% 100%; /* White for text on accents */
+    --accent: 0 0% 90%; /* Light Gray */
+    --accent-foreground: 0 0% 13%;
 
-    --destructive: 0 84% 55%; /* Bright red for destructive actions */
-    --destructive-foreground: 0 0% 100%; /* White for text on destructive buttons */
+    --destructive: 0 73% 42%; /* Red (kept for functionality) */
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 220 15% 80%; /* Light gray-blue for borders */
-    --input: 0 0% 98%; /* Soft off-white for input backgrounds */
+    --border: 0 0% 89%; /* Light Gray */
+    --input: 0 0% 100%; /* White */
 
-    --ring: 260 85% 60%; /* Neon purple for focus outlines */
-    --radius: 0.5rem; /* Rounded corners */
+    --ring: 0 0% 70%; /* Medium Gray */
+    --radius: 0.5rem;
   }
 
   .dark {
-    --background: 240 10% 10%; /* Deep navy for the background */
-    --foreground: 0 0% 95%; /* Off-white for text */
+    /* Dark Mode - Black & Gray */
+    --background: 0 0% 13%; /* Dark Charcoal */
+    --foreground: 0 0% 98%; /* Off-White */
 
-    --card: 240 10% 15%; /* Slightly lighter navy for cards */
-    --card-foreground: 0 0% 95%; /* Off-white for card text */
+    --card: 0 0% 18%; /* Dark Gray */
+    --card-foreground: 0 0% 98%;
 
-    --popover: 240 10% 15%; /* Slightly lighter navy for popovers */
-    --popover-foreground: 0 0% 95%; /* Off-white for popover text */
+    --popover: 0 0% 18%; /* Dark Gray */
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 260 85% 70%; /* Brighter neon purple for primary actions */
-    --primary-foreground: 0 0% 95%; /* Off-white for text on primary buttons */
+    --primary: 0 0% 100%; /* White */
+    --primary-foreground: 0 0% 13%;
 
-    --secondary: 200 85% 70%; /* Bright aqua blue for secondary actions */
-    --secondary-foreground: 0 0% 95%; /* Off-white for text on secondary buttons */
+    --secondary: 0 0% 25%; /* Medium Gray */
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 220 25% 20%; /* Dark blue-gray for muted backgrounds */
-    --muted-foreground: 220 15% 65%; /* Soft gray-blue for muted text */
+    --muted: 0 0% 30%; /* Dark Gray */
+    --muted-foreground: 0 0% 70%; /* Medium Gray */
 
-    --accent: 50 85% 70%; /* Bright lime yellow for accents */
-    --accent-foreground: 0 0% 95%; /* Off-white for text on accents */
+    --accent: 0 0% 35%; /* Charcoal */
+    --accent-foreground: 0 0% 98%;
 
-    --destructive: 0 84% 60%; /* Bright red for destructive actions */
-    --destructive-foreground: 0 0% 95%; /* Off-white for text on destructive buttons */
+    --destructive: 0 73% 42%; /* Red */
+    --destructive-foreground: 0 0% 98%;
 
-    --border: 220 15% 30%; /* Dark blue-gray for borders */
-    --input: 240 10% 15%; /* Slightly lighter navy for input backgrounds */
+    --border: 0 0% 25%; /* Medium Gray */
+    --input: 0 0% 18%; /* Dark Gray */
 
-    --ring: 260 85% 70%; /* Neon purple for focus outlines */
+    --ring: 0 0% 60%; /* Medium Gray */
   }
 }
 
 @layer base {
   * {
     @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;

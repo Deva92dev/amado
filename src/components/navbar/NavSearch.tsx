@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Input } from "../ui/input";
 import { useDebouncedCallback } from "use-debounce";
 import { useEffect, useState } from "react";
+import { Search, X } from "lucide-react";
 
 const NavSearch = () => {
   const searchParams = useSearchParams();
@@ -11,6 +12,7 @@ const NavSearch = () => {
   const [search, setSearch] = useState(
     searchParams.get("search")?.toString() || ""
   );
+  const [isVisible, setIsVisible] = useState(false);
 
   const handleSearch = useDebouncedCallback((value: string) => {
     const params = new URLSearchParams(searchParams);
@@ -30,16 +32,32 @@ const NavSearch = () => {
   }, [searchParams.get("search")]);
 
   return (
-    <Input
-      type="search"
-      placeholder="Search Products"
-      className="max-w-xs dark:bg-muted"
-      value={search}
-      onChange={(e) => {
-        setSearch(e.target.value);
-        handleSearch(e.target.value);
-      }}
-    />
+    <div className="flex items-center relative">
+      {isVisible ? (
+        <div className="flex items-center gap-2">
+          <Input
+            type="search"
+            placeholder="Search Products"
+            className="max-w-32 lg:max-w-xs dark:bg-muted transition-all duration-300"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              handleSearch(e.target.value);
+            }}
+            autoFocus
+          />
+          <X
+            className="w-6 h-6 text-gray-500 cursor-pointer hover:text-gray-700"
+            onClick={() => setIsVisible(false)}
+          />
+        </div>
+      ) : (
+        <Search
+          className="w-6 h-6 text-gray-500 cursor-pointer hover:text-gray-700"
+          onClick={() => setIsVisible(true)}
+        />
+      )}
+    </div>
   );
 };
 

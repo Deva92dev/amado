@@ -68,19 +68,53 @@ export const fetchAllProductsForSitemap = async () => {
   return products;
 };
 
-export const fetchAllProducts = async ({ search = "" }: { search: string }) => {
-  const normalizedSearch = search.toLowerCase();
+export const fetchAllProducts = async ({
+  search = "",
+  category = "all",
+}: {
+  search: string;
+  category: string;
+}) => {
+  const queryConditions: any = {};
+
+  if (search) {
+    queryConditions.OR = [
+      { name: { contains: search, mode: "insensitive" } },
+      { description: { contains: search, mode: "insensitive" } },
+    ];
+  }
+
+  // Handle category filter (only if a specific category is selected)
+  if (category && category !== "all") {
+    // If there's already a search OR condition, we need to add this as an AND
+    if (queryConditions.OR) {
+      queryConditions.AND = [{ category: { hasSome: [category] } }];
+    } else {
+      // If no search, we can just set the category condition directly
+      queryConditions.category = { hasSome: [category] };
+    }
+  }
+
   return db.product.findMany({
-    where: {
-      OR: [
-        { name: { contains: search, mode: "insensitive" } },
-        { category: { hasSome: [normalizedSearch] } }, // category is an array
-      ],
-    },
+    where: queryConditions,
     orderBy: {
-      createdAt: "desc",
+      createdAt: "asc",
     },
   });
+};
+
+export const fetchProductCategories = async () => {
+  const products = await db.product.findMany({
+    select: {
+      category: true,
+    },
+  });
+
+  //  Since category is an array field in schema, we need to flatten all category arrays and get unique values
+  const allCategories = products.flatMap((product) => product.category || []);
+  // Remove duplicates by using a Set
+  const uniqueCategories = [...new Set(allCategories)];
+  return uniqueCategories.sort(); // alphabetically sort
 };
 
 export const fetchSingleProduct = async (productId: string) => {

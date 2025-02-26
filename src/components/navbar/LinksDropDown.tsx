@@ -13,10 +13,17 @@ import { SignedIn, SignedOut, SignInButton, SignUpButton } from "@clerk/nextjs";
 import SignOutLink from "./SignOutLink";
 import UserIcon from "./UserIcon";
 import { auth } from "@clerk/nextjs/server";
+import { env } from "../../../env";
 
-const LinksDropDown = async () => {
+type LinksDropDownProps = {
+  hidePublicLinks?: boolean;
+};
+
+const LinksDropDown = async ({
+  hidePublicLinks = false,
+}: LinksDropDownProps) => {
   const { userId } = await auth();
-  const isAdmin = userId === process.env.ADMIN_USER_ID;
+  const isAdmin = userId === env.ADMIN_USER_ID;
 
   return (
     <DropdownMenu>
@@ -57,6 +64,13 @@ const LinksDropDown = async () => {
         <SignedIn>
           {navLinks.map((link) => {
             if (link.label === "dashboard" && !isAdmin) return null;
+            // Skip public links on large screens
+            if (
+              hidePublicLinks &&
+              publicNavLinks.some((publicLink) => publicLink.href === link.href)
+            ) {
+              return null;
+            }
             return (
               <DropdownMenuItem key={link.href}>
                 <Link href={link.href} className="capitalize w-full">

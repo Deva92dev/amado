@@ -23,8 +23,6 @@ type SingleProductPageProps = {
   }>;
 };
 
-export const revalidate = 3600;
-
 const getSingleProduct = cache(fetchSingleProduct);
 
 export const generateMetadata = async ({

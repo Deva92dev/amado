@@ -16,8 +16,8 @@ export const navLinks: NavLinks[] = [
 
 export const publicNavLinks: NavLinks[] = [
   { href: "/", label: "Home" },
-  { href: "/about", label: "About" },
   { href: "/products", label: "Products" },
+  { href: "/about", label: "About" },
 ];
 
 export const adminLinks: NavLinks[] = [
