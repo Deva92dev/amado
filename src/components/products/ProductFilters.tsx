@@ -28,6 +28,14 @@ const ProductFilters = async ({
       searchParams.set("search", currentSearch);
     }
 
+    if (currentCategory !== "all") {
+      searchParams.set("category", currentCategory);
+    }
+
+    if (currentSort) {
+      searchParams.set("sortBy", currentSort);
+    }
+
     // Add current layout
     searchParams.set("layout", currentLayout);
 

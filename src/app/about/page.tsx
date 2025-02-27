@@ -6,7 +6,7 @@ export const metadata: Metadata = {
 
 const AboutPage = () => {
   return (
-    <section>
+    <section className="min-h-screen">
       <h1 className="flex flex-wrap gap-2 sm:gap-x-6 items-center justify-center text-4xl font-bold leading-none tracking-wide sm:text-6xl">
         We love
         <span className="bg-primary py-2 px-4 rounded-lg tracking-widest text-white">
