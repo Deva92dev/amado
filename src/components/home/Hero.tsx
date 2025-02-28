@@ -8,7 +8,7 @@ const Hero = () => {
       <div>
         <h1 className="text-6xl md:text-8xl font-extrabold text-foreground">
           New age of <br />
-          <span className="text-accent"> Shopping</span>
+          <span className="text-accent-foreground"> Shopping</span>
         </h1>
         <p className="mt-4 text-muted-foreground max-w-2xl mx-auto lg:mx-0">
           Fashion gives us a huge sense of value.

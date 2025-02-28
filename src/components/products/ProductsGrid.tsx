@@ -15,22 +15,24 @@ interface ProductsGridProps {
 
 const ProductsGrid = ({ products }: ProductsGridProps) => {
   return (
-    <div className="pt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      {products.map((product) => {
+    <div className="pt-12 grid gap-8 grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+      {products.map((product, index) => {
         const { name, price, image, favoriteId } = product;
         const productId = product.id;
         const formattedPrice = formatCurrency(price);
         return (
           <article key={productId} className="group relative">
             <Link href={`/products/${productId}`}>
-              <Card className="bg-secondary text-secondary-foreground rounded-lg transition-all transform group-hover:shadow-xl group-hover:bg-accent group-hover:text-accent-foreground duration-500 ">
+              <Card className="bg-secondary text-secondary-foreground rounded-lg will-change-transform group-hover:shadow-lg group-hover:bg-accent group-hover:text-accent-foreground duration-300">
                 <CardContent className="p-4">
                   <div className="relative h-64 md:h-48 rounded overflow-hidden">
                     <Image
                       src={image}
                       alt={name}
-                      fill
-                      loading="lazy"
+                      width={300}
+                      height={200}
+                      priority={index === 0}
+                      loading={index === 0 ? "eager" : "lazy"}
                       sizes="(max-width:768px) 100vw, (max-width:1200px) 50vw, 33vw"
                       className="rounded-lg object-cover w-full bg-gradient-to-t from-black/30 to-transparent transform group-hover:scale-105 transition-transform duration-500"
                     />

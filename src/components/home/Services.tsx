@@ -38,7 +38,7 @@ const Services = () => {
             <div className="rounded-lg p-3 bg-primary w-max">
               <p className="text-primary-foreground text-2xl">{link.icon}</p>
             </div>
-            <h4 className="font-semibold my-4 font-serif">{link.label}</h4>
+            <h3 className="font-semibold my-4 font-serif">{link.label}</h3>
             <p className="text-muted-foreground text-sm leading-relaxed">
               {link.details}
             </p>

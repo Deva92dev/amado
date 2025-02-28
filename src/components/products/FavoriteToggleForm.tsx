@@ -44,7 +44,6 @@ const FavoriteToggleForm = ({
       return { message: result.message };
     } catch (error) {
       setOptimisticFavoriteId(initialFavoriteId);
-      console.error("Error updating favorite:", error);
       return { message: "Failed to update favorite" };
     }
   };

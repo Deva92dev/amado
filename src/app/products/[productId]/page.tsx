@@ -46,18 +46,6 @@ export const generateMetadata = async ({
   return {
     title,
     description: metaDescription,
-    // openGraph: {
-    //   title,
-    //   description: metaDescription,
-    //   type: "product",
-    //   url: `/products/${productId}`,
-    //   images: [
-    //     {
-    //       url: image,
-    //       alt: name,
-    //     },
-    //   ],
-    // },
     twitter: {
       card: "summary_large_image",
       title,
@@ -72,30 +60,34 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
   const product = await getSingleProduct(productId);
   // if the user is not logged in
   const { userId } = await auth();
-  const favoriteId = userId ? await fetchFavoriteId({ productId }) : null;
 
-  const hasPurchased = userId
-    ? await checkProductPurchase({ userId, productId })
-    : false;
+  const [favoriteId, hasPurchased, reviewExists] = await Promise.all([
+    userId ? fetchFavoriteId({ productId }) : null,
+    userId ? checkProductPurchase({ userId, productId }) : false,
+    userId ? findExistingReview(userId, product.id) : true,
+  ]);
 
-  const reviewDoesNotExist =
-    userId && !(await findExistingReview(userId, product.id)) && hasPurchased;
-
+  const reviewDoesNotExist = userId && !reviewExists && hasPurchased;
   const { category, description, image, price, name } = product;
   const formattedPrice = formatCurrency(price);
+  const categoryText = category.join(", ");
+
+  const imageWidth = 800;
+  const imageHeight = 600;
 
   return (
     <section>
       <BreadCrumbs name={product.name} />
-      <div className="mt-6 grid grid-cols-1 gap-y-8 lg:grid-cols-2 lg:gap-x-16">
-        <div className="relative h-full min-h-[300px] lg:min-h-0">
+      <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-y-8 lg:gap-x-16 items-stretch grid-rows-[auto_1fr_auto]">
+        <div className="relative aspect-[4/3] w-full min-h-[300px] lg:min-h-0">
           <Image
             src={image}
             alt={name}
-            fill
-            sizes="(max-width:768px) 100vw,(max-width:1200px) 50vw,33vw"
+            width={imageWidth}
+            height={imageHeight}
             priority
-            className="w-full rounded-md object-cover"
+            sizes="(max-width:768px) 100vw,(max-width:1200px) 50vw,33vw"
+            className="rounded-md object-cover absolute inset-0 w-full h-full"
           />
         </div>
         {/* productInfo second col */}
@@ -111,17 +103,19 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
             </div>
           </div>
           <ProductRating productId={productId} />
-          <h2 className="text-xl mt-2">{category.join(", ")}</h2>
+          <h2 className="text-xl mt-2">{categoryText}</h2>
           <p className="mt-3 text-md bg-muted inline-block p-2 rounded-md">
             {formattedPrice}
           </p>
           <p className="mt-6 leading-8 text-muted-foreground ">{description}</p>
           <AddToCart productId={productId} />
         </div>
-        <ProductReviews productId={productId} />
-        {hasPurchased && reviewDoesNotExist && (
-          <SubmitReview productId={productId} />
-        )}
+        <div className="col-span-1 lg:col-span-2 mt-12">
+          <ProductReviews productId={productId} />
+          {hasPurchased && reviewDoesNotExist && (
+            <SubmitReview productId={productId} />
+          )}
+        </div>
       </div>
     </section>
   );

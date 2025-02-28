@@ -27,8 +27,9 @@ function HeroCarousel() {
                   alt={`Hero image ${index + 1}`}
                   fill
                   priority={index === 0}
+                  loading={index === 0 ? "eager" : "lazy"}
                   className="rounded-lg object-cover"
-                  sizes="(max-width: 768px) 100vw, 75vw"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, 75vw"
                 />
                 {/* Gradient overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent rounded-lg" />
