@@ -32,7 +32,7 @@ const ProductsList = ({ products }: ProductListProps) => {
                       src={image}
                       alt={name}
                       fill
-                      sizes="(max-width:768px) 100vw, (max-width:1200px) 50vw, 33vw"
+                      sizes="(max-width: 480px) 95vw, (max-width: 768px) 90vw, (max-width: 1200px) 85vw, 75vw"
                       loading="lazy"
                       className="w-full rounded-md object-cover"
                     />

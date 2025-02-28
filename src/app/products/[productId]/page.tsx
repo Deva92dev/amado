@@ -86,7 +86,7 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
             width={imageWidth}
             height={imageHeight}
             priority
-            sizes="(max-width:768px) 100vw,(max-width:1200px) 50vw,33vw"
+            sizes="(max-width: 480px) 95vw, (max-width: 768px) 90vw, (max-width: 1200px) 85vw, 75vw"
             className="rounded-md object-cover absolute inset-0 w-full h-full"
           />
         </div>

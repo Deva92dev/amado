@@ -33,7 +33,7 @@ const ProductsGrid = ({ products }: ProductsGridProps) => {
                       height={200}
                       priority={index === 0}
                       loading={index === 0 ? "eager" : "lazy"}
-                      sizes="(max-width:768px) 100vw, (max-width:1200px) 50vw, 33vw"
+                      sizes="(max-width: 480px) 95vw, (max-width: 768px) 90vw, (max-width: 1200px) 85vw, 75vw"
                       className="rounded-lg object-cover w-full bg-gradient-to-t from-black/30 to-transparent transform group-hover:scale-105 transition-transform duration-500"
                     />
                   </div>
