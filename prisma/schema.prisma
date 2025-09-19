@@ -17,7 +17,6 @@ model Product {
   name        String
   price       Int
   image       String
-  slug        String
   featured    Boolean
   description String
   type        String

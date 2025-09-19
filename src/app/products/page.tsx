@@ -13,7 +13,7 @@ type ProductPageProps = {
     category?: string;
     color?: string;
     size?: string;
-    sortBy: SortOption;
+    sortBy?: SortOption;
   }>;
 };
 
@@ -21,11 +21,10 @@ export type SortOption = "price-low" | "price-high" | "name-a-z" | "name-z-a";
 
 export const generateMetadata = async ({
   searchParams,
-}: {
-  searchParams: { search?: string };
-}): Promise<Metadata> => {
+}: ProductPageProps): Promise<Metadata> => {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-  const { search } = searchParams;
+  const params = await searchParams;
+  const { search } = params;
 
   const title = search ? `Search results for "${search}"` : "Shop Products";
   const description = search

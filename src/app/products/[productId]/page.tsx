@@ -15,12 +15,23 @@ import {
 import RelatedProducts from "@/components/single-product/RelatedProducts";
 import RecentlyViewedSection from "@/components/single-product/RecentlyViewed";
 import { TrackProductView } from "@/components/single-product/TrackProductView";
+import db from "@/utils/db";
 
 type SingleProductPageProps = {
   params: Promise<{
     productId: string;
   }>;
 };
+
+export async function generateStaticParams() {
+  const products = await db.product.findMany({
+    select: { id: true },
+  });
+
+  return products.map(({ id }) => ({
+    productId: id.toString(),
+  }));
+}
 
 const getSingleProduct = cache(fetchSingleProduct);
 

@@ -1,6 +1,6 @@
 "use server";
 
-import { redirect } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import db from "./db";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import {
@@ -329,7 +329,7 @@ export const fetchSingleProduct = async (productId: string) => {
 
   // redirect may break ISR caching.
   if (!product) {
-    redirect("/products");
+    notFound();
   }
   return product;
 };

@@ -1,10 +1,8 @@
-// CartDrawer.tsx
 "use client";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useCartUI } from "../Store/cart-ui";
 import { useCartStore } from "../Store/cart";
-import { useCartClient } from "../Store/cart-client";
 
 export default function CartDrawer() {
   const isOpen = useCartUI((s) => s.isDrawerOpen);
