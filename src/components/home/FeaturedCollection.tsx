@@ -114,6 +114,7 @@ const FeaturedCollection = async () => {
                                 fill
                                 loading="lazy"
                                 sizes="64px"
+                                quality={60}
                                 className="object-cover"
                               />
                             </div>
@@ -134,6 +135,7 @@ const FeaturedCollection = async () => {
                       alt={collections.men[3].name}
                       fill
                       loading="lazy"
+                      quality={60}
                       sizes="320px"
                       className="w-full h-full object-cover"
                       hover={{ scale: 1.05, duration: 0.7 }}
@@ -163,6 +165,7 @@ const FeaturedCollection = async () => {
                             alt={product.name}
                             fill
                             loading="lazy"
+                            quality={60}
                             sizes="48px"
                             className="object-cover"
                           />
@@ -196,6 +199,7 @@ const FeaturedCollection = async () => {
                       fill
                       loading="lazy"
                       sizes="384px"
+                      quality={60}
                       className="w-full h-full object-cover"
                       hover={{ scale: 1.05, duration: 0.6 }}
                       triggerOnce={true}
@@ -268,6 +272,7 @@ const FeaturedCollection = async () => {
                             alt={product.name}
                             fill
                             loading="lazy"
+                            quality={60}
                             sizes="48px"
                             className="object-cover"
                           />
@@ -288,6 +293,7 @@ const FeaturedCollection = async () => {
                       alt={collections.casual[2].name}
                       fill
                       loading="lazy"
+                      quality={60}
                       sizes="320px"
                       className="w-full h-full object-cover"
                       hover={{ scale: 1.05, duration: 0.6 }}
@@ -316,6 +322,7 @@ const FeaturedCollection = async () => {
                             alt={product.name}
                             fill
                             loading="lazy"
+                            quality={60}
                             sizes="40px"
                             className="object-cover"
                           />

@@ -1,10 +1,11 @@
 import { Suspense } from "react";
 import { Metadata } from "next";
-import FilterDialog from "@/components/products/FilterDialog";
 import ProductsBanner from "@/components/products/ProductsBanner";
 import ProductsContainer from "@/components/products/ProductsContainer";
 import { countProducts, fetchProductMeta } from "@/utils/actions";
 import ProductsGridSkeleton from "@/components/products/ProductGridSkeleton";
+import dynamic from "next/dynamic";
+import FilterSheetSkeleton from "@/components/products/FilterSheetSkeleton";
 
 type ProductPageProps = {
   searchParams: Promise<{
@@ -69,6 +70,13 @@ export const generateMetadata = async ({
     applicationName: "Amado",
   };
 };
+
+const FilterDialog = dynamic(
+  () => import("@/components/products/FilterDialog"),
+  {
+    loading: () => <FilterSheetSkeleton />,
+  }
+);
 
 const ProductsPage = async ({ searchParams }: ProductPageProps) => {
   const {

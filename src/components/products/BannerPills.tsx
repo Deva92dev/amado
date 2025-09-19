@@ -26,8 +26,8 @@ export default function CategoryPillsClient({
         variant={currentCategory === "all" ? "secondary" : "outline"}
         className={`rounded-full cursor-pointer px-6 py-2 transition-all duration-300 hover:scale-105 ${
           currentCategory === "all"
-            ? "bg-background text-gray-900 shadow-lg"
-            : "bg-background/20 text-background border-background/30 hover:bg-background/30 backdrop-blur-sm"
+            ? "bg-background text-foreground shadow-lg"
+            : "bg-background/20 text-foreground border-background/30 hover:bg-background/30 backdrop-blur-sm"
         }`}
         onClick={() => setCategory("all")}
       >

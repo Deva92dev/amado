@@ -5,8 +5,9 @@ import { fetchAllProducts } from "@/utils/actions";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 import { SortOption } from "@/app/products/page";
-import LoadMore from "./LoadMore";
 import SortSelect from "./SortSelect";
+import dynamic from "next/dynamic";
+import LoadMoreSkeleton from "./LoadMoreSkeleton";
 
 export type ProductWithFavorite = Awaited<
   ReturnType<typeof fetchAllProducts>
@@ -22,6 +23,10 @@ type ProductContainerProps = {
   size?: string;
   sortBy?: SortOption;
 };
+
+const LoadMore = dynamic(() => import("@/components/products/LoadMore"), {
+  loading: () => <LoadMoreSkeleton />,
+});
 
 const ProductsContainer = async ({
   layout = "grid",

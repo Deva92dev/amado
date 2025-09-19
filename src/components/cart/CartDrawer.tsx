@@ -78,8 +78,12 @@ export default function CartDrawer() {
               </Link>
               <Link
                 href="/checkout"
-                className="w-1/2 inline-flex items-center justify-center rounded-[--radius] btn-brand px-4 py-2"
+                className="w-1/2 inline-flex items-center justify-center rounded-[--radius] px-4 py-2"
                 onClick={close}
+                style={{
+                  backgroundColor: "hsl(215, 100%, 40%)",
+                  color: "#fff",
+                }}
               >
                 Checkout
               </Link>

@@ -17,6 +17,7 @@ import QueryProvider from "./QueryProvider";
 import CartDrawer from "@/components/cart/CartDrawer";
 import Script from "next/script";
 import { siteSchema } from "@/utils/jsonldSchema";
+import Head from "next/head";
 
 export const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -61,6 +62,7 @@ export const metadata: Metadata = {
     default: "Amado – Where Leisure Meets Luxury",
     template: "%s | Amado",
   },
+  description: "Enjoy the different styles with various option at Amado.",
   alternates: { canonical: "/" },
   robots: { index: true, follow: true },
   openGraph: {

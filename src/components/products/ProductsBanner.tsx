@@ -1,7 +1,9 @@
+import dynamic from "next/dynamic";
 import { Sparkles, TrendingUp, Star } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import SlidesClient, { SlideText } from "./BannerSlides";
-import CategoryPillsClient from "./BannerPills";
+import { SlideText } from "./BannerSlides";
+import { SlidesClientSkeleton } from "./SlidesClientSkeleton";
+import CategoryPillsSkeleton from "./CategoryPillsSkeleton";
 import ScrollDownClient from "./BannerScrollDown";
 
 type Props = {
@@ -42,6 +44,20 @@ const heroSlides = [
     accent: "text-background/90",
   },
 ];
+
+const SlidesClient = dynamic(
+  () => import("@/components/products/BannerSlides"),
+  {
+    loading: () => <SlidesClientSkeleton />,
+  }
+);
+
+const CategoryPillsClient = dynamic(
+  () => import("@/components/products/BannerPills"),
+  {
+    loading: () => <CategoryPillsSkeleton />,
+  }
+);
 
 export default function ProductsBanner({
   totalProducts = 0,
