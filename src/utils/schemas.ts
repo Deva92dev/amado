@@ -29,10 +29,13 @@ export const validateImageFile = () => {
 };
 
 export const productSchema = z.object({
-  name: z.string().min(2, { message: "Name must be 4 characters long" }),
+  name: z.string().min(4, { message: "Name must be 4 characters long" }),
+  type: z.string().min(2, { message: "Name must be 4 characters long" }),
   category: z.array(
     z.string({ message: "Category must be an array of string" })
   ),
+  colors: z.array(z.string({ message: "Color must be an array of string" })),
+  sizes: z.array(z.string({ message: "Size must be an array of string" })),
   price: z.coerce
     .number()
     .int()

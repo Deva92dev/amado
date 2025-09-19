@@ -1,16 +1,25 @@
-import { fetchAllProducts, fetchFavoriteIdsForProducts } from "@/utils/actions";
-import { Button } from "../ui/button";
+import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
-import { LuLayoutGrid, LuLayoutList } from "react-icons/lu";
+import { Grid2X2, List } from "lucide-react";
+import { fetchAllProducts } from "@/utils/actions";
+import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
-import ProductsGrid from "./ProductsGrid";
-import ProductsList from "./ProductsList";
 import { SortOption } from "@/app/products/page";
+import LoadMore from "./LoadMore";
+import SortSelect from "./SortSelect";
+
+export type ProductWithFavorite = Awaited<
+  ReturnType<typeof fetchAllProducts>
+>[0] & {
+  favoriteId: string | null;
+};
 
 type ProductContainerProps = {
   layout?: string;
   search?: string;
   category?: string;
+  color?: string;
+  size?: string;
   sortBy?: SortOption;
 };
 
@@ -19,83 +28,86 @@ const ProductsContainer = async ({
   search = "",
   category = "all",
   sortBy = "name-a-z",
+  color = "",
+  size = "",
 }: ProductContainerProps) => {
-  const products = await fetchAllProducts({ search, category });
-  const productIds = products.map((product) => product.id);
-  const favorites = await fetchFavoriteIdsForProducts(productIds);
-  // mapping favorites to products
-  let productsWithFavorites = products.map((product) => ({
-    ...product,
-    favoriteId:
-      favorites.find((fav) => fav.productId === product.id)?.id || null,
-  }));
+  const { userId } = await auth();
+  const initialProductsRaw = await fetchAllProducts({
+    search,
+    category,
+    color,
+    size,
+    userId: userId ?? null,
+  });
 
-  productsWithFavorites = sortProducts(productsWithFavorites, sortBy);
-  const totalProducts = productsWithFavorites.length;
+  // Products already include isFavorited/favoriteIds from the single query
+  const initialProducts = sortProducts(initialProductsRaw, sortBy);
+  const totalProducts = initialProducts.length;
 
   const createUrl = (newParams: Record<string, string>) => {
     const params = new URLSearchParams();
-
-    // Add existing params
     if (search) params.set("search", search);
     if (category !== "all") params.set("category", category);
     if (sortBy) params.set("sortBy", sortBy);
-
-    // Override with new params
-    Object.entries(newParams).forEach(([key, value]) => {
-      params.set(key, value);
-    });
-
+    if (color) params.set("color", color);
+    if (size) params.set("size", size);
+    Object.entries(newParams).forEach(([key, value]) => params.set(key, value));
     return `/products?${params.toString()}`;
   };
 
   return (
     <>
-      {/* header */}
       <section>
         <div className="flex justify-between items-center">
-          <h4 className="font-medium text-lg">
-            {totalProducts} product{totalProducts > 1 && "s"}
-          </h4>
+          <h2 className="font-medium text-lg">
+            Showing {totalProducts} product{totalProducts > 1 ? "s" : ""}
+          </h2>
           <div className="flex gap-4">
+            <SortSelect
+              sortBy={sortBy}
+              layout={layout}
+              search={search}
+              category={category}
+            />
             <Button
               asChild
               size="icon"
               variant={layout === "grid" ? "default" : "ghost"}
+              aria-label="Grid layout"
             >
-              <Link
-                href={createUrl({ layout: "grid" })}
-                aria-label="grid-layout"
-              >
-                <LuLayoutGrid />
+              <Link href={createUrl({ layout: "grid" })}>
+                <Grid2X2 aria-hidden="true" focusable="false" />
+                <span className="sr-only">Grid layout</span>
               </Link>
             </Button>
             <Button
               asChild
               size="icon"
               variant={layout === "list" ? "default" : "ghost"}
+              aria-label="list-layout"
             >
-              <Link
-                href={createUrl({ layout: "list" })}
-                aria-label="list-layout"
-              >
-                <LuLayoutList />
+              <Link href={createUrl({ layout: "list" })}>
+                <List aria-hidden="true" focusable="false" />
+                <span className="sr-only">List layout</span>
               </Link>
             </Button>
           </div>
         </div>
         <Separator className="mt-4" />
       </section>
-      {/* Products */}
       <div>
-        {totalProducts < 0 ? (
+        {initialProducts.length === 0 ? (
           <h5 className="text-2xl mt-12">
-            Sorry No products found matched your search...
+            Sorry, no products matched your search...
           </h5>
-        ) : layout === "grid" ? (
-          <ProductsGrid products={productsWithFavorites} />
         ) : (
-          <ProductsList products={productsWithFavorites} />
+          <LoadMore
+            initialProducts={initialProducts}
+            layout={layout}
+            color={color}
+            size={size}
+            category={category}
+          />
         )}
       </div>
     </>

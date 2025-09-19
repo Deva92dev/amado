@@ -1,10 +1,12 @@
-import { fetchCartItems } from "@/utils/actions";
-import { Button } from "../ui/button";
+import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
+import { Button } from "../ui/button";
 import { LuShoppingCart } from "react-icons/lu";
+import { getCartCount } from "../Store/cart-read";
 
 const CartButton = async () => {
-  const numOfItemsInCart = await fetchCartItems();
+  const { userId } = await auth();
+  const numOfItemsInCart = userId ? await getCartCount(userId) : 0;
 
   return (
     <Button

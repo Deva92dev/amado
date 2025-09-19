@@ -1,21 +1,20 @@
-import FavoriteToggleButton from "@/components/products/FavoriteToggleButton";
+import { auth } from "@clerk/nextjs/server";
+import { cache } from "react";
+import { Metadata } from "next";
 import ProductReviews from "@/components/reviews/ProductReviews";
 import SubmitReview from "@/components/reviews/SubmitReview";
-import AddToCart from "@/components/single-product/AddToCart";
 import BreadCrumbs from "@/components/single-product/BreadCrumbs";
-import ProductRating from "@/components/single-product/ProductRating";
-import ShareButton from "@/components/single-product/ShareButton";
+import GallerySection from "@/components/single-product/GallerySection";
+import ProductInfo from "@/components/single-product/ProductInfo";
 import {
   checkProductPurchase,
   fetchFavoriteId,
   fetchSingleProduct,
   findExistingReview,
 } from "@/utils/actions";
-import { formatCurrency } from "@/utils/format";
-import { auth } from "@clerk/nextjs/server";
-import { Metadata } from "next";
-import Image from "next/image";
-import { cache } from "react";
+import RelatedProducts from "@/components/single-product/RelatedProducts";
+import RecentlyViewedSection from "@/components/single-product/RecentlyViewed";
+import { TrackProductView } from "@/components/single-product/TrackProductView";
 
 type SingleProductPageProps = {
   params: Promise<{
@@ -35,6 +34,10 @@ export const generateMetadata = async ({
     return {
       title: "Product Not Found - Amado",
       description: "The product you are looking for does not exist.",
+      openGraph: {
+        title: "Product Not Found - Amado",
+        description: "The product you are looking for does not exist.",
+      },
     };
   }
 
@@ -46,6 +49,12 @@ export const generateMetadata = async ({
   return {
     title,
     description: metaDescription,
+    openGraph: {
+      title,
+      description: metaDescription,
+      images: [image],
+      type: "website",
+    },
     twitter: {
       card: "summary_large_image",
       title,
@@ -58,58 +67,63 @@ export const generateMetadata = async ({
 const SingleProductPage = async ({ params }: SingleProductPageProps) => {
   const { productId } = await params;
   const product = await getSingleProduct(productId);
-  // if the user is not logged in
+
+  if (!product) {
+    // Optionally render a 404 page or redirect
+    return (
+      <section className="py-20">
+        <h1 className="text-3xl font-bold">Product not found</h1>
+      </section>
+    );
+  }
+
   const { userId } = await auth();
 
+  // parallel when signed-in; skip entirely for guests
   const [favoriteId, hasPurchased, reviewExists] = await Promise.all([
-    userId ? fetchFavoriteId({ productId }) : null,
-    userId ? checkProductPurchase({ userId, productId }) : false,
-    userId ? findExistingReview(userId, product.id) : true,
+    userId ? fetchFavoriteId({ productId }) : Promise.resolve(null),
+    userId
+      ? checkProductPurchase({ userId, productId })
+      : Promise.resolve(false),
+    userId ? findExistingReview(userId, product.id) : Promise.resolve(true),
   ]);
 
-  const reviewDoesNotExist = userId && !reviewExists && hasPurchased;
-  const { category, description, image, price, name } = product;
-  const formattedPrice = formatCurrency(price);
-  const categoryText = category.join(", ");
+  // A signed-in user can post a review only if they purchased and no review exists yet
+  const reviewDoesNotExist = Boolean(userId) && !reviewExists && hasPurchased;
 
-  const imageWidth = 800;
-  const imageHeight = 600;
+  const { category, description, image, price, name, colors, sizes, type } =
+    product;
 
   return (
-    <section>
+    <section className="relative overflow-hidden py-24 px-4 sm:px-6 lg:px-8 bg-gradient-hero">
       <BreadCrumbs name={product.name} />
-      <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-y-8 lg:gap-x-16 items-stretch grid-rows-[auto_1fr_auto]">
-        <div className="relative aspect-[4/3] w-full min-h-[300px] lg:min-h-0">
-          <Image
-            src={image}
-            alt={name}
-            width={imageWidth}
-            height={imageHeight}
-            priority
-            sizes="(max-width: 480px) 95vw, (max-width: 768px) 90vw, (max-width: 1200px) 85vw, 75vw"
-            className="rounded-md object-cover absolute inset-0 w-full h-full"
+      <div
+        className="
+          mt-6 grid grid-cols-1 gap-y-8
+          lg:grid-cols-2 lg:gap-x-16 lg:items-start
+        "
+        data-equal-cols-root
+        style={{ ["--equal-h" as any]: "600px" }}
+      >
+        <div className="md:mb-0 lg:[height:var(--equal-h)]">
+          <GallerySection
+            image={image}
+            equalHeightVar="--equal-h"
+            className="bg-gradient-metallic rounded-xl"
           />
         </div>
-        {/* productInfo second col */}
-        <div>
-          <div className="flex gap-x-8 items-center">
-            <h1 className="capitalize text-3xl font-bold">{name} </h1>
-            <div className="flex items-center gap-x-2">
-              <FavoriteToggleButton
-                favoriteId={favoriteId}
-                productId={productId}
-              />
-              <ShareButton name={product.name} productId={product.id} />
-            </div>
-          </div>
-          <ProductRating productId={productId} />
-          <h2 className="text-xl mt-2">{categoryText}</h2>
-          <p className="mt-3 text-md bg-muted inline-block p-2 rounded-md">
-            {formattedPrice}
-          </p>
-          <p className="mt-6 leading-8 text-muted-foreground ">{description}</p>
-          <AddToCart productId={productId} />
-        </div>
+        <ProductInfo
+          className="equal-height-source card-gradient-glass"
+          name={name}
+          price={price}
+          category={category}
+          colors={colors}
+          type={type}
+          sizes={sizes}
+          description={description}
+          favoriteId={favoriteId}
+          productId={productId}
+        />
         <div className="col-span-1 lg:col-span-2 mt-12">
           <ProductReviews productId={productId} />
           {hasPurchased && reviewDoesNotExist && (
@@ -117,6 +131,11 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
           )}
         </div>
       </div>
+      <div className="col-span-1 lg:col-span-2">
+        <RelatedProducts productId={product.id} type={product.type} />
+        <RecentlyViewedSection />
+      </div>
+      <TrackProductView productId={product.id} />
     </section>
   );
 };

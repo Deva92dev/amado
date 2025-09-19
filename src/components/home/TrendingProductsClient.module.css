@@ -1,0 +1,38 @@
+.embla {
+  /* This container can be simpler now */
+  position: relative;
+  max-width: 1200px;
+  margin: auto;
+}
+
+/* --- Desktop Styles --- */
+.emblaViewport {
+  overflow: hidden;
+}
+
+.emblaContainer {
+  display: flex;
+  /* These create the peek-a-boo effect on desktop */
+  margin-left: -2rem;
+  margin-right: -2rem;
+}
+
+.emblaSlide {
+  flex: 0 0 33.3333%;
+  min-width: 0;
+  padding-left: 2rem;
+  position: relative;
+}
+
+/* --- Mobile Styles (Updated) --- */
+.emblaViewportMobile {
+  overflow: hidden;
+}
+
+.emblaSlideMobile {
+  /* Each slide takes up 80% of the container's width */
+  flex: 0 0 80%;
+  min-width: 0;
+  position: relative;
+  padding: 0 0.75rem; /* 12px on each side */
+}

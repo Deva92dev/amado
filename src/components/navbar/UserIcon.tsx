@@ -13,7 +13,9 @@ const UserIcon = async () => {
         className="w-6 h-6 rounded-full object-cover"
       />
     );
-  return <LuUser className="w-6 h-6 bg-primary rounded-full text-white" />;
+  return (
+    <LuUser className="w-6 h-6 bg-primary rounded-full text-white cursor-pointer" />
+  );
 };
 
 export default UserIcon;

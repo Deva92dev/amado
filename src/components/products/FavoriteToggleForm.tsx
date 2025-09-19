@@ -3,49 +3,46 @@
 import { toggleFavoriteAction } from "@/utils/actions";
 import FormContainer from "../form/FormContainer";
 import { CardSubmitButton } from "../form/Buttons";
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useTransition, useState } from "react";
 
-type FormState = {
-  message: string;
-};
+type FormState = { message: string };
+type FavoriteToggleFormProps = { favoriteId: string | null; productId: string };
 
-type FavoriteToggleFormProps = {
-  favoriteId: string | null;
-  productId: string;
-};
-
-const FavoriteToggleForm = ({
+export default function FavoriteToggleForm({
   favoriteId: initialFavoriteId,
   productId,
-}: FavoriteToggleFormProps) => {
-  const [optimisticFavoriteId, setOptimisticFavoriteId] =
-    useState(initialFavoriteId);
-  const startTransition = useTransition()[1];
+}: FavoriteToggleFormProps) {
+  const [optimisticFavoriteId, setOptimisticFavoriteId] = useState<
+    string | null
+  >(initialFavoriteId);
+  const [isPending, startTransition] = useTransition();
+  const lastStableId = useRef(initialFavoriteId);
 
-  const action = async (
-    _prevState: FormState | undefined
-  ): Promise<{ message: string }> => {
-    const currentFavoriteId = optimisticFavoriteId;
+  useEffect(() => {
+    if (initialFavoriteId !== lastStableId.current) {
+      lastStableId.current = initialFavoriteId;
+      setOptimisticFavoriteId(initialFavoriteId);
+    }
+  }, [initialFavoriteId]);
 
-    // Optimistic update
-    startTransition(() => {
-      setOptimisticFavoriteId(currentFavoriteId ? null : "optimistic-id");
+  const action = async (_prev: FormState | undefined): Promise<FormState> => {
+    const baseline = optimisticFavoriteId;
+    setOptimisticFavoriteId(baseline ? null : "optimistic-id");
+
+    startTransition(async () => {
+      try {
+        const result = await toggleFavoriteAction({
+          productId,
+          favoriteId: baseline,
+        });
+        lastStableId.current = result.favoriteId || null;
+        setOptimisticFavoriteId(result.favoriteId || null);
+      } catch {
+        setOptimisticFavoriteId(baseline);
+      }
     });
 
-    try {
-      const result = await toggleFavoriteAction({
-        productId,
-        favoriteId: currentFavoriteId,
-        pathname: window.location.pathname,
-      });
-
-      // Sync with actual result
-      setOptimisticFavoriteId(result.favoriteId || null);
-      return { message: result.message };
-    } catch (error) {
-      setOptimisticFavoriteId(initialFavoriteId);
-      return { message: "Failed to update favorite" };
-    }
+    return { message: "queued" };
   };
 
   return (
@@ -53,6 +50,4 @@ const FavoriteToggleForm = ({
       <CardSubmitButton isFavorite={!!optimisticFavoriteId} />
     </FormContainer>
   );
-};
-
-export default FavoriteToggleForm;
+}

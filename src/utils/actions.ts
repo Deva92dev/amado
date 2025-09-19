@@ -9,10 +9,15 @@ import {
   reviewSchema,
   ValidateWithZodSchema,
 } from "./schemas";
-import { deleteImage, uploadImage } from "./supabase";
-import { revalidatePath } from "next/cache";
-import { Cart } from "@prisma/client";
+import { deleteImage, uploadImage, uploadVideo } from "./supabase";
+import { revalidatePath, revalidateTag, unstable_cache } from "next/cache";
 import { env } from "../../env";
+import {
+  FeaturedCollectionCategoryType,
+  FeaturedCollectionType,
+  FeaturedProduct,
+  ToggleFavoriteInput,
+} from "./types";
 
 const folder = "Amado";
 
@@ -21,7 +26,7 @@ type FormState = {
 };
 
 const renderError = (error: unknown): { message: string } => {
-  console.log(error);
+  // console.log(error);
   return {
     message: error instanceof Error ? error.message : "an error occurred",
   };
@@ -35,31 +40,143 @@ const getAuthUser = async () => {
   return user;
 };
 
+export async function uploadVideoAction(
+  video: File,
+  folder: string,
+  userId: string
+) {
+  return await uploadVideo(video, folder, userId);
+}
+
+export async function getAuthUserIdStrict() {
+  const { userId } = await auth();
+  if (!userId) throw new Error("Unauthorized");
+  return userId;
+}
+
 const getAdminUser = async () => {
   const user = await currentUser();
   if (user?.id !== env.ADMIN_USER_ID) redirect("/");
   return user;
 };
 
-export const fetchFeaturedProducts = async () => {
-  const { userId } = await auth();
-  const products = await db.product.findMany({
-    where: {
-      featured: true,
-    },
-    include: {
-      favorites: {
-        select: { id: true, clerkId: true },
-      },
-    },
-  });
+export const getFeaturedCollection = unstable_cache(
+  async (): Promise<FeaturedCollectionCategoryType> => {
+    try {
+      // Single DB round-trip, array filters are indexable via GIN on category[]
+      const products = await db.product.findMany({
+        select: { id: true, name: true, image: true, category: true },
+        where: {
+          OR: [
+            { category: { has: "men" } },
+            { category: { has: "women" } },
+            { category: { has: "winter" } },
+            { category: { has: "summer" } },
+            { category: { has: "casual" } },
+          ],
+        },
+      });
 
-  return products.map((product) => ({
-    ...product,
-    favoriteId:
-      product.favorites.find((fav) => fav.clerkId === userId)?.id || null,
-  }));
-};
+      // Single pass partition (no multiple .filter calls)
+      const buckets: Record<
+        keyof FeaturedCollectionCategoryType,
+        FeaturedCollectionType[]
+      > = {
+        men: [],
+        women: [],
+        winter: [],
+        summer: [],
+        casual: [],
+      };
+
+      for (const p of products) {
+        if (p.category?.includes("men")) buckets.men.push(p);
+        if (p.category?.includes("women")) buckets.women.push(p);
+        if (p.category?.includes("winter")) buckets.winter.push(p);
+        if (p.category?.includes("summer")) buckets.summer.push(p);
+        if (p.category?.includes("casual")) buckets.casual.push(p);
+      }
+
+      // Distinct by image helper
+      const distinctByImage = (arr: FeaturedCollectionType[]) => {
+        const seen = new Set<string>();
+        const out: FeaturedCollectionType[] = [];
+        for (const item of arr) {
+          if (!seen.has(item.image)) {
+            seen.add(item.image);
+            out.push(item);
+          }
+        }
+        return out;
+      };
+
+      return {
+        men: distinctByImage(buckets.men),
+        women: distinctByImage(buckets.women),
+        winter: distinctByImage(buckets.winter),
+        summer: distinctByImage(buckets.summer),
+        casual: distinctByImage(buckets.casual),
+      };
+    } catch (error) {
+      console.error("getFeaturedCollection error:", error);
+      return { men: [], women: [], winter: [], summer: [], casual: [] };
+    }
+  },
+  // Key parts (stable if there are no params)
+  ["featured:collections:key"],
+  // Cache options: tag + TTL (e.g., 14 days)
+  { tags: ["featured:collections"], revalidate: 60 * 60 * 24 * 14 }
+);
+
+const _fetchFeaturedProducts = unstable_cache(
+  async (userId: string | null) => {
+    if (!userId) {
+      const products = await db.product.findMany({
+        where: { featured: true },
+        select: { id: true, name: true, image: true, price: true },
+      });
+
+      return products.map<FeaturedProduct>((p) => ({
+        ...p,
+        favoriteId: null,
+      }));
+    }
+
+    const products = await db.product.findMany({
+      where: { featured: true },
+      select: {
+        id: true,
+        name: true,
+        image: true,
+        price: true,
+        _count: {
+          select: {
+            favorites: { where: { clerkId: userId } },
+          },
+        },
+      },
+    });
+
+    return products.map<FeaturedProduct>((p) => ({
+      id: p.id,
+      name: p.name,
+      image: p.image,
+      price: p.price,
+      favoriteId: p._count.favorites > 0 ? "favorited" : null,
+    }));
+  },
+  ["featured:products"],
+  {
+    tags: ["featured:products"],
+    revalidate: 60 * 60 * 24, // adjust if user favorites must update faster
+  }
+);
+
+export async function fetchFeaturedProducts(): Promise<FeaturedProduct[]> {
+  const { userId } = await auth();
+  // Pass only serializable primitive(s) into the cached worker
+  return _fetchFeaturedProducts(userId ?? null);
+}
 
 export const fetchAllProductsForSitemap = async () => {
   const products = await db.product.findMany({
@@ -71,50 +188,131 @@ export const fetchAllProductsForSitemap = async () => {
 export const fetchAllProducts = async ({
   search = "",
   category = "all",
+  color,
+  size,
+  userId, // pass the current user id from caller when available
 }: {
-  search: string;
-  category: string;
+  search?: string;
+  category?: string;
+  color?: string;
+  size?: string;
+  userId?: string | null;
 }) => {
-  const queryConditions: any = {};
+  // Build index-friendly filters (GIN on arrays, trigram on text)
+  const where: any = {};
+  const AND: any[] = [];
 
   if (search) {
-    queryConditions.OR = [
+    // Trigram index speeds up contains/ILIKE on name/description
+    where.OR = [
       { name: { contains: search, mode: "insensitive" } },
       { description: { contains: search, mode: "insensitive" } },
     ];
   }
+  if (category && category !== "all") AND.push({ category: { has: category } }); // GIN(text[])
+  if (color) AND.push({ colors: { has: color } }); // GIN(text[])
+  if (size) AND.push({ sizes: { has: size } }); // GIN(text[])
+  if (AND.length) where.AND = AND;
 
-  // Handle category filter (only if a specific category is selected)
-  if (category && category !== "all") {
-    // If there's already a search OR condition, we need to add this as an AND
-    if (queryConditions.OR) {
-      queryConditions.AND = [{ category: { hasSome: [category] } }];
-    } else {
-      // If no search, we can just set the category condition directly
-      queryConditions.category = { hasSome: [category] };
-    }
+  if (!userId) {
+    // Unauthenticated: skip favorites join entirely to reduce work and payload
+    const rows = await db.product.findMany({
+      where,
+      orderBy: { createdAt: "asc" }, // covered by B-tree index
+      select: {
+        id: true,
+        name: true,
+        price: true,
+        image: true,
+        type: true,
+        // Include these only if the grid needs them; otherwise remove to further trim payload
+        colors: true,
+        sizes: true,
+      },
+    });
+
+    // Keep return shape stable; favoriteIds becomes empty and isFavorited false
+    return rows.map((r) => ({ ...r, favoriteIds: [], isFavorited: false }));
   }
 
-  return db.product.findMany({
-    where: queryConditions,
-    orderBy: {
-      createdAt: "asc",
+  // Authenticated: use filtered _count to avoid transferring an array of favorite IDs
+  const rows = await db.product.findMany({
+    where,
+    orderBy: { createdAt: "asc" },
+    select: {
+      id: true,
+      name: true,
+      price: true,
+      image: true,
+      type: true,
+      colors: true,
+      sizes: true,
+      _count: {
+        select: {
+          favorites: { where: { clerkId: userId } }, // tiny integer instead of array
+        },
+      },
     },
   });
+
+  return rows.map((r) => ({
+    id: r.id,
+    name: r.name,
+    price: r.price,
+    image: r.image,
+    type: r.type,
+    colors: r.colors,
+    sizes: r.sizes,
+    // Preserve the old field but keep it light: a boolean instead of full IDs is cheaper
+    favoriteIds: r._count.favorites > 0 ? ["favorited"] : [],
+    isFavorited: r._count.favorites > 0,
+  }));
 };
 
-export const fetchProductCategories = async () => {
-  const products = await db.product.findMany({
-    select: {
-      category: true,
-    },
-  });
+export async function countProducts({
+  search = "",
+  category = "all",
+  color = "",
+  size = "",
+}: {
+  search?: string;
+  category?: string;
+  color?: string;
+  size?: string;
+}) {
+  const where: any = {};
+  const AND: any[] = [];
 
-  //  Since category is an array field in schema, we need to flatten all category arrays and get unique values
-  const allCategories = products.flatMap((product) => product.category || []);
-  // Remove duplicates by using a Set
-  const uniqueCategories = [...new Set(allCategories)];
-  return uniqueCategories.sort(); // alphabetically sort
+  if (search) {
+    where.OR = [
+      { name: { contains: search, mode: "insensitive" } },
+      { description: { contains: search, mode: "insensitive" } },
+    ];
+  }
+  if (category && category !== "all") AND.push({ category: { has: category } });
+  if (color) AND.push({ colors: { has: color } });
+  if (size) AND.push({ sizes: { has: size } });
+  if (AND.length) where.AND = AND;
+
+  return db.product.count({ where });
+}
+
+export const fetchProductMeta = async () => {
+  const [cats, cols, siz] = await db.$transaction([
+    db.$queryRaw<
+      Array<{ v: string }>
+    >`SELECT DISTINCT unnest("category") AS v FROM "Product" WHERE cardinality("category") > 0`,
+    db.$queryRaw<
+      Array<{ v: string }>
+    >`SELECT DISTINCT unnest("colors")   AS v FROM "Product" WHERE cardinality("colors") > 0`,
+    db.$queryRaw<
+      Array<{ v: string }>
+    >`SELECT DISTINCT unnest("sizes")    AS v FROM "Product" WHERE cardinality("sizes") > 0`,
+  ]);
+  const categories = cats.map((r) => r.v).sort();
+  const colors = cols.map((r) => r.v).sort();
+  const sizes = siz.map((r) => r.v).sort();
+  return { categories, colors, sizes };
 };
 
 export const fetchSingleProduct = async (productId: string) => {
@@ -134,6 +332,43 @@ export const fetchSingleProduct = async (productId: string) => {
     redirect("/products");
   }
   return product;
+};
+
+export const fetchProductByIds = async (ids: string[]) => {
+  if (!ids.length) return [];
+  const products = await db.product.findMany({
+    where: { id: { in: ids } },
+    select: {
+      id: true,
+      name: true,
+      image: true,
+      price: true,
+    },
+  });
+  const map = new Map(products.map((p) => [p.id, p]));
+  return ids.map((id) => map.get(id)).filter(Boolean) as typeof products;
+};
+
+export const fetchRelatedProducts = async (params: {
+  productId: string;
+  type: string;
+}) => {
+  const { productId, type } = params;
+  const related = await db.product.findMany({
+    where: {
+      id: { not: productId },
+      type,
+    },
+    orderBy: [{ updatedAt: "desc" }],
+    select: {
+      id: true,
+      name: true,
+      image: true,
+      price: true,
+    },
+  });
+
+  return related;
 };
 
 export const createProductAction = async (
@@ -320,76 +555,74 @@ export const fetchFavoriteId = async ({
   return favorite?.id || null;
 };
 
-export const toggleFavoriteAction = async (prevState: {
-  productId: string;
-  favoriteId: string | null;
-  pathname: string;
-}): Promise<{ message: string; favoriteId?: string | null }> => {
+export const toggleFavoriteAction = async ({
+  productId,
+  favoriteId,
+}: ToggleFavoriteInput): Promise<{
+  message: string;
+  favoriteId?: string | null;
+}> => {
   const user = await getAuthUser();
-  const { productId, favoriteId, pathname } = prevState;
 
-  try {
-    let newFavoriteId: string | null = null;
-    if (favoriteId) {
-      await db.favorite.delete({
-        where: {
-          id: favoriteId,
-        },
-      });
-    } else {
-      const newFavorite = await db.favorite.create({
-        data: {
-          productId,
-          clerkId: user.id,
-        },
-      });
-      newFavoriteId = newFavorite.id;
-    }
-
-    revalidatePath("/");
-    revalidatePath("/products");
-    revalidatePath(`/products/${productId}`);
-    revalidatePath("/favorites");
-
-    return {
-      message: favoriteId ? "Removed from favorites" : "Added to favorites",
-      favoriteId: newFavoriteId,
-    };
-  } catch (error) {
-    return renderError(error);
+  let newFavoriteId: string | null = null;
+  if (favoriteId) {
+    await db.favorite.delete({ where: { id: favoriteId } });
+  } else {
+    const newFavorite = await db.favorite.create({
+      data: { productId, clerkId: user.id },
+    });
+    newFavoriteId = newFavorite.id;
   }
+  // tags are O(1)
+  revalidateTag(`favorites:user:${user.id}`);
+  revalidateTag(`favorites:product:${productId}`);
+
+  return {
+    message: favoriteId ? "Removed from favorites" : "Added to favorites",
+    favoriteId: newFavoriteId,
+  };
 };
 
-export const fetchUserFavorites = async () => {
-  const user = await getAuthUser();
-  const favorites = await db.favorite.findMany({
-    where: {
-      clerkId: user.id,
-    },
-    include: {
-      product: {
-        include: {
-          favorites: {
-            select: {
-              id: true,
-            },
-            where: {
-              clerkId: user.id,
-            },
+// Typed tags helper
+const favoritesUserTag = (userId: string) => `favorites:user:${userId}`;
+// const favoritesProductTag = (productId: string) => `favorites:product:${productId}`
+
+export const fetchUserFavorites = unstable_cache(
+  async (userId: string) => {
+    return db.favorite.findMany({
+      where: { clerkId: userId },
+      select: {
+        id: true,
+        productId: true,
+        createdAt: true,
+        product: {
+          select: {
+            id: true,
+            name: true,
+            price: true,
+            image: true,
+            type: true,
+            colors: true,
+            sizes: true,
           },
         },
       },
-    },
-  });
+    });
+  },
+  // Seed key; stable across builds. Arguments are not auto-keyed.
+  ["favorites:getUserFavorites"],
+  {
+    tags: [] as unknown as string[],
+  } as any
+);
 
-  return favorites.map((fav) => ({
-    ...fav,
-    product: {
-      ...fav.product,
-      favoriteId: fav.id,
-    },
-  }));
-};
+// Provide convenience functions that apply dynamic tags at call sites:
+export async function readUserFavorites(userId: string) {
+  await fetch("data:application/json,{}", {
+    next: { tags: [favoritesUserTag(userId)] },
+  });
+  return fetchUserFavorites(userId);
+}
 
 export const createReviewAction = async (
   prevState: FormState | undefined,
@@ -415,38 +648,58 @@ export const createReviewAction = async (
   }
 };
 
-export const fetchProductReviews = async (productId: string) => {
-  const reviews = await db.review.findMany({
-    where: {
-      productId,
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-  });
+export const fetchProductReviews = unstable_cache(
+  async (productId: string) =>
+    db.review.findMany({
+      where: { productId },
+      orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        rating: true,
+        comment: true,
+        authorName: true,
+        authorImageUrl: true,
+        createdAt: true,
+      },
+    }),
+  ["reviews:byProduct"],
+  {
+    // Tags must be a static string[]
+    tags: ["reviews"],
+    revalidate: 300, // 5 minutes
+  }
+);
 
-  return reviews;
-};
+// export const fetchProductRating = async (productId: string) => {
+//   const result = await db.review.aggregate({
+//     where: { productId },
+//     _avg: { rating: true },
+//     _count: { rating: true },
+//   });
+//   return {
+//     rating: Math.round(((result._avg.rating ?? 0) as number) * 10) / 10,
+//     count: result._count.rating ?? 0,
+//   };
+// };
 
-export const fetchProductRating = async (productId: string) => {
-  const result = await db.review.aggregate({
-    where: {
-      productId,
-    },
-    _avg: {
-      rating: true,
-    },
-    _count: {
-      rating: true,
-    },
-  });
-
-  // return empty array if no review
-  return {
-    rating: result._avg.rating || 0,
-    count: result._count.rating || 0,
-  };
-};
+export const fetchProductRating = unstable_cache(
+  async (productId: string) => {
+    const r = await db.review.aggregate({
+      where: { productId },
+      _avg: { rating: true },
+      _count: { rating: true },
+    });
+    return {
+      rating: Math.round(((r._avg.rating ?? 0) as number) * 10) / 10,
+      count: r._count.rating ?? 0,
+    };
+  },
+  ["rating:byProduct"],
+  {
+    tags: ["reviews"],
+    revalidate: 300, // 5 minutes
+  }
+);
 
 export const fetchProductReviewsByUser = async () => {
   const user = await getAuthUser();
@@ -470,19 +723,23 @@ export const fetchProductReviewsByUser = async () => {
   return reviews;
 };
 
-export const deleteReviewAction = async (prevState: { reviewId: string }) => {
-  const { reviewId } = prevState;
-  const user = await getAuthUser();
+export const deleteReviewAction = async (prev: { reviewId: string }) => {
+  const { reviewId } = prev;
 
   try {
-    await db.review.delete({
-      where: {
-        id: reviewId,
-        clerkId: user.id,
-      },
+    const user = await getAuthUser();
+    const review = await db.review.findUnique({
+      where: { id: reviewId },
+      select: { clerkId: true, productId: true },
     });
+    if (!review || review.clerkId !== user.id) {
+      return { error: true, message: "Not authorized" };
+    }
 
-    revalidatePath("/reviews");
+    await db.review.delete({ where: { id: reviewId } });
+    revalidatePath(`/products/${review.productId}`);
+    revalidatePath(`/reviews`);
+
     return { message: "Review deleted successfully" };
   } catch (error) {
     return renderError(error);
@@ -491,11 +748,9 @@ export const deleteReviewAction = async (prevState: { reviewId: string }) => {
 
 // so that review not duplicated by same user for same product
 export const findExistingReview = async (userId: string, productId: string) => {
-  return db.review.findFirst({
-    where: {
-      productId,
-      clerkId: userId,
-    },
+  return db.review.findUnique({
+    where: { productId_clerkId: { productId, clerkId: userId } },
+    select: { id: true },
   });
 };
 
@@ -515,71 +770,89 @@ export const fetchCartItems = async () => {
 };
 
 const fetchProduct = async (productId: string) => {
-  const product = await db.product.findUnique({
-    where: {
-      id: productId,
-    },
+  const product = await db.product.findFirst({
+    where: { id: productId },
+    select: { id: true },
   });
-
-  if (!productId) {
-    throw new Error("Product Not Found");
-  }
+  if (!product) return { ok: false, message: "Product Not Found" };
 
   return product;
 };
 
-const includeProductClause = {
-  cartItems: {
-    include: {
-      product: true,
-    },
-  },
-};
-
-export const fetchOrCreateCart = async ({
-  userId,
-  errorOnFailure = false,
-}: {
-  userId: string;
-  errorOnFailure?: boolean;
-}) => {
+export const fetchOrCreateCartId = async (userId: string) => {
   let cart = await db.cart.findFirst({
-    where: {
-      clerkId: userId,
-    },
-    include: includeProductClause,
+    where: { clerkId: userId },
+    select: { id: true, taxRate: true, shipping: true }, // only what updateCart need
   });
-
-  if (!cart && errorOnFailure) {
-    throw new Error("Cart Not Found");
-  }
-
   if (!cart) {
     cart = await db.cart.create({
-      data: {
-        clerkId: userId,
-      },
-      include: includeProductClause,
+      data: { clerkId: userId },
+      select: { id: true, taxRate: true, shipping: true },
     });
   }
-
   return cart;
+};
+
+export const upsertCartItem = async ({
+  cartId,
+  productId,
+  delta,
+  color,
+  size,
+}: {
+  cartId: string;
+  productId: string;
+  delta: number;
+  color: string | null;
+  size: string | null;
+}) => {
+  // Prisma upsert on a composite unique requires a named unique constraint
+  const colorKey = color ?? "";
+  const sizeKey = size ?? "";
+  return db.cartItem.upsert({
+    where: {
+      cartId_productId_color_size_unique: {
+        cartId,
+        productId,
+        color: colorKey,
+        size: sizeKey,
+      },
+    },
+    create: {
+      cartId,
+      productId,
+      amount: delta,
+      color,
+      size,
+    },
+    update: { amount: { increment: delta } },
+    select: { id: true, amount: true, color: true, size: true },
+  });
 };
 
 export const updateOrCreateCartItem = async ({
   productId,
   cartId,
   amount,
+  color,
+  size,
 }: {
   productId: string;
   cartId: string;
   amount: number;
+  color: string | null;
+  size: string | null;
 }) => {
+  const colorKey = color ?? null;
+  const sizeKey = size ?? null;
   let cartItem = await db.cartItem.findFirst({
     where: {
       productId,
       cartId,
+      color: colorKey,
+      size: sizeKey,
     },
+    select: { id: true, amount: true },
   });
 
   if (cartItem) {
@@ -590,94 +863,143 @@ export const updateOrCreateCartItem = async ({
       data: {
         amount: cartItem.amount + amount,
       },
+      select: { id: true, amount: true, color: true, size: true },
     });
   } else {
     cartItem = await db.cartItem.create({
-      data: { amount, productId, cartId },
+      data: { amount, productId, cartId, color: colorKey, size: sizeKey },
+      select: { id: true, amount: true, color: true, size: true },
     });
   }
+  return cartItem; // hide if needed
 };
 
-export const updateCart = async (cart: Cart) => {
-  const cartItems = await db.cartItem.findMany({
-    where: {
-      cartId: cart.id,
-    },
-    include: {
-      product: true,
-    },
-    orderBy: {
-      createdAt: "asc",
-    },
-  });
+function toInt(val: unknown): number {
+  if (typeof val === "bigint") return Number(val);
+  if (typeof val === "number") return val | 0; // optional clamp for numbers
+  if (typeof val === "string") return Number(val);
+  return 0;
+}
 
+export async function updateCart(cart: {
+  id: string;
+  taxRate: number;
+  shipping: number;
+}) {
   let numItemsInCart = 0;
   let cartTotal = 0;
 
-  for (const item of cartItems) {
-    numItemsInCart += item.amount;
-    cartTotal += item.amount * item.product.price;
+  try {
+    const [row] = await db.$queryRaw<
+      Array<{
+        numitems: number | string | bigint | null;
+        subtotal: number | string | bigint | null;
+      }>
+    >`SELECT
+         COALESCE(SUM(ci."amount"), 0)::BIGINT                 AS numitems,
+         COALESCE(SUM(ci."amount" * p."price"), 0)::BIGINT     AS subtotal
+       FROM "CartItem" ci
+       JOIN "Product" p ON p."id" = ci."productId"
+       WHERE ci."cartId" = ${cart.id};`;
+
+    numItemsInCart = toInt(row?.numitems ?? 0);
+    cartTotal = toInt(row?.subtotal ?? 0);
+  } catch (e) {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn("[updateCartFast] raw aggregate failed, falling back:", e);
+      const lines = await db.cartItem.findMany({
+        where: { cartId: cart.id },
+        include: { product: { select: { price: true } } },
+      });
+      numItemsInCart = lines.reduce((n, l) => n + l.amount, 0);
+      cartTotal = lines.reduce((s, l) => s + l.amount * l.product.price, 0);
+    } else {
+      throw e;
+    }
   }
 
-  const tax = cart.taxRate * cartTotal;
+  const tax = Math.round(cart.taxRate * cartTotal);
   const shipping = cartTotal ? cart.shipping : 0;
   const orderTotal = cartTotal + tax + shipping;
 
   const currentCart = await db.cart.update({
-    where: {
-      id: cart.id,
+    where: { id: cart.id },
+    data: { numItemsInCart, cartTotal, tax, orderTotal },
+    select: {
+      id: true,
+      numItemsInCart: true,
+      cartTotal: true,
+      tax: true,
+      shipping: true,
+      orderTotal: true,
     },
-    data: {
-      numItemsInCart,
-      cartTotal,
-      tax,
-      orderTotal,
-    },
-    include: includeProductClause,
   });
 
-  return { currentCart, cartItems };
-};
+  return currentCart;
+}
 
 export const addToCartAction = async (prevState: any, formData: FormData) => {
   const user = await getAuthUser();
   try {
     const productId = formData.get("productId") as string;
     const amount = Number(formData.get("amount"));
-    await fetchProduct(productId);
-    const cart = await fetchOrCreateCart({ userId: user.id });
-    await updateOrCreateCartItem({ productId, cartId: cart.id, amount });
-    await updateCart(cart);
+    const colorRaw = (formData.get("color") as string) || "";
+    const sizeRaw = (formData.get("size") as string) || "";
+    const color = colorRaw.trim() ? colorRaw.trim() : null;
+    const size = sizeRaw.trim() ? sizeRaw.trim() : null;
+    await db.product
+      .findFirst({ where: { id: productId }, select: { id: true } })
+      .then((p) => {
+        if (!p) throw new Error("Product not found");
+      });
+    const cart = await fetchOrCreateCartId(user.id);
+    await upsertCartItem({
+      cartId: cart.id,
+      productId,
+      delta: amount,
+      color,
+      size,
+    });
+    await db.cart.update({
+      where: { id: cart.id },
+      data: { numItemsInCart: { increment: amount } },
+      select: { id: true },
+    });
+    revalidateTag("cart:summary");
+    revalidatePath("/cart");
+    return { ok: true, message: "Item Added" };
   } catch (error) {
-    return renderError(error);
+    const message = error instanceof Error ? error.message : "Unknown error";
+    return { ok: false, message };
   }
-  redirect("/cart");
 };
 
 export const removeCartItemAction = async (
-  prevState: FormState | undefined,
+  _prevState: FormState | undefined,
   formData: FormData
 ) => {
   const user = await getAuthUser();
   try {
     const cartItemId = formData.get("id") as string;
-    const cart = await fetchOrCreateCart({
-      userId: user.id,
-      errorOnFailure: true,
-    });
-    await db.cartItem.delete({
-      where: {
-        id: cartItemId,
-        cartId: cart.id,
-      },
+    const cart = await fetchOrCreateCartId(user.id); // { id, taxRate, shipping }
+    // Safe, scoped delete
+    const res = await db.cartItem.deleteMany({
+      where: { id: cartItemId, cartId: cart.id },
     });
 
+    if (res.count === 0) {
+      revalidateTag("cart:summary");
+      revalidatePath("/cart");
+      return { ok: true, message: "Item already removed" };
+    }
+    // Recompute totals after a remove
     await updateCart(cart);
+    revalidateTag("cart:summary");
     revalidatePath("/cart");
-    revalidatePath("/");
-    return { message: "Item removed from Cart" };
+    return { ok: true, message: "Cart item removed" };
   } catch (error) {
-    return renderError(error);
+    const message = error instanceof Error ? error.message : "Unknown error";
+    return { ok: false, message };
   }
 };
 
@@ -689,46 +1011,92 @@ export const updateCartItemAction = async ({
   cartItemId: string;
 }) => {
   const user = await getAuthUser();
-
   try {
-    const cart = await fetchOrCreateCart({
-      userId: user.id,
-      errorOnFailure: true,
+    const cart = await fetchOrCreateCartId(user.id);
+
+    const res = await db.cartItem.updateMany({
+      where: { id: cartItemId, cartId: cart.id },
+      data: { amount },
     });
-    await db.cartItem.update({
-      where: {
-        id: cartItemId,
-        cartId: cart.id,
-      },
-      data: {
-        amount,
-      },
-    });
+
+    if (res.count === 0) {
+      return { ok: false, message: "Cart item not found" };
+    }
 
     await updateCart(cart);
+    revalidateTag("cart:summary");
     revalidatePath("/cart");
-    return { message: "Cart Updated" };
+    return { ok: true, message: "Cart Updated" };
   } catch (error) {
-    renderError(error);
+    const message = error instanceof Error ? error.message : "Unknown error";
+    return { ok: false, message };
   }
 };
 
-export const createOrderAction = async (prevState: any, formData: FormData) => {
+// NEW: Clear entire cart for current user
+export const clearCartAction = async () => {
   const user = await getAuthUser();
-  let orderId: null | string = null;
-  let cartId: null | string = null;
   try {
-    const cart = await fetchOrCreateCart({
-      userId: user.id,
-      errorOnFailure: true,
+    const cart = await db.cart.findFirst({
+      where: { clerkId: user.id },
+      select: { id: true, taxRate: true, shipping: true },
     });
 
-    cartId = cart.id;
-    await db.order.deleteMany({
-      where: {
-        clerkId: user.id,
-        isPaid: false,
+    if (!cart) {
+      return { ok: true, message: "Cart already empty" };
+    }
+
+    await db.cartItem.deleteMany({ where: { cartId: cart.id } });
+
+    await db.cart.update({
+      where: { id: cart.id },
+      data: {
+        numItemsInCart: 0,
+        cartTotal: 0,
+        tax: 0,
+        orderTotal: 0,
       },
+    });
+
+    revalidateTag("cart:summary");
+    revalidatePath("/cart");
+    revalidatePath("/"); // optional; keep if header depends on root layout
+
+    return { ok: true, message: "Cart cleared" };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+    return { ok: false, message };
+  }
+};
+
+export const createOrderAction = async (
+  _prevState: any,
+  _formData: FormData
+) => {
+  const user = await getAuthUser();
+  let orderId: string | null = null;
+  let cartId: string | null = null;
+
+  try {
+    const cart = await db.cart.findFirst({
+      where: { clerkId: user.id },
+      select: {
+        id: true,
+        numItemsInCart: true,
+        orderTotal: true,
+        tax: true,
+        shipping: true,
+      },
+    });
+    if (!cart) {
+      throw new Error("Cart not found");
+    }
+
+    cartId = cart.id;
+
+    // delete stale orders
+    await db.order.deleteMany({
+      where: { clerkId: user.id, isPaid: false },
     });
 
     const order = await db.order.create({
@@ -741,13 +1109,13 @@ export const createOrderAction = async (prevState: any, formData: FormData) => {
         email: user.emailAddresses[0].emailAddress,
         isPaid: false,
       },
+      select: { id: true },
     });
 
     orderId = order.id;
   } catch (error) {
     return renderError(error);
   }
-
   redirect(`/checkout?orderId=${orderId}&cartId=${cartId}`);
 };
 

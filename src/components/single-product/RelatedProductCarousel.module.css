@@ -1,0 +1,113 @@
+.embla {
+  position: relative;
+  width: 100%;
+}
+
+.viewport {
+  overflow: hidden;
+  width: 100%;
+}
+
+.container {
+  display: flex;
+  gap: 1rem; /* 16px */
+  will-change: transform;
+}
+
+.slide {
+  flex: 0 0 66%;
+}
+
+@media (min-width: 640px) {
+  .slide {
+    flex-basis: 45%;
+  }
+}
+@media (min-width: 768px) {
+  .slide {
+    flex-basis: 30%;
+  }
+}
+@media (min-width: 1024px) {
+  .slide {
+    flex-basis: 22%;
+  }
+}
+
+/* Optional: momentum scrolling feel on iOS */
+.viewport {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Optional: focus styles for accessibility when slides are links/cards */
+.slide :where(a, button) {
+  outline: none;
+}
+.slide :where(a, button):focus-visible {
+  box-shadow: 0 0 0 3px color-mix(in oklab, canvasText 30%, transparent);
+  border-radius: 0.5rem;
+}
+
+/* Compact layout for "recent": smaller, square thumbnails */
+.containerCompact {
+  display: flex;
+  gap: 0.75rem;
+  will-change: transform;
+}
+.slideCompact {
+  flex: 0 0 40%;
+}
+@media (min-width: 640px) {
+  .slideCompact {
+    flex-basis: 30%;
+  }
+} /* sm */
+@media (min-width: 768px) {
+  .slideCompact {
+    flex-basis: 22%;
+  }
+} /* md */
+@media (min-width: 1024px) {
+  .slideCompact {
+    flex-basis: 16%;
+  }
+} /* lg */
+
+/* Prev/Next buttons shown only for "recent" via component logic */
+.prevBtn,
+.nextBtn {
+  position: absolute;
+  top: 50%;
+  translate: 0 -50%;
+  z-index: 2;
+  height: 32px;
+  width: 32px;
+  border-radius: 9999px;
+  border: 1px solid var(--tw-color-border, hsl(0 0% 86%));
+  background: color-mix(in oklab, canvas 80%, canvasText 2%);
+  color: color-mix(in oklab, canvasText 75%, transparent);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+.prevBtn {
+  left: -8px;
+}
+.nextBtn {
+  right: -8px;
+}
+
+.prevBtn:hover,
+.nextBtn:hover {
+  background: color-mix(in oklab, canvas 70%, canvasText 5%);
+}
+
+/* Ensure small gutters on tiny screens */
+@media (max-width: 480px) {
+  .prevBtn {
+    left: -4px;
+  }
+  .nextBtn {
+    right: -4px;
+  }
+}

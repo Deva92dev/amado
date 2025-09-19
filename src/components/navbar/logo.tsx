@@ -1,12 +1,18 @@
-import { Button } from "../ui/button";
 import Link from "next/link";
-import { VscCode } from "react-icons/vsc";
+import Image from "next/image";
+import { Button } from "../ui/button";
 
 const Logo = () => {
   return (
     <Button size="icon" asChild>
       <Link href="/" aria-label="Go to homepage">
-        <VscCode className="w-6 h-6" />
+        <Image
+          src="/Logo.png"
+          alt="Logo of Website"
+          className="bg-blue-400"
+          width={32}
+          height={32}
+        />
       </Link>
     </Button>
   );

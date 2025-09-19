@@ -27,17 +27,30 @@ export const SecondColumn = ({
   name,
   category,
   productId,
+  color,
+  size,
 }: {
   name: string;
   category: string[];
   productId: string;
+  color?: string | null;
+  size?: string | null;
 }) => {
   return (
-    <div className="sm:w-48">
+    <div className="sm:w-56">
       <Link href={`/products/${productId}`}>
         <h3 className="capitalize font-medium hover:underline">{name}</h3>
       </Link>
-      <h4 className="mt-2 capitalize text-sm">{category.join(", ")}</h4>
+      <h4 className="mt-1 capitalize text-sm text-muted-foreground">
+        {category.join(", ")}
+      </h4>
+      {(color || size) && (
+        <div className="mt-2 text-xs text-muted-foreground">
+          {color ? <span className="capitalize">Color: {color}</span> : null}
+          {color && size ? <span className="mx-1">•</span> : null}
+          {size ? <span className="uppercase">Size: {size}</span> : null}
+        </div>
+      )}
     </div>
   );
 };

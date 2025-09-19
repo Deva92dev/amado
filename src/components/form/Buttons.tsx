@@ -99,6 +99,7 @@ export const CardSubmitButton = ({ isFavorite }: CardSubmitButtonProps) => {
       size="icon"
       variant="outline"
       className="p-2 cursor-pointer"
+      disabled={pending}
       aria-label={
         pending
           ? "Submitting form"

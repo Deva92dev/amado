@@ -1,25 +1,91 @@
+import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import {
+  Playfair_Display,
+  Abril_Fatface,
+  Inter,
+  Manrope,
+  Italiana,
+} from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/navbar/Navbar";
-import Container from "@/components/global/Container";
 import Providers from "./providers";
-import { ClerkProvider } from "@clerk/nextjs";
 import Footer from "@/components/global/Footer";
+import { LenisProvider } from "./LenisProvider";
+import { MotionProvider } from "./MotionProvider";
+import QueryProvider from "./QueryProvider";
+import CartDrawer from "@/components/cart/CartDrawer";
+import Script from "next/script";
+import { siteSchema } from "@/utils/jsonldSchema";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+export const playfair = Playfair_Display({
   subsets: ["latin"],
+  variable: "--font-playfair-display", // maps to CSS var
+  display: "swap",
+  weight: ["400", "700"], // regular + bold
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+export const abril = Abril_Fatface({
   subsets: ["latin"],
+  variable: "--font-abril-fatface",
+  display: "swap",
+  weight: "400",
+});
+
+export const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+  weight: ["400", "700"],
+});
+
+export const manrope = Manrope({
+  subsets: ["latin"],
+  variable: "--font-manrope",
+  display: "swap",
+  weight: ["400", "700"],
+});
+
+export const italiana = Italiana({
+  subsets: ["latin"],
+  variable: "--font-italiana",
+  display: "swap",
+  weight: "400",
 });
 
 export const metadata: Metadata = {
-  title: "Amado",
-  description: "One stop solution for your fashion needs",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"
+  ),
+  title: {
+    default: "Amado – Where Leisure Meets Luxury",
+    template: "%s | Amado",
+  },
+  alternates: { canonical: "/" },
+  robots: { index: true, follow: true },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    title: "Amado – Where Leisure Meets Luxury",
+    description: "Enjoy the different styles with various option at Amado.",
+    url: "/",
+    siteName: "Amado",
+    images: [
+      {
+        url: "/opengraph-default.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Amado clothing banner",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Amado – Where Leisure Meets Luxury",
+    description: "Explore styles of different colors with Amado.",
+    images: ["/opengraph-default.jpg"],
+  },
+  applicationName: "Amado",
 };
 
 export default function RootLayout({
@@ -31,13 +97,31 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en" suppressHydrationWarning>
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+          className={`
+        ${playfair.variable}   /* headline serif */
+        ${inter.variable}      /* body sans-serif */
+        ${italiana.variable}   /* accent script */
+      `}
         >
-          <Providers>
-            <Navbar />
-            <Container className="py-20">{children}</Container>
-            <Footer />
-          </Providers>
+          <Script
+            id="site-schema"
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify(siteSchema).replace(/</g, "\\u003c"),
+            }}
+          />
+          <QueryProvider>
+            <Providers>
+              <LenisProvider>
+                <MotionProvider>
+                  <Navbar />
+                  {children}
+                  <Footer />
+                  <CartDrawer />
+                </MotionProvider>
+              </LenisProvider>
+            </Providers>
+          </QueryProvider>
         </body>
       </html>
     </ClerkProvider>

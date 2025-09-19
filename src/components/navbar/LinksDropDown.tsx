@@ -1,3 +1,4 @@
+import { auth } from "@clerk/nextjs/server";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,7 +13,6 @@ import Link from "next/link";
 import { SignedIn, SignedOut, SignInButton, SignUpButton } from "@clerk/nextjs";
 import SignOutLink from "./SignOutLink";
 import UserIcon from "./UserIcon";
-import { auth } from "@clerk/nextjs/server";
 import { env } from "../../../env";
 
 type LinksDropDownProps = {
@@ -26,18 +26,22 @@ const LinksDropDown = async ({
   const isAdmin = userId === env.ADMIN_USER_ID;
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button
           variant="outline"
-          className="flex gap-4 max-w-[100px]"
+          className="flex gap-4 max-w-[100px] cursor-pointer"
           aria-label="User options"
         >
-          <LuAlignLeft className="w-6 h-6" />
+          <LuAlignLeft className="w-6 h-6 cursor-pointer" />
           <UserIcon />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-48" align="start" sideOffset={10}>
+      <DropdownMenuContent
+        className="w-48 cursor-pointer"
+        align="start"
+        sideOffset={10}
+      >
         <SignedOut>
           <DropdownMenuItem>
             <SignInButton mode="modal">

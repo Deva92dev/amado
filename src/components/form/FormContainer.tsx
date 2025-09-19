@@ -1,34 +1,39 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
-import { useToast } from "@/hooks/use-toast";
 import { useActionState, useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
 
-type FormState = {
-  message: string;
-};
+type FormState = { message: string };
 
-const initialState = {
-  message: "",
-};
+type StatefulAction = (
+  prev: FormState,
+  formData: FormData
+) => Promise<FormState>;
+type SimpleAction = (formData: FormData) => Promise<FormState>;
 
 type FormContainerProps = {
-  action: (
-    prevState: FormState,
-    formData: FormData
-  ) => Promise<{ message: string }>;
+  action: StatefulAction | SimpleAction; // accept both shapes
   children: React.ReactNode;
 };
 
+const initialState: FormState = { message: "" };
+
 const FormContainer = ({ action, children }: FormContainerProps) => {
-  const [state, formAction] = useActionState(action, initialState);
+  const wrapped: StatefulAction = (prev, form) => {
+    if (action.length === 1) {
+      return (action as SimpleAction)(form);
+    }
+    return (action as StatefulAction)(prev, form);
+  };
+
+  const [state, formAction] = useActionState(wrapped, initialState);
   const { toast } = useToast();
 
   useEffect(() => {
-    if (state.message) {
+    if (state?.message) {
       toast({ description: state.message });
     }
-  }, [state]);
+  }, [state, toast]);
 
   return <form action={formAction}>{children}</form>;
 };

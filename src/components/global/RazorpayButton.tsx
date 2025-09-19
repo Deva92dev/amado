@@ -5,7 +5,6 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "../ui/button";
-import { fetchCartItems } from "@/utils/actions";
 
 type RazorpayButtonProps = {
   orderId: string | null;

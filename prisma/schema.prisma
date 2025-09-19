@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
   provider = "prisma-client-js"
@@ -14,15 +9,21 @@ datasource db {
   directUrl = env("DIRECT_URL")
   
 }
+// npx prisma generate
+// npx prisma migrate dev --name add_product_colors_sizes (what changes you did)
 
 model Product {
   id          String       @id @default(uuid())
   name        String
   price       Int
   image       String
+  slug        String
   featured    Boolean
   description String
+  type        String
   category    String[]
+  colors      String[]     @default([])
+  sizes       String[]     @default([])
   favorites   Favorite[]
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @updatedAt
@@ -30,6 +31,10 @@ model Product {
   reviews     Review[]
   cartItems   CartItem[]
   OrderItem   OrderItem[]
+  // Existing B-Tree indexes (good for equality/range sorts)
+  @@index([featured])
+  @@index([type])
+  @@index([createdAt])
 }
 
 model Favorite {
@@ -39,7 +44,11 @@ model Favorite {
   productId String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+  @@index([clerkId, productId])
+  @@index([productId])
+  @@index([createdAt])
 }
+
 
 model Review {
   id             String    @id @default(uuid())
@@ -52,6 +61,11 @@ model Review {
   updatedAt      DateTime  @updatedAt
   product        Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId      String
+  @@index([productId, createdAt])
+  @@index([clerkId, createdAt])
+  @@index([createdAt])
+  // Enforce “one review per user per product” at DB level
+  @@unique([productId, clerkId])
 }
 
 model Cart {
@@ -66,7 +80,8 @@ model Cart {
   orderTotal     Int         @default(0)
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
-
+  @@index([clerkId])
+  @@index([updatedAt])
 }
 
 model CartItem {
@@ -75,10 +90,16 @@ model CartItem {
   productId String
   cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
   cartId    String
+  color     String?
+  size      String?
   amount    Int
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-
+  // Indexes and constraints
+  @@index([updatedAt])
+  @@index([cartId])
+  @@index([productId])
+  @@unique([cartId, productId, color, size], name: "cartId_productId_color_size_unique")
 }
 
 enum PaymentStatus {
@@ -102,10 +123,9 @@ model Order {
   createdAt         DateTime       @default(now())
   updatedAt         DateTime       @updatedAt
   orderItems        OrderItem[]
-
-  //                Indexes
   @@index([clerkId, isPaid])
   @@index([razorpayOrderId])
+  @@index([createdAt])
 }
 
 model OrderItem {
