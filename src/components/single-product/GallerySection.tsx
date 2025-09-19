@@ -1,5 +1,4 @@
 import { GallerySource } from "@/utils/types";
-import React from "react";
 import ProductGallery from "./ProductGallery";
 
 const GallerySection = ({

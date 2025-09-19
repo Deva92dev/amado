@@ -62,6 +62,8 @@ export function SlideText({ slides }: { slides: Slide[] }) {
   const [current, setCurrent] = useState(0);
 
   useEffect(() => {
+    if (slides.length <= 1) return; // Don't rotate if only one slide
+
     const t = setInterval(
       () => setCurrent((v) => (v + 1) % slides.length),
       5000
@@ -69,21 +71,20 @@ export function SlideText({ slides }: { slides: Slide[] }) {
     return () => clearInterval(t);
   }, [slides.length]);
 
+  if (slides.length === 0) return null;
+
   const s = slides[current];
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-5xl md:text-7xl font-bold leading-tight">
-        {s.title}
-        <span className="block text-2xl md:text-3xl font-normal mt-2 opacity-90">
-          {s.subtitle}
-        </span>
-      </h1>
-      <p
-        className={`text-lg md:text-xl ${s.accent} max-w-2xl mx-auto leading-relaxed`}
-      >
-        {s.description}
-      </p>
+    <div className="space-y-4 mt-8 border-t border-white/20 pt-6">
+      <div className="opacity-75 text-sm font-medium">Also featuring:</div>
+      <div className="space-y-2">
+        <h3 className="text-xl md:text-2xl font-semibold">{s.title}</h3>
+        <p className="text-sm md:text-base opacity-90">{s.subtitle}</p>
+        <p className={`text-xs md:text-sm ${s.accent} opacity-80`}>
+          {s.description}
+        </p>
+      </div>
     </div>
   );
 }
