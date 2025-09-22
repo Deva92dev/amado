@@ -12,7 +12,7 @@ import { useCallback, useMemo, useRef, useState, memo } from "react";
 import { useLensZoom } from "@/hooks/useLensZoom";
 import type { GallerySource, VariantKey } from "@/utils/types";
 import { useFullScreen } from "@/components/Store/gallery";
-import { useMediaQuery } from "@/hooks/useMediaQuery"; // Assuming you have this hook
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { Thumb } from "./Thumbnail";
 import { cn } from "@/lib/utils";
 import { filterClassByVariant } from "./GalleryStyles";
@@ -236,7 +236,6 @@ export default function ProductGallery({
           {idx + 1} / {count}
         </div>
       </header>
-
       <div
         className={cn(
           "gap-4",

@@ -13,7 +13,7 @@ const NewsLetter = () => {
         type: "bounce",
         duration: 1.2,
       }}
-      className="relative overflow-hidden bg-background py-20 sm:py-28"
+      className="relative bg-gradient-hero overflow-hidden bg-background py-20 sm:py-28"
       style={{
         background:
           "linear-gradient(135deg, hsl(var(--background)), hsla(var(--pastel-lavender) / 0.3))",

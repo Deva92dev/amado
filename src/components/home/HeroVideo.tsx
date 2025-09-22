@@ -5,10 +5,10 @@ import { useCallback, useState } from "react";
 
 interface HeroVideoProps {
   mp4Url: string;
-  webmUrl: string;
+  webMUrl: string;
 }
 
-const HeroVideo = ({ mp4Url, webmUrl }: HeroVideoProps) => {
+const HeroVideo = ({ mp4Url, webMUrl }: HeroVideoProps) => {
   const [isVideoReady, setIsVideoReady] = useState(false);
 
   const handleVideoReady = useCallback(() => {
@@ -18,7 +18,7 @@ const HeroVideo = ({ mp4Url, webmUrl }: HeroVideoProps) => {
   return (
     <>
       <Image
-        src="/media/Hero.webp"
+        src="/media/HeroWeb.webp"
         alt="Fashion model in trench coat sitting on outdoor iron stairs"
         fill
         priority
@@ -38,7 +38,7 @@ const HeroVideo = ({ mp4Url, webmUrl }: HeroVideoProps) => {
         onCanPlayThrough={handleVideoReady}
         aria-label="Hero background video"
       >
-        <source src={webmUrl} type="video/webm" />
+        <source src={webMUrl} type="video/webm" />
         <source src={mp4Url} type="video/mp4" />
       </video>
     </>

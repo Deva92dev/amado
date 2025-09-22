@@ -17,7 +17,6 @@ import QueryProvider from "./QueryProvider";
 import CartDrawer from "@/components/cart/CartDrawer";
 import Script from "next/script";
 import { siteSchema } from "@/utils/jsonldSchema";
-import Head from "next/head";
 
 export const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -74,7 +73,7 @@ export const metadata: Metadata = {
     siteName: "Amado",
     images: [
       {
-        url: "/opengraph-default.jpg",
+        url: "/opengraph-image.jpg",
         width: 1200,
         height: 630,
         alt: "Amado clothing banner",
@@ -85,7 +84,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Amado – Where Leisure Meets Luxury",
     description: "Explore styles of different colors with Amado.",
-    images: ["/opengraph-default.jpg"],
+    images: ["/opengraph-image.jpg"],
   },
   applicationName: "Amado",
 };

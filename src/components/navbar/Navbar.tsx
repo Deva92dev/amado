@@ -12,18 +12,19 @@ import { publicNavLinks } from "@/utils/links";
 const Navbar = async () => {
   const { userId } = await auth();
   return (
-    <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-lg border-b border-border/50 shadow-sm">
+    <nav className="fixed top-0 w-full z-50">
       <Container className="py-5">
         {/* --- Small screens (Mobile & Tablet) --- */}
-        <div className="flex flex-row justify-between items-center lg:hidden">
+        <div className="flex flex-row justify-between items-center lg:hidden bg-gradient-glass backdrop-blur-lg border border-border/50 rounded-3xl p-4 shadow-md">
           <DarkMode />
           <Suspense>
             <NavSearch />
           </Suspense>
           <LinksDropDown hidePublicLinks={false} />
         </div>
+
         {/* --- Big screens (Desktop) --- */}
-        <div className="hidden lg:flex flex-row justify-between items-center border border-border rounded-3xl p-4 gap-4 bg-card shadow-md">
+        <div className="hidden lg:flex flex-row justify-between items-center bg-gradient-glass backdrop-blur-lg border border-border/50 rounded-3xl p-4 gap-4 shadow-md">
           <Logo />
           <ul className="flex flex-row gap-12 font-secondary-sans">
             {publicNavLinks.map((link) => (

@@ -2,6 +2,8 @@ import { readRecentlyViewed } from "@/lib/recentlyViewed";
 import { fetchProductByIds } from "@/utils/actions";
 import { RelatedProductCarousel } from "./RelatedProductCarousel";
 
+// use dynamic loading
+
 export default async function RecentlyViewedSection() {
   const ids = readRecentlyViewed();
   if (!ids) return null;

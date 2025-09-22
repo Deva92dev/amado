@@ -75,6 +75,7 @@ export const generateMetadata = async ({
   };
 };
 
+// inline above the fold css
 const SingleProductPage = async ({ params }: SingleProductPageProps) => {
   const { productId } = await params;
   const product = await getSingleProduct(productId);
@@ -116,13 +117,6 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
         data-equal-cols-root
         style={{ ["--equal-h" as any]: "600px" }}
       >
-        <div className="md:mb-0 lg:[height:var(--equal-h)]">
-          <GallerySection
-            image={image}
-            equalHeightVar="--equal-h"
-            className="bg-gradient-metallic rounded-xl"
-          />
-        </div>
         <ProductInfo
           className="equal-height-source card-gradient-glass"
           name={name}
@@ -135,6 +129,13 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
           favoriteId={favoriteId}
           productId={productId}
         />
+        <div className="md:mb-0 lg:[height:var(--equal-h)]">
+          <GallerySection
+            image={image}
+            equalHeightVar="--equal-h"
+            className="bg-gradient-metallic rounded-xl"
+          />
+        </div>
         <div className="col-span-1 lg:col-span-2 mt-12">
           <ProductReviews productId={productId} />
           {hasPurchased && reviewDoesNotExist && (

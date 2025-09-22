@@ -410,6 +410,17 @@
   background-repeat: no-repeat;
 }
 
+@keyframes fadeInGallery {
+  from {
+    opacity: 0;
+    pointer-events: none;
+  }
+  to {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
 @keyframes gradient-x {
   0%,
   100% {

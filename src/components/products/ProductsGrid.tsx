@@ -98,7 +98,12 @@ const ProductsGrid = ({ products }: ProductsGridProps) => {
                 group-hover:-translate-y-2 group-hover:scale-[1.02]
                 group-hover:bg-accent group-hover:text-accent-foreground 
                 flex flex-col flex-grow overflow-hidden
-                ${isFeatured ? "ring-2 ring-primary/20 shadow-lg" : ""}
+                bg-gradient-glass
+                ${
+                  isFeatured
+                    ? "bg-gradient-metallic ring-2 ring-primary/20 shadow-lg"
+                    : ""
+                }
               `}
               >
                 <CardContent className="p-0 flex h-full min-h-[420px] md:min-h-[520px] lg:min-h-[620px] flex-col relative">

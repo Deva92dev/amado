@@ -53,7 +53,7 @@ const FeaturedCollection = async () => {
             <span className="px-6 py-3 text-sm font-medium tracking-wider text-gold bg-gradient-to-r from-pastel-blush to-warm-gray rounded-full border border-gold/30 inline-block mb-6 font-accent">
               Curated Collections
             </span>
-            <h2 className="h1 bg-gradient-to-r from-charcoal via-foreground to-metal-gold bg-clip-text text-transparent mb-8 glow-text glass-effect magnetic-hover glow-text">
+            <h2 className="h1 bg-gradient-to-r from-charcoal via-foreground to-metal-gold bg-clip-text text-transparent mb-8 glass-effect magnetic-hover glow-text">
               Featured
               <span className="block font-accent italic font-light">
                 Collections
@@ -81,7 +81,7 @@ const FeaturedCollection = async () => {
                       alt={collections[currentSeason][0].name}
                       fill
                       loading="lazy"
-                      quality={60}
+                      quality={75}
                       sizes="(min-width: 1280px) 50vw, 60vw"
                       className="object-cover object-top"
                       hover={{ scale: 1.05, duration: 0.7 }}
@@ -135,7 +135,7 @@ const FeaturedCollection = async () => {
                       alt={collections.men[3].name}
                       fill
                       loading="lazy"
-                      quality={60}
+                      quality={75}
                       sizes="320px"
                       className="w-full h-full object-cover"
                       hover={{ scale: 1.05, duration: 0.7 }}
@@ -199,7 +199,7 @@ const FeaturedCollection = async () => {
                       fill
                       loading="lazy"
                       sizes="384px"
-                      quality={60}
+                      quality={75}
                       className="w-full h-full object-cover"
                       hover={{ scale: 1.05, duration: 0.6 }}
                       triggerOnce={true}
@@ -233,7 +233,7 @@ const FeaturedCollection = async () => {
                 {/* Women's Collection - Wide */}
                 {collections.women?.length > 0 && (
                   <MotionCard
-                    className={`${cardBaseClasses} flex-1 h-full min-w-0`}
+                    className={`${cardBaseClasses} flex-1 h-full min-w-0 bg-gradient-jewel`}
                   >
                     <div className={shimmerEffectClasses} />
                     <MotionImage
@@ -242,7 +242,7 @@ const FeaturedCollection = async () => {
                       alt={collections.women[1].name}
                       fill
                       loading="lazy"
-                      quality={60}
+                      quality={75}
                       sizes="(max-width: 1200px) 50vw, 40vw"
                       className="w-full h-full object-cover"
                       hover={{ scale: 1.05, duration: 0.7 }}
@@ -293,7 +293,7 @@ const FeaturedCollection = async () => {
                       alt={collections.casual[2].name}
                       fill
                       loading="lazy"
-                      quality={60}
+                      quality={75}
                       sizes="320px"
                       className="w-full h-full object-cover"
                       hover={{ scale: 1.05, duration: 0.6 }}
@@ -347,6 +347,7 @@ const FeaturedCollection = async () => {
                       alt={collections[currentSeason][1].name}
                       fill
                       loading="lazy"
+                      quality={75}
                       sizes="(min-width: 768px) 62.5vw, 100vw"
                       className="object-cover object-top"
                       hover={{ scale: 1.05, duration: 0.7 }}
@@ -373,6 +374,7 @@ const FeaturedCollection = async () => {
                       alt={collections.men[2].name}
                       fill
                       loading="lazy"
+                      quality={75}
                       sizes="(max-width: 1024px) 40vw, 30vw"
                       className="object-cover"
                       hover={{ scale: 1.05, duration: 0.7 }}
@@ -390,13 +392,16 @@ const FeaturedCollection = async () => {
                 )}
                 {/* Women's Collection */}
                 {collections.women?.length > 0 && (
-                  <MotionCard className={`${cardBaseClasses} col-span-3`}>
+                  <MotionCard
+                    className={`${cardBaseClasses} col-span-3 bg-gradient-jewel`}
+                  >
                     <div className={shimmerEffectClasses} />
                     <MotionImage
                       src={collections.women[0].image}
                       alt={collections.women[0].name}
                       fill
                       loading="lazy"
+                      quality={75}
                       sizes="(max-width: 1024px) 40vw, 30vw"
                       className="object-cover"
                       hover={{ scale: 1.05, duration: 0.7 }}
@@ -421,6 +426,7 @@ const FeaturedCollection = async () => {
                       alt={collections.casual[0].name}
                       fill
                       loading="lazy"
+                      quality={75}
                       sizes="(max-width: 1024px) 50vw, 40vw"
                       className="object-cover"
                       hover={{ scale: 1.05, duration: 0.6 }}
@@ -454,6 +460,7 @@ const FeaturedCollection = async () => {
                       }
                       fill
                       loading="lazy"
+                      quality={75}
                       sizes="(max-width: 1024px) 50vw, 40vw"
                       className="object-cover"
                       hover={{ scale: 1.05, duration: 0.6 }}
@@ -495,6 +502,7 @@ const FeaturedCollection = async () => {
                     alt={collections[currentSeason][1].name}
                     fill
                     loading="lazy"
+                    quality={75}
                     sizes="100vw"
                     className="object-cover object-top"
                   />
@@ -520,6 +528,7 @@ const FeaturedCollection = async () => {
                       alt={collections.men[2].name}
                       fill
                       loading="lazy"
+                      quality={75}
                       sizes="(max-width: 768px) 50vw, 33vw"
                       className="object-cover"
                     />
@@ -536,13 +545,14 @@ const FeaturedCollection = async () => {
                 )}
                 {/* Women's Collection */}
                 {collections.women?.length > 0 && (
-                  <MotionCard className="relative overflow-hidden rounded-3xl group cursor-pointer shadow-xl h-[250px]">
+                  <MotionCard className="relative overflow-hidden rounded-3xl group cursor-pointer shadow-xl h-[250px] bg-gradient-jewel">
                     <div className={shimmerEffectClasses} />
                     <MotionImage
                       src={collections.women[0].image}
                       alt={collections.women[0].name}
                       fill
                       loading="lazy"
+                      quality={75}
                       sizes="(max-width: 768px) 50vw, 33vw"
                       className="object-cover"
                     />
@@ -568,6 +578,7 @@ const FeaturedCollection = async () => {
                       src={collections.casual[0].image}
                       alt={collections.casual[0].name}
                       fill
+                      quality={75}
                       loading="lazy"
                       sizes="(max-width: 768px) 100vw, 50vw"
                       className="object-cover"
@@ -601,6 +612,7 @@ const FeaturedCollection = async () => {
                       }
                       fill
                       loading="lazy"
+                      quality={75}
                       sizes="(max-width: 768px) 100vw, 50vw"
                       className="object-cover"
                     />
@@ -634,6 +646,7 @@ const FeaturedCollection = async () => {
           {/* Call-to-Action */}
           <div className="mt-20 text-center">
             <MotionButton
+              href="/products"
               variant="brand"
               size="xl"
               className="cursor-magnetic font-accent tracking-wide shadow-2xl px-12 py-4"

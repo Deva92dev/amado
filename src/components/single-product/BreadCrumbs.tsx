@@ -13,7 +13,7 @@ type BreadCrumbsProps = {
 
 const BreadCrumbs = ({ name }: BreadCrumbsProps) => {
   return (
-    <Breadcrumb>
+    <Breadcrumb className="pt-8">
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink href="/" className="capitalize text-lg">

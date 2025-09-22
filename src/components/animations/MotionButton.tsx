@@ -6,6 +6,7 @@ import {
   Transition,
   Easing,
 } from "motion/react";
+import Link from "next/link";
 import {
   ButtonHTMLAttributes,
   ReactNode,
@@ -21,6 +22,8 @@ interface MotionButtonProps
   extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "onClick"> {
   children: ReactNode;
   className?: string;
+  href?: string;
+  target?: string; // Optional: for external links
   as?: string;
   variant?:
     | "primary"
@@ -130,6 +133,8 @@ interface RippleEffect {
 
 const MotionButton = ({
   children,
+  href,
+  target,
   className = "",
   variant = "primary",
   size = "md",
@@ -659,6 +664,126 @@ const MotionButton = ({
     createRipple(e);
     onTapStart?.();
   };
+
+  // Remove passHref and legacyBehavior, use Link directly without nested <a>
+  if (href) {
+    const linkProps = target ? { target, rel: "noopener noreferrer" } : {};
+
+    return (
+      <Link href={href} {...linkProps} className="inline-block">
+        <m.div // Changed from m.a to m.div
+          ref={combinedRef}
+          className={getEnhancedClassName()}
+          initial={shouldAnimate ? animationVariants.initial : false}
+          animate={
+            shouldAnimate
+              ? inView
+                ? animationVariants.animate
+                : animationVariants.initial
+              : false
+          }
+          style={{
+            x: magneticOffset.x,
+            y: magneticOffset.y,
+          }}
+          onClick={handleClick}
+          onTouchStart={handleTouchStart}
+          onHoverStart={onHoverStart}
+          onHoverEnd={onHoverEnd}
+          onTapCancel={onTapCancel}
+          {...(hoverVariants as any)}
+          {...(tapVariants as any)}
+          role="button"
+          tabIndex={0}
+        >
+          {/* Loading State */}
+          <AnimatePresence mode="wait">
+            {loading.state ? (
+              <m.div
+                key="loading"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex items-center justify-center"
+              >
+                {loading.spinner || (
+                  <svg
+                    className="animate-spin -ml-1 mr-2 h-4 w-4"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
+                  </svg>
+                )}
+                {loading.text || "Loading..."}
+              </m.div>
+            ) : (
+              <m.div
+                key="content"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex items-center justify-center"
+              >
+                {children}
+              </m.div>
+            )}
+          </AnimatePresence>
+          {/* Ripple Effects */}
+          <AnimatePresence>
+            {ripples.map((ripple) => (
+              <m.span
+                key={ripple.id}
+                className="absolute rounded-full pointer-events-none"
+                style={{
+                  left:
+                    ripple.x -
+                    (typeof ripple.size === "number" ? ripple.size / 2 : 50),
+                  top:
+                    ripple.y -
+                    (typeof ripple.size === "number" ? ripple.size / 2 : 50),
+                  backgroundColor:
+                    ripple.color || "hsla(var(--brand-accent) / 0.3)",
+                }}
+                initial={{
+                  width: typeof ripple.size === "number" ? ripple.size : 0,
+                  height: typeof ripple.size === "number" ? ripple.size : 0,
+                  opacity: 0.8,
+                }}
+                animate={{
+                  width:
+                    typeof ripple.size === "number" ? ripple.size * 2 : 100,
+                  height:
+                    typeof ripple.size === "number" ? ripple.size * 2 : 100,
+                  opacity: 0,
+                }}
+                exit={{
+                  opacity: 0,
+                }}
+                transition={{
+                  duration: (ripple.duration || 600) / 1000,
+                  ease: "easeOut",
+                }}
+              />
+            ))}
+          </AnimatePresence>
+        </m.div>
+      </Link>
+    );
+  }
 
   return (
     <m.button

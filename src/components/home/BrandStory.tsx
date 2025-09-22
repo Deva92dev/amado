@@ -11,7 +11,7 @@ const MotionText = dynamic(() =>
 
 const BrandStory = () => {
   return (
-    <section className="relative w-full bg-background text-foreground py-24 md:py-32 overflow-hidden">
+    <section className="relative bg-gradient-metallic w-full bg-background text-foreground py-24 md:py-32 overflow-hidden">
       <div
         className="absolute top-[-10%] left-[-5%] w-[110%] h-[120%] transform-gpu"
         style={{

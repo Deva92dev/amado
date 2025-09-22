@@ -28,7 +28,7 @@ const CartPage = async () => {
 
   return (
     <main className="py-24">
-      <div className="flex items-center justify-between px-4">
+      <div className="flex items-center justify-between px-4 mt-8">
         <SectionTitle text="Your Shopping Cart" />
         <ClearCartButton />
       </div>

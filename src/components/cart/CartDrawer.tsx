@@ -31,7 +31,7 @@ export default function CartDrawer() {
       {mounted && (
         <>
           <div
-            className={`absolute inset-0 transition-opacity duration-300 ease-out bg-black/50 backdrop-blur-md ${
+            className={`absolute bg-gradient-glass inset-0 transition-opacity duration-300 ease-out bg-foreground/50 backdrop-blur-md ${
               isOpen ? "opacity-100 pointer-events-auto" : "opacity-0"
             }`}
             onClick={close}
