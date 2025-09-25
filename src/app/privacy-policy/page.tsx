@@ -1,21 +1,6 @@
-import Script from "next/script";
 import type { Metadata } from "next";
-import Link from "next/link";
 import Image from "next/image";
-import {
-  Shield,
-  Lock,
-  Eye,
-  Mail,
-  Phone,
-  Clock,
-  AlertCircle,
-  CheckCircle,
-  Globe,
-  Database,
-  UserCheck,
-} from "lucide-react";
-// import { BASE_URL, buildWebPage } from "@/utils/schema";
+import { Shield, Lock, Eye, Clock, Database, UserCheck } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Privacy Policy - Protecting Your Data | Amado",
@@ -95,26 +80,8 @@ export default function PrivacyPolicyPage() {
     },
   ];
 
-  // const privacyPolicySchema = buildWebPage(
-  //   "About Amado's privacy policy",
-  //   `${BASE_URL}/privacy-policy`,
-  //   "How Amado collects and uses your personal information."
-  // );
-
-  // const jsonLd = {
-  //   "@context": "https://schema.org",
-  //   "@graph": [privacyPolicySchema],
-  // };
-
   return (
     <>
-      {/* <Script
-        id="privacy-policy-schema"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
-        }}
-      /> */}
       <main className="relative overflow-hidden bg-[hsl(var(--background))] min-h-screen pb-24">
         <section className="relative w-full h-[50vh] min-h-[400px] mb-16 overflow-hidden">
           <Image

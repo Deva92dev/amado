@@ -1,9 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
-import { currentUser } from "@clerk/nextjs/server";
-import { LuUser } from "react-icons/lu";
+import { requireUserProfile } from "@/lib/clerk/authServer";
+import { User } from "lucide-react";
 
 const UserIcon = async () => {
-  const user = await currentUser();
+  const user = await requireUserProfile();
   const profileImage = user?.imageUrl;
   if (profileImage)
     return (
@@ -14,7 +14,7 @@ const UserIcon = async () => {
       />
     );
   return (
-    <LuUser className="w-6 h-6 bg-primary rounded-full text-white cursor-pointer" />
+    <User className="w-6 h-6 bg-primary rounded-full text-white cursor-pointer" />
   );
 };
 

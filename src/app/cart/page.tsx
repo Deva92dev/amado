@@ -1,4 +1,3 @@
-import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { Metadata } from "next";
 import db from "@/utils/db";
@@ -7,11 +6,12 @@ import CartTotals from "@/components/cart/CartTotals";
 import SectionTitle from "@/components/global/SectionTitle";
 import ClearCartButton from "@/components/cart/ClearCartButton";
 import { fetchOrCreateCartId, updateCart } from "@/utils/actions";
+import { requireAuth } from "@/lib/clerk/authServer";
 
 export const metadata: Metadata = { title: "Cart" };
 
 const CartPage = async () => {
-  const { userId } = await auth();
+  const userId = await requireAuth();
   if (!userId) redirect("/");
   const cartInfo = await fetchOrCreateCartId(userId);
   const currentCart = await updateCart(cartInfo);

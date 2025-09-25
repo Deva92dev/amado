@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Label } from "../ui/label";
 import { X } from "lucide-react";
+import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 
 type MultipleFormInputType = {

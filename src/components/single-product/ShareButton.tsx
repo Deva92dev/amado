@@ -1,6 +1,6 @@
 "use client";
 
-import { LuShare2 } from "react-icons/lu";
+import { Share } from "lucide-react";
 import { Button } from "../ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import {
@@ -32,7 +32,7 @@ const ShareButton = ({ name, productId }: ShareButtonProps) => {
           className="p-2"
           aria-label="Share"
         >
-          <LuShare2 title="Share" />
+          <Share aria-label="Share" />
         </Button>
       </PopoverTrigger>
       <PopoverContent

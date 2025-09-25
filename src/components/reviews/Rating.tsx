@@ -1,4 +1,4 @@
-import { FaRegStar, FaStar } from "react-icons/fa";
+import { StarHalfIcon, StarIcon } from "lucide-react";
 
 const Rating = ({ rating }: { rating: number }) => {
   const stars = Array.from({ length: 5 }, (_, i) => i + 1 <= rating);
@@ -10,9 +10,9 @@ const Rating = ({ rating }: { rating: number }) => {
           isFilled ? "text-primary" : "text-gray-500"
         }`;
         return isFilled ? (
-          <FaStar className={className} key={i} />
+          <StarHalfIcon className={className} key={i} />
         ) : (
-          <FaRegStar className={className} key={i} />
+          <StarIcon className={className} key={i} />
         );
       })}
     </div>

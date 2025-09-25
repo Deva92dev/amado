@@ -9,7 +9,6 @@ import { SubmitButton } from "../form/Buttons";
 import { useToast } from "@/hooks/use-toast";
 import { useCartClient } from "@/components/Store/cart-client";
 
-// Match FormContainer state type
 type FormState = { message: string };
 
 const ThirdColumn = ({

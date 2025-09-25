@@ -1,7 +1,7 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { ArrowUp } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const BackToTopButton = () => {
   const scrollToTop = () => {

@@ -1,12 +1,12 @@
 "use client";
 
-import { uploadVideoAction } from "@/utils/actions";
-import { useUser } from "@clerk/nextjs";
 import { useState } from "react";
+import { useAuthUser } from "@/lib/clerk/authClient";
+import { uploadVideoAction } from "@/utils/actions";
 
 const VideoUploader = () => {
-  const { user } = useUser();
-  const userId = user?.id;
+  const { user } = useAuthUser();
+  const userId = user?.id as string;
   const [uploading, setUploading] = useState(false);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
 

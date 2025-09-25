@@ -1,4 +1,3 @@
-import { auth } from "@clerk/nextjs/server";
 import { cache } from "react";
 import { Metadata } from "next";
 import ProductReviews from "@/components/reviews/ProductReviews";
@@ -15,23 +14,13 @@ import {
 import RelatedProducts from "@/components/single-product/RelatedProducts";
 import RecentlyViewedSection from "@/components/single-product/RecentlyViewed";
 import { TrackProductView } from "@/components/single-product/TrackProductView";
-import db from "@/utils/db";
+import { getOptionalAuth } from "@/lib/clerk/authServer";
 
 type SingleProductPageProps = {
   params: Promise<{
     productId: string;
   }>;
 };
-
-export async function generateStaticParams() {
-  const products = await db.product.findMany({
-    select: { id: true },
-  });
-
-  return products.map(({ id }) => ({
-    productId: id.toString(),
-  }));
-}
 
 const getSingleProduct = cache(fetchSingleProduct);
 
@@ -89,7 +78,7 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
     );
   }
 
-  const { userId } = await auth();
+  const userId = await getOptionalAuth();
 
   // parallel when signed-in; skip entirely for guests
   const [favoriteId, hasPurchased, reviewExists] = await Promise.all([

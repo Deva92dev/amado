@@ -19,10 +19,6 @@ const nextConfig: NextConfig = {
     removeConsole: process.env.NODE_ENV === "production",
   },
 
-  experimental: {
-    inlineCss: true,
-  },
-
   async headers() {
     return [
       {
@@ -52,6 +48,19 @@ const nextConfig: NextConfig = {
       {
         source: "/:path*.webm",
         headers: [{ key: "Cache-Control", value: "public, max-age=31536000" }],
+      },
+      {
+        source: "/robots.txt",
+        headers: [
+          {
+            key: "Content-Security-Policy",
+            value: "connect-src 'self'; script-src 'none'; object-src 'none';",
+          },
+          {
+            key: "Cache-Control",
+            value: "public, max-age=3600, s-maxage=3600",
+          },
+        ],
       },
     ];
   },

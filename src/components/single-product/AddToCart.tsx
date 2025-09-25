@@ -1,13 +1,13 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useAuth } from "@clerk/nextjs";
 import SelectProductAmount, { Mode } from "./SelectProductAmount";
 import FormContainer from "../form/FormContainer";
 import { SubmitButton } from "../form/Buttons";
 import { useCartClient } from "@/components/Store/cart-client";
 import { useCartUI } from "@/components/Store/cart-ui";
 import { toast } from "@/hooks/use-toast";
+import { useAuthUser } from "@/lib/clerk/authClient";
 
 type FormState = { message: string };
 
@@ -27,7 +27,8 @@ export default function AddToCart({
   size,
 }: AddToCartProps) {
   const [amount, setAmount] = useState(1);
-  const { userId } = useAuth();
+  const { user } = useAuthUser();
+  const userId = user?.id;
   const { add } = useCartClient();
   const [pending, startTransition] = useTransition();
   const openDrawer = useCartUI((s) => s.openDrawer);

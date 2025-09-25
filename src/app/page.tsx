@@ -1,5 +1,6 @@
 import dynamic from "next/dynamic";
 import { Suspense } from "react";
+import { Metadata } from "next";
 import Hero from "@/components/home/Hero";
 import FeaturedCollection from "@/components/home/FeaturedCollection";
 import BrandStory from "@/components/home/BrandStory";
@@ -15,7 +16,24 @@ const SocialProof = dynamic(() => import("@/components/home/SocialProof"), {
   loading: () => <SocialProofGridSkeleton />,
 });
 
-// inline above the fold css
+export const metadata: Metadata = {
+  title: "Amado – Where Leisure Meets Luxury",
+  description:
+    "Enjoy the different styles with various option at Amado. Discover our trending products, featured collections, and premium clothing that combines comfort with elegance.",
+  openGraph: {
+    title: "Amado – Where Leisure Meets Luxury",
+    description:
+      "Enjoy the different styles with various option at Amado. Discover our trending products, featured collections, and premium clothing that combines comfort with elegance.",
+    type: "website",
+    url: "/opengraph-image.jpg",
+  },
+  twitter: {
+    title: "Amado – Where Leisure Meets Luxury",
+    description:
+      "Enjoy the different styles with various option at Amado. Discover our trending products, featured collections, and premium clothing that combines comfort with elegance.",
+  },
+};
+
 export default function Home() {
   return (
     <>

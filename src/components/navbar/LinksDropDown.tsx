@@ -1,4 +1,5 @@
-import { auth } from "@clerk/nextjs/server";
+import Link from "next/link";
+import { AlignLeft } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,13 +8,17 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Button } from "../ui/button";
-import { LuAlignLeft } from "react-icons/lu";
 import { navLinks, publicNavLinks } from "@/utils/links";
-import Link from "next/link";
-import { SignedIn, SignedOut, SignInButton, SignUpButton } from "@clerk/nextjs";
 import SignOutLink from "./SignOutLink";
 import UserIcon from "./UserIcon";
 import { env } from "../../../env";
+import { getOptionalAuth } from "@/lib/clerk/authServer";
+import {
+  AuthSignedIn,
+  AuthSignedOut,
+  AuthSignInButton,
+  AuthSignUpButton,
+} from "@/lib/clerk/authClient";
 
 type LinksDropDownProps = {
   hidePublicLinks?: boolean;
@@ -22,7 +27,7 @@ type LinksDropDownProps = {
 const LinksDropDown = async ({
   hidePublicLinks = false,
 }: LinksDropDownProps) => {
-  const { userId } = await auth();
+  const userId = await getOptionalAuth();
   const isAdmin = userId === env.ADMIN_USER_ID;
 
   return (
@@ -33,7 +38,7 @@ const LinksDropDown = async ({
           className="flex gap-4 max-w-[100px] cursor-pointer"
           aria-label="User options"
         >
-          <LuAlignLeft className="w-6 h-6 cursor-pointer" />
+          <AlignLeft className="w-6 h-6 cursor-pointer" />
           <UserIcon />
         </Button>
       </DropdownMenuTrigger>
@@ -42,17 +47,17 @@ const LinksDropDown = async ({
         align="start"
         sideOffset={10}
       >
-        <SignedOut>
+        <AuthSignedOut>
           <DropdownMenuItem>
-            <SignInButton mode="modal">
+            <AuthSignInButton mode="modal">
               <button className="w-full text-left">Login</button>
-            </SignInButton>
+            </AuthSignInButton>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem>
-            <SignUpButton mode="modal">
+            <AuthSignUpButton mode="modal">
               <button className="w-full text-left">Register</button>
-            </SignUpButton>
+            </AuthSignUpButton>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           {publicNavLinks.map((link) => {
@@ -64,8 +69,8 @@ const LinksDropDown = async ({
               </DropdownMenuItem>
             );
           })}
-        </SignedOut>
-        <SignedIn>
+        </AuthSignedOut>
+        <AuthSignedIn>
           {navLinks.map((link) => {
             if (link.label === "dashboard" && !isAdmin) return null;
             // Skip public links on large screens
@@ -87,7 +92,7 @@ const LinksDropDown = async ({
           <DropdownMenuItem>
             <SignOutLink />
           </DropdownMenuItem>
-        </SignedIn>
+        </AuthSignedIn>
       </DropdownMenuContent>
     </DropdownMenu>
   );

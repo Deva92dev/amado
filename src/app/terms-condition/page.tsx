@@ -1,4 +1,3 @@
-import Script from "next/script";
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
@@ -7,18 +6,12 @@ import {
   Scale,
   Shield,
   Users,
-  CreditCard,
   AlertTriangle,
-  CheckCircle,
   XCircle,
   Globe,
-  Phone,
-  Mail,
-  Gavel,
   AlertCircle,
   Clock,
 } from "lucide-react";
-// import { BASE_URL, buildWebPage } from "@/utils/schema";
 
 export const metadata: Metadata = {
   title: "Terms & Conditions - Legal Agreement | Amado",
@@ -96,26 +89,8 @@ export default function TermsConditionsPage() {
     },
   ];
 
-  // const termsSchema = buildWebPage(
-  //   "About Amado Terms & Conditions",
-  //   `${BASE_URL}/terms-conditions`,
-  //   "Legal terms and user agreement for Amado site usage."
-  // );
-
-  // const jsonLd = {
-  //   "@context": "https://schema.org",
-  //   "@graph": [termsSchema],
-  // };
-
   return (
     <>
-      {/* <Script
-        id="terms-conditions-schema"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
-        }}
-      /> */}
       <main className="relative overflow-hidden bg-[hsl(var(--background))] min-h-screen pb-24">
         {/* Header Section */}
         <section className="relative w-full h-[50vh] min-h-[400px] mb-16 overflow-hidden">

@@ -4,21 +4,41 @@ import { env } from "../env";
 
 const isPublicRoute = createRouteMatcher([
   "/",
-  "/products(.*)",
+  "/products",
+  "/products/(.*)",
   "/about",
   "/api/payment",
   "/api/verify",
+  "/api/webhooks(.*)",
+  "/robots.txt",
+  "/sitemap.xml",
+  "/favicon.ico",
+  "/cancellation-refunds",
+  "/contact",
+  "/privacy-policy",
+  "/shipping-policy",
+  "/terms-condition",
 ]);
+
 const isAdminRoute = createRouteMatcher(["/admin(.*)"]);
 
 export default clerkMiddleware(async (auth, req) => {
-  const isAdminUser = (await auth()).userId === env.ADMIN_USER_ID;
+  const { userId } = await auth();
 
-  if (isAdminRoute(req) && !isAdminUser) {
-    return NextResponse.redirect(new URL("/", req.url));
+  if (isAdminRoute(req)) {
+    if (userId !== env.ADMIN_USER_ID) {
+      return NextResponse.redirect(new URL("/", req.url));
+    }
+    return;
   }
 
-  if (!isPublicRoute(req)) auth.protect();
+  if (!isPublicRoute(req)) {
+    if (!userId) {
+      return NextResponse.redirect(new URL("/", req.url));
+    }
+  }
+
+  return NextResponse.next();
 });
 
 export const config = {

@@ -1,4 +1,3 @@
-import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import {
   Playfair_Display,
@@ -17,6 +16,7 @@ import QueryProvider from "./QueryProvider";
 import CartDrawer from "@/components/cart/CartDrawer";
 import Script from "next/script";
 import { siteSchema } from "@/utils/jsonldSchema";
+import ClerkClientProvider from "./ClerkProvider";
 
 export const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -95,8 +95,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
+    <ClerkClientProvider>
       <html lang="en" suppressHydrationWarning>
+        <head>
+          <meta
+            name="description"
+            content="Enjoy the different styles with various option at Amado."
+          />
+        </head>
         <body
           className={`
         ${playfair.variable}   /* headline serif */
@@ -125,6 +131,6 @@ export default function RootLayout({
           </QueryProvider>
         </body>
       </html>
-    </ClerkProvider>
+    </ClerkClientProvider>
   );
 }

@@ -1,10 +1,10 @@
+import dynamic from "next/dynamic";
 import { Suspense } from "react";
 import { Metadata } from "next";
 import ProductsBanner from "@/components/products/ProductsBanner";
 import ProductsContainer from "@/components/products/ProductsContainer";
 import { countProducts, fetchProductMeta } from "@/utils/actions";
 import ProductsGridSkeleton from "@/components/products/ProductGridSkeleton";
-import dynamic from "next/dynamic";
 import FilterSheetSkeleton from "@/components/products/FilterSheetSkeleton";
 
 type ProductPageProps = {

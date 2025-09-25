@@ -1,7 +1,7 @@
 "use client";
-import { useUser } from "@clerk/nextjs";
 import { CardSignInButton } from "../form/Buttons";
 import FavoriteToggleForm from "./FavoriteToggleForm";
+import { useAuthUser } from "@/lib/clerk/authClient";
 
 type FavoriteToggleButtonProps = {
   productId: string;
@@ -12,7 +12,7 @@ const FavoriteToggleButton = ({
   productId,
   favoriteId,
 }: FavoriteToggleButtonProps) => {
-  const { user } = useUser();
+  const { user } = useAuthUser();
   const userId = user?.id;
   if (!userId) return <CardSignInButton />;
 

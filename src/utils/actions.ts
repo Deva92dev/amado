@@ -2,7 +2,6 @@
 
 import { notFound, redirect } from "next/navigation";
 import db from "./db";
-import { auth, currentUser } from "@clerk/nextjs/server";
 import {
   imageSchema,
   productSchema,
@@ -10,14 +9,20 @@ import {
   ValidateWithZodSchema,
 } from "./schemas";
 import { deleteImage, uploadImage, uploadVideo } from "./supabase";
-import { revalidatePath, revalidateTag, unstable_cache } from "next/cache";
-import { env } from "../../env";
+import { revalidatePath, revalidateTag } from "next/cache";
 import {
   FeaturedCollectionCategoryType,
   FeaturedCollectionType,
   FeaturedProduct,
   ToggleFavoriteInput,
 } from "./types";
+import {
+  getOptionalAuth,
+  requireAdminAuth,
+  requireAuth,
+  requireUserWithEmail,
+} from "@/lib/clerk/authServer";
+import { CachePresets, createCache } from "./cache";
 
 const folder = "Amado";
 
@@ -26,18 +31,9 @@ type FormState = {
 };
 
 const renderError = (error: unknown): { message: string } => {
-  // console.log(error);
   return {
     message: error instanceof Error ? error.message : "an error occurred",
   };
-};
-
-const getAuthUser = async () => {
-  const user = await currentUser();
-  if (!user) {
-    throw new Error("You must be logged in to access this route");
-  }
-  return user;
 };
 
 export async function uploadVideoAction(
@@ -48,19 +44,7 @@ export async function uploadVideoAction(
   return await uploadVideo(video, folder, userId);
 }
 
-export async function getAuthUserIdStrict() {
-  const { userId } = await auth();
-  if (!userId) throw new Error("Unauthorized");
-  return userId;
-}
-
-const getAdminUser = async () => {
-  const user = await currentUser();
-  if (user?.id !== env.ADMIN_USER_ID) redirect("/");
-  return user;
-};
-
-export const getFeaturedCollection = unstable_cache(
+export const getFeaturedCollection = createCache(
   async (): Promise<FeaturedCollectionCategoryType> => {
     try {
       // Single DB round-trip, array filters are indexable via GIN on category[]
@@ -122,13 +106,10 @@ export const getFeaturedCollection = unstable_cache(
       return { men: [], women: [], winter: [], summer: [], casual: [] };
     }
   },
-  // Key parts (stable if there are no params)
-  ["featured:collections:key"],
-  // Cache options: tag + TTL (e.g., 14 days)
-  { tags: ["featured:collections"], revalidate: 60 * 60 * 24 * 14 }
+  CachePresets.daily(["featured_collection"])
 );
 
-const _fetchFeaturedProducts = unstable_cache(
+const _fetchFeaturedProducts = createCache(
   async (userId: string | null) => {
     if (!userId) {
       const products = await db.product.findMany({
@@ -165,15 +146,15 @@ const _fetchFeaturedProducts = unstable_cache(
       favoriteId: p._count.favorites > 0 ? "favorited" : null,
     }));
   },
-  ["featured:products"],
   {
-    tags: ["featured:products"],
-    revalidate: 60 * 60 * 24, // adjust if user favorites must update faster
+    revalidate: 60 * 60 * 24,
+    tags: ["featured_products", "products", "favorites"],
+    keyPrefix: "fetchFeaturedProducts",
   }
 );
 
 export async function fetchFeaturedProducts(): Promise<FeaturedProduct[]> {
-  const { userId } = await auth();
+  const userId = await getOptionalAuth();
   // Pass only serializable primitive(s) into the cached worker
   return _fetchFeaturedProducts(userId ?? null);
 }
@@ -185,119 +166,127 @@ export const fetchAllProductsForSitemap = async () => {
   return products;
 };
 
-export const fetchAllProducts = async ({
-  search = "",
-  category = "all",
-  color,
-  size,
-  userId, // pass the current user id from caller when available
-}: {
-  search?: string;
-  category?: string;
-  color?: string;
-  size?: string;
-  userId?: string | null;
-}) => {
-  // Build index-friendly filters (GIN on arrays, trigram on text)
-  const where: any = {};
-  const AND: any[] = [];
+export const fetchAllProducts = createCache(
+  async ({
+    search = "",
+    category = "all",
+    color,
+    size,
+    userId, // pass the current user id from caller when available
+  }: {
+    search?: string;
+    category?: string;
+    color?: string;
+    size?: string;
+    userId?: string | null;
+  }) => {
+    // Build index-friendly filters (GIN on arrays, trigram on text)
+    const where: any = {};
+    const AND: any[] = [];
 
-  if (search) {
-    // Trigram index speeds up contains/ILIKE on name/description
-    where.OR = [
-      { name: { contains: search, mode: "insensitive" } },
-      { description: { contains: search, mode: "insensitive" } },
-    ];
-  }
-  if (category && category !== "all") AND.push({ category: { has: category } }); // GIN(text[])
-  if (color) AND.push({ colors: { has: color } }); // GIN(text[])
-  if (size) AND.push({ sizes: { has: size } }); // GIN(text[])
-  if (AND.length) where.AND = AND;
+    if (search) {
+      // Trigram index speeds up contains/ILIKE on name/description
+      where.OR = [
+        { name: { contains: search, mode: "insensitive" } },
+        { description: { contains: search, mode: "insensitive" } },
+      ];
+    }
+    if (category && category !== "all")
+      AND.push({ category: { has: category } }); // GIN(text[])
+    if (color) AND.push({ colors: { has: color } }); // GIN(text[])
+    if (size) AND.push({ sizes: { has: size } }); // GIN(text[])
+    if (AND.length) where.AND = AND;
 
-  if (!userId) {
-    // Unauthenticated: skip favorites join entirely to reduce work and payload
+    if (!userId) {
+      // Unauthenticated: skip favorites join entirely to reduce work and payload
+      const rows = await db.product.findMany({
+        where,
+        orderBy: { createdAt: "asc" }, // covered by B-tree index
+        select: {
+          id: true,
+          name: true,
+          price: true,
+          image: true,
+          type: true,
+          // Include these only if the grid needs them; otherwise remove to further trim payload
+          colors: true,
+          sizes: true,
+        },
+      });
+
+      // Keep return shape stable; favoriteIds becomes empty and isFavorited false
+      return rows.map((r) => ({ ...r, favoriteIds: [], isFavorited: false }));
+    }
+
+    // Authenticated: use filtered _count to avoid transferring an array of favorite IDs
     const rows = await db.product.findMany({
       where,
-      orderBy: { createdAt: "asc" }, // covered by B-tree index
+      orderBy: { createdAt: "asc" },
       select: {
         id: true,
         name: true,
         price: true,
         image: true,
         type: true,
-        // Include these only if the grid needs them; otherwise remove to further trim payload
         colors: true,
         sizes: true,
+        _count: {
+          select: {
+            favorites: { where: { clerkId: userId } }, // tiny integer instead of array
+          },
+        },
       },
     });
 
-    // Keep return shape stable; favoriteIds becomes empty and isFavorited false
-    return rows.map((r) => ({ ...r, favoriteIds: [], isFavorited: false }));
-  }
+    return rows.map((r) => ({
+      id: r.id,
+      name: r.name,
+      price: r.price,
+      image: r.image,
+      type: r.type,
+      colors: r.colors,
+      sizes: r.sizes,
+      // Preserve the old field but keep it light: a boolean instead of full IDs is cheaper
+      favoriteIds: r._count.favorites > 0 ? ["favorited"] : [],
+      isFavorited: r._count.favorites > 0,
+    }));
+  },
+  CachePresets.weekly(["products", "all_products"])
+);
 
-  // Authenticated: use filtered _count to avoid transferring an array of favorite IDs
-  const rows = await db.product.findMany({
-    where,
-    orderBy: { createdAt: "asc" },
-    select: {
-      id: true,
-      name: true,
-      price: true,
-      image: true,
-      type: true,
-      colors: true,
-      sizes: true,
-      _count: {
-        select: {
-          favorites: { where: { clerkId: userId } }, // tiny integer instead of array
-        },
-      },
-    },
-  });
+export const countProducts = createCache(
+  async ({
+    search = "",
+    category = "all",
+    color = "",
+    size = "",
+  }: {
+    search?: string;
+    category?: string;
+    color?: string;
+    size?: string;
+  }) => {
+    const where: any = {};
+    const AND: any[] = [];
 
-  return rows.map((r) => ({
-    id: r.id,
-    name: r.name,
-    price: r.price,
-    image: r.image,
-    type: r.type,
-    colors: r.colors,
-    sizes: r.sizes,
-    // Preserve the old field but keep it light: a boolean instead of full IDs is cheaper
-    favoriteIds: r._count.favorites > 0 ? ["favorited"] : [],
-    isFavorited: r._count.favorites > 0,
-  }));
-};
+    if (search) {
+      where.OR = [
+        { name: { contains: search, mode: "insensitive" } },
+        { description: { contains: search, mode: "insensitive" } },
+      ];
+    }
+    if (category && category !== "all")
+      AND.push({ category: { has: category } });
+    if (color) AND.push({ colors: { has: color } });
+    if (size) AND.push({ sizes: { has: size } });
+    if (AND.length) where.AND = AND;
 
-export async function countProducts({
-  search = "",
-  category = "all",
-  color = "",
-  size = "",
-}: {
-  search?: string;
-  category?: string;
-  color?: string;
-  size?: string;
-}) {
-  const where: any = {};
-  const AND: any[] = [];
+    return db.product.count({ where });
+  },
+  CachePresets.dynamic(["products", "meta"])
+);
 
-  if (search) {
-    where.OR = [
-      { name: { contains: search, mode: "insensitive" } },
-      { description: { contains: search, mode: "insensitive" } },
-    ];
-  }
-  if (category && category !== "all") AND.push({ category: { has: category } });
-  if (color) AND.push({ colors: { has: color } });
-  if (size) AND.push({ sizes: { has: size } });
-  if (AND.length) where.AND = AND;
-
-  return db.product.count({ where });
-}
-
-export const fetchProductMeta = async () => {
+export const fetchProductMeta = createCache(async () => {
   const [cats, cols, siz] = await db.$transaction([
     db.$queryRaw<
       Array<{ v: string }>
@@ -313,7 +302,7 @@ export const fetchProductMeta = async () => {
   const colors = cols.map((r) => r.v).sort();
   const sizes = siz.map((r) => r.v).sort();
   return { categories, colors, sizes };
-};
+}, CachePresets.static(["products", "meta"]));
 
 export const fetchSingleProduct = async (productId: string) => {
   const product = await db.product.findUnique({
@@ -327,14 +316,13 @@ export const fetchSingleProduct = async (productId: string) => {
     },
   });
 
-  // redirect may break ISR caching.
   if (!product) {
     notFound();
   }
   return product;
 };
 
-export const fetchProductByIds = async (ids: string[]) => {
+export const fetchProductByIds = createCache(async (ids: string[]) => {
   if (!ids.length) return [];
   const products = await db.product.findMany({
     where: { id: { in: ids } },
@@ -347,35 +335,35 @@ export const fetchProductByIds = async (ids: string[]) => {
   });
   const map = new Map(products.map((p) => [p.id, p]));
   return ids.map((id) => map.get(id)).filter(Boolean) as typeof products;
-};
+}, CachePresets.static(["products", "bulk"]));
 
-export const fetchRelatedProducts = async (params: {
-  productId: string;
-  type: string;
-}) => {
-  const { productId, type } = params;
-  const related = await db.product.findMany({
-    where: {
-      id: { not: productId },
-      type,
-    },
-    orderBy: [{ updatedAt: "desc" }],
-    select: {
-      id: true,
-      name: true,
-      image: true,
-      price: true,
-    },
-  });
+export const fetchRelatedProducts = createCache(
+  async (params: { productId: string; type: string }) => {
+    const { productId, type } = params;
+    const related = await db.product.findMany({
+      where: {
+        id: { not: productId },
+        type,
+      },
+      orderBy: [{ updatedAt: "desc" }],
+      select: {
+        id: true,
+        name: true,
+        image: true,
+        price: true,
+      },
+    });
 
-  return related;
-};
+    return related;
+  },
+  CachePresets.weekly(["products", "related"])
+);
 
 export const createProductAction = async (
   prevState: FormState | undefined,
   formData: FormData
 ): Promise<{ message: string }> => {
-  const user = await getAuthUser();
+  const userId = await requireAuth();
 
   try {
     const rawData = Object.fromEntries(formData);
@@ -398,7 +386,7 @@ export const createProductAction = async (
       data: {
         ...validatedFields,
         image: fullImagePath,
-        clerkId: user.id,
+        clerkId: userId,
       },
     });
   } catch (error) {
@@ -409,7 +397,7 @@ export const createProductAction = async (
 };
 
 export const fetchAdminProducts = async () => {
-  await getAdminUser();
+  await requireAdminAuth();
   const products = await db.product.findMany({
     orderBy: {
       createdAt: "desc",
@@ -420,7 +408,7 @@ export const fetchAdminProducts = async () => {
 
 export const deleteProductAction = async (prevState: { productId: string }) => {
   const { productId } = prevState;
-  await getAdminUser();
+  await requireAdminAuth();
 
   try {
     const product = await db.product.delete({
@@ -438,7 +426,7 @@ export const deleteProductAction = async (prevState: { productId: string }) => {
 };
 
 export const fetchAdminProductDetails = async (productId: string) => {
-  await getAdminUser();
+  await requireAdminAuth();
   const product = await db.product.findUnique({
     where: {
       id: productId,
@@ -452,7 +440,7 @@ export const updateProductAction = async (
   prevState: FormState | undefined,
   formData: FormData
 ) => {
-  await getAdminUser();
+  await requireAdminAuth();
   try {
     const productId = formData.get("id") as string;
     const rawData = Object.fromEntries(formData);
@@ -486,7 +474,7 @@ export const updateProductImageAction = async (
   prevState: FormState | undefined,
   formData: FormData
 ) => {
-  await getAdminUser();
+  await requireAdminAuth();
 
   try {
     const image = formData.get("image") as File;
@@ -515,13 +503,17 @@ export const updateProductImageAction = async (
 };
 
 export const fetchFavoriteIdsForProducts = async (productIds: string[]) => {
-  const user = await getAuthUser().catch(() => null);
-  if (!user) return [];
+  let userId: string;
+  try {
+    userId = await requireAuth();
+  } catch {
+    return [];
+  }
 
   const favorites = await db.favorite.findMany({
     where: {
       productId: { in: productIds },
-      clerkId: user.id,
+      clerkId: userId,
     },
     select: {
       id: true,
@@ -537,15 +529,17 @@ export const fetchFavoriteId = async ({
 }: {
   productId: string;
 }): Promise<string | null> => {
-  const user = await getAuthUser();
-  if (!user || !user.id) {
-    return null;
+  let userId: string;
+  try {
+    userId = await requireAuth();
+  } catch {
+    return null; // Return null if not authenticated
   }
 
   const favorite = await db.favorite.findFirst({
     where: {
       productId,
-      clerkId: user?.id,
+      clerkId: userId,
     },
     select: {
       id: true,
@@ -562,19 +556,19 @@ export const toggleFavoriteAction = async ({
   message: string;
   favoriteId?: string | null;
 }> => {
-  const user = await getAuthUser();
+  const userId = await requireAuth();
 
   let newFavoriteId: string | null = null;
   if (favoriteId) {
     await db.favorite.delete({ where: { id: favoriteId } });
   } else {
     const newFavorite = await db.favorite.create({
-      data: { productId, clerkId: user.id },
+      data: { productId, clerkId: userId },
     });
     newFavoriteId = newFavorite.id;
   }
   // tags are O(1)
-  revalidateTag(`favorites:user:${user.id}`);
+  revalidateTag(`favorites:user:${userId}`);
   revalidateTag(`favorites:product:${productId}`);
 
   return {
@@ -587,7 +581,7 @@ export const toggleFavoriteAction = async ({
 const favoritesUserTag = (userId: string) => `favorites:user:${userId}`;
 // const favoritesProductTag = (productId: string) => `favorites:product:${productId}`
 
-export const fetchUserFavorites = unstable_cache(
+export const fetchUserFavorites = createCache(
   async (userId: string) => {
     return db.favorite.findMany({
       where: { clerkId: userId },
@@ -609,11 +603,11 @@ export const fetchUserFavorites = unstable_cache(
       },
     });
   },
-  // Seed key; stable across builds. Arguments are not auto-keyed.
-  ["favorites:getUserFavorites"],
   {
-    tags: [] as unknown as string[],
-  } as any
+    revalidate: 60 * 2, // 2 minutes cache
+    tags: ["favorites", "user_favorites"],
+    keyPrefix: "fetchUserFavorites",
+  }
 );
 
 // Provide convenience functions that apply dynamic tags at call sites:
@@ -628,7 +622,7 @@ export const createReviewAction = async (
   prevState: FormState | undefined,
   formData: FormData
 ) => {
-  const user = await getAuthUser();
+  const userId = await requireAuth();
 
   try {
     const rawData = Object.fromEntries(formData);
@@ -637,7 +631,7 @@ export const createReviewAction = async (
     await db.review.create({
       data: {
         ...validatedFields,
-        clerkId: user.id,
+        clerkId: userId,
       },
     });
 
@@ -648,7 +642,7 @@ export const createReviewAction = async (
   }
 };
 
-export const fetchProductReviews = unstable_cache(
+export const fetchProductReviews = createCache(
   async (productId: string) =>
     db.review.findMany({
       where: { productId },
@@ -662,27 +656,15 @@ export const fetchProductReviews = unstable_cache(
         createdAt: true,
       },
     }),
-  ["reviews:byProduct"],
+
   {
-    // Tags must be a static string[]
-    tags: ["reviews"],
-    revalidate: 300, // 5 minutes
+    revalidate: 60 * 15, // 15 minutes - reviews don't change often
+    tags: ["reviews", "product_reviews"],
+    keyPrefix: "fetchProductReviews",
   }
 );
 
-// export const fetchProductRating = async (productId: string) => {
-//   const result = await db.review.aggregate({
-//     where: { productId },
-//     _avg: { rating: true },
-//     _count: { rating: true },
-//   });
-//   return {
-//     rating: Math.round(((result._avg.rating ?? 0) as number) * 10) / 10,
-//     count: result._count.rating ?? 0,
-//   };
-// };
-
-export const fetchProductRating = unstable_cache(
+export const fetchProductRating = createCache(
   async (productId: string) => {
     const r = await db.review.aggregate({
       where: { productId },
@@ -694,18 +676,18 @@ export const fetchProductRating = unstable_cache(
       count: r._count.rating ?? 0,
     };
   },
-  ["rating:byProduct"],
   {
-    tags: ["reviews"],
-    revalidate: 300, // 5 minutes
+    revalidate: 60 * 10, // ratings need to be fresher
+    tags: ["reviews", "product_ratings", "aggregates"],
+    keyPrefix: "fetchProductRating",
   }
 );
 
 export const fetchProductReviewsByUser = async () => {
-  const user = await getAuthUser();
+  const userId = await requireAuth();
   const reviews = await db.review.findMany({
     where: {
-      clerkId: user.id,
+      clerkId: userId,
     },
     select: {
       id: true,
@@ -727,12 +709,12 @@ export const deleteReviewAction = async (prev: { reviewId: string }) => {
   const { reviewId } = prev;
 
   try {
-    const user = await getAuthUser();
+    const userId = await requireAuth();
     const review = await db.review.findUnique({
       where: { id: reviewId },
       select: { clerkId: true, productId: true },
     });
-    if (!review || review.clerkId !== user.id) {
+    if (!review || review.clerkId !== userId) {
       return { error: true, message: "Not authorized" };
     }
 
@@ -755,7 +737,7 @@ export const findExistingReview = async (userId: string, productId: string) => {
 };
 
 export const fetchCartItems = async () => {
-  const { userId } = await auth();
+  const userId = await requireAuth();
 
   const cart = await db.cart.findFirst({
     where: {
@@ -939,7 +921,7 @@ export async function updateCart(cart: {
 }
 
 export const addToCartAction = async (prevState: any, formData: FormData) => {
-  const user = await getAuthUser();
+  const userId = await requireAuth();
   try {
     const productId = formData.get("productId") as string;
     const amount = Number(formData.get("amount"));
@@ -952,7 +934,7 @@ export const addToCartAction = async (prevState: any, formData: FormData) => {
       .then((p) => {
         if (!p) throw new Error("Product not found");
       });
-    const cart = await fetchOrCreateCartId(user.id);
+    const cart = await fetchOrCreateCartId(userId);
     await upsertCartItem({
       cartId: cart.id,
       productId,
@@ -978,10 +960,10 @@ export const removeCartItemAction = async (
   _prevState: FormState | undefined,
   formData: FormData
 ) => {
-  const user = await getAuthUser();
+  const userId = await requireAuth();
   try {
     const cartItemId = formData.get("id") as string;
-    const cart = await fetchOrCreateCartId(user.id); // { id, taxRate, shipping }
+    const cart = await fetchOrCreateCartId(userId); // { id, taxRate, shipping }
     // Safe, scoped delete
     const res = await db.cartItem.deleteMany({
       where: { id: cartItemId, cartId: cart.id },
@@ -1010,9 +992,9 @@ export const updateCartItemAction = async ({
   amount: number;
   cartItemId: string;
 }) => {
-  const user = await getAuthUser();
+  const userId = await requireAuth();
   try {
-    const cart = await fetchOrCreateCartId(user.id);
+    const cart = await fetchOrCreateCartId(userId);
 
     const res = await db.cartItem.updateMany({
       where: { id: cartItemId, cartId: cart.id },
@@ -1033,12 +1015,12 @@ export const updateCartItemAction = async ({
   }
 };
 
-// NEW: Clear entire cart for current user
+// Clear entire cart for current user
 export const clearCartAction = async () => {
-  const user = await getAuthUser();
+  const userId = await requireAuth();
   try {
     const cart = await db.cart.findFirst({
-      where: { clerkId: user.id },
+      where: { clerkId: userId },
       select: { id: true, taxRate: true, shipping: true },
     });
 
@@ -1073,7 +1055,7 @@ export const createOrderAction = async (
   _prevState: any,
   _formData: FormData
 ) => {
-  const user = await getAuthUser();
+  const user = await requireUserWithEmail();
   let orderId: string | null = null;
   let cartId: string | null = null;
 
@@ -1106,7 +1088,7 @@ export const createOrderAction = async (
         orderTotal: cart.orderTotal,
         tax: cart.tax,
         shipping: cart.shipping,
-        email: user.emailAddresses[0].emailAddress,
+        email: user.email,
         isPaid: false,
       },
       select: { id: true },
@@ -1120,10 +1102,10 @@ export const createOrderAction = async (
 };
 
 export const fetchUserOrders = async () => {
-  const user = await getAuthUser();
+  const userId = await requireAuth();
   const orders = await db.order.findMany({
     where: {
-      clerkId: user.id,
+      clerkId: userId,
       isPaid: true,
     },
     orderBy: {
@@ -1135,7 +1117,7 @@ export const fetchUserOrders = async () => {
 };
 
 export const fetchAdminOrders = async () => {
-  const user = await getAdminUser();
+  await requireAdminAuth();
 
   const orders = await db.order.findMany({
     where: {

@@ -1,7 +1,7 @@
-import { formatCurrency } from "@/utils/format";
-import { Card, CardContent } from "../ui/card";
 import Link from "next/link";
 import Image from "next/image";
+import { formatCurrency } from "@/utils/format";
+import { Card, CardContent } from "../ui/card";
 import FavoriteToggleButton from "./FavoriteToggleButton";
 import { ProductWithFavorite } from "./ProductsContainer";
 

@@ -1,19 +1,14 @@
-import Script from "next/script";
 import type { Metadata } from "next";
 import Image from "next/image";
 import {
   Truck,
   Clock,
   Globe,
-  Package,
-  Users,
   CheckCircle,
-  AlertTriangle,
   Shield,
   Phone,
   Mail,
 } from "lucide-react";
-// import { BASE_URL, buildWebPage } from "@/utils/schema";
 
 export const metadata: Metadata = {
   title: "Shipping Policy - Fast & Secure Delivery | Amado",
@@ -86,26 +81,8 @@ export default function ShippingPolicyPage() {
     "Support team available for delivery inquiries.",
   ];
 
-  // const shippingSchema = buildWebPage(
-  //   "Amado Shipping Policy",
-  //   `${BASE_URL}/shipping-policy`,
-  //   "Our commitment to timely and secure delivery of your orders."
-  // );
-
-  // const jsonLd = {
-  //   "@context": "https://schema.org",
-  //   "@graph": [shippingSchema],
-  // };
-
   return (
     <>
-      {/* <Script
-        id="shipping-policy-schema"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c"),
-        }}
-      /> */}
       <main className="relative overflow-hidden bg-[hsl(var(--background))] min-h-screen pb-24">
         {/* Hero header */}
         <section className="relative w-full h-[50vh] min-h-[400px] mb-16 overflow-hidden">

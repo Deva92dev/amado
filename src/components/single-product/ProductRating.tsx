@@ -1,5 +1,5 @@
 import { fetchProductRating } from "@/utils/actions";
-import { FaStar } from "react-icons/fa";
+import { Star } from "lucide-react";
 
 type ProductRatingProps = {
   productId: string;
@@ -12,7 +12,7 @@ const ProductRating = async ({ productId }: ProductRatingProps) => {
   const countValue = `(${count}) reviews`;
   return (
     <span className={className}>
-      <FaStar className="w-3 h-3" />
+      <Star className="w-3 h-3" />
       {/* {rating.toFixed(1)} {countValue} */}
       4.9 (30)
     </span>

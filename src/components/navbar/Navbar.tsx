@@ -1,4 +1,3 @@
-import { auth } from "@clerk/nextjs/server";
 import { Suspense } from "react";
 import Link from "next/link";
 import Container from "../global/Container";
@@ -8,9 +7,10 @@ import LinksDropDown from "./LinksDropDown";
 import Logo from "./logo";
 import NavSearch from "./NavSearch";
 import { publicNavLinks } from "@/utils/links";
+import { getOptionalAuth } from "@/lib/clerk/authServer";
 
 const Navbar = async () => {
-  const { userId } = await auth();
+  const userId = await getOptionalAuth();
   return (
     <nav className="fixed top-0 w-full z-50">
       <Container className="py-5">

@@ -1,6 +1,5 @@
-import Script from "next/script";
+import Image from "next/image";
 import type { Metadata } from "next";
-import Link from "next/link";
 import {
   RefreshCw,
   Clock,
@@ -16,8 +15,6 @@ import {
   CreditCard,
   Zap,
 } from "lucide-react";
-// import { BASE_URL, buildWebPage } from "@/utils/schema";
-import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "Cancellation & Refund Policy - Fair & Flexible | Amado",
@@ -154,25 +151,8 @@ export default function CancellationRefunds() {
     },
   ];
 
-  // const cancellationSchema = buildWebPage(
-  //   "Amado's cancellation and refunds policy",
-  //   `${BASE_URL}/cancellation-refunds`,
-  //   "Fair, flexible, and transparent cancellation and refund policies for Amado."
-  // );
-  // const jsonLd = {
-  //   "@context": "https://schema.org",
-  //   "@graph": [cancellationSchema],
-  // };
-
   return (
     <>
-      {/* <Script
-        id="cancellation-refunds-site-schema"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(jsonLd).replace(/</g, "\u003c"),
-        }}
-      /> */}
       <main className="relative overflow-hidden bg-[hsl(var(--background))] min-h-screen">
         {/* Hero Section */}
         <section className="relative w-full h-[50vh] min-h-[400px] mb-16 overflow-hidden">

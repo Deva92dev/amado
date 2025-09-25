@@ -1,9 +1,9 @@
 "use client";
 
+import { useEffect, useRef, useTransition, useState } from "react";
 import { toggleFavoriteAction } from "@/utils/actions";
 import FormContainer from "../form/FormContainer";
 import { CardSubmitButton } from "../form/Buttons";
-import { useEffect, useRef, useTransition, useState } from "react";
 
 type FormState = { message: string };
 type FavoriteToggleFormProps = { favoriteId: string | null; productId: string };

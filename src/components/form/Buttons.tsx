@@ -1,12 +1,17 @@
 "use client";
 
 import { useFormStatus } from "react-dom";
+import {
+  DeleteIcon,
+  Edit,
+  Heart,
+  HeartPulse,
+  RefreshCcw,
+  RotateCcwIcon,
+} from "lucide-react";
 import { Button } from "../ui/button";
 import { cn } from "@/lib/utils";
-import { DeleteIcon, Edit, RotateCcwIcon } from "lucide-react";
-import { SignInButton } from "@clerk/nextjs";
-import { FaHeart, FaRegHeart } from "react-icons/fa";
-import { ReloadIcon } from "@radix-ui/react-icons";
+import { AuthSignInButton } from "@/lib/clerk/authClient";
 
 type btnSize = "default" | "lg" | "sm";
 type FormButtonProps = {
@@ -72,7 +77,7 @@ export const IconButton = ({ actionType }: { actionType: actionType }) => {
 
 export const CardSignInButton = () => {
   return (
-    <SignInButton mode="modal">
+    <AuthSignInButton mode="modal">
       <Button
         type="button"
         size="icon"
@@ -80,9 +85,9 @@ export const CardSignInButton = () => {
         className="p-2 cursor-pointer"
         asChild
       >
-        <FaRegHeart />
+        <Heart className="w-4 h-4" />
       </Button>
-    </SignInButton>
+    </AuthSignInButton>
   );
 };
 
@@ -109,11 +114,11 @@ export const CardSubmitButton = ({ isFavorite }: CardSubmitButtonProps) => {
       }
     >
       {pending ? (
-        <ReloadIcon className="animate-spin" />
+        <RefreshCcw className="animate-spin" />
       ) : isFavorite ? (
-        <FaHeart />
+        <HeartPulse className="w-4 h-4" />
       ) : (
-        <FaRegHeart />
+        <Heart className="w-4 h-4" />
       )}
     </Button>
   );
@@ -121,10 +126,10 @@ export const CardSubmitButton = ({ isFavorite }: CardSubmitButtonProps) => {
 
 export const ProductSignInButton = () => {
   return (
-    <SignInButton mode="modal">
+    <AuthSignInButton mode="modal">
       <Button type="button" size="default" className="mt-8">
         Please Sign In
       </Button>
-    </SignInButton>
+    </AuthSignInButton>
   );
 };

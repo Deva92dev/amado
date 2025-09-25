@@ -1,13 +1,13 @@
-import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { Grid2X2, List } from "lucide-react";
 import { fetchAllProducts } from "@/utils/actions";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
 import { SortOption } from "@/app/products/page";
 import SortSelect from "./SortSelect";
-import dynamic from "next/dynamic";
 import LoadMoreSkeleton from "./LoadMoreSkeleton";
+import { getOptionalAuth } from "@/lib/clerk/authServer";
 
 export type ProductWithFavorite = Awaited<
   ReturnType<typeof fetchAllProducts>
@@ -36,7 +36,7 @@ const ProductsContainer = async ({
   color = "",
   size = "",
 }: ProductContainerProps) => {
-  const { userId } = await auth();
+  const userId = await getOptionalAuth();
   const initialProductsRaw = await fetchAllProducts({
     search,
     category,

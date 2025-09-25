@@ -1,7 +1,7 @@
 import SectionTitle from "@/components/global/SectionTitle";
 import ProductsGrid from "@/components/products/ProductsGrid";
+import { requireAuth } from "@/lib/clerk/authServer";
 import { fetchUserFavorites } from "@/utils/actions";
-import { currentUser } from "@clerk/nextjs/server";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -9,9 +9,8 @@ export const metadata: Metadata = {
 };
 
 const FavoritesPage = async () => {
-  const user = await currentUser();
-  const userId = user?.id;
-  const favorites = await fetchUserFavorites(userId as string);
+  const userId = await requireAuth();
+  const favorites = await fetchUserFavorites(userId);
 
   if (favorites.length === 0) {
     return <SectionTitle text="You have no favorites yet" />;

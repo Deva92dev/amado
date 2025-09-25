@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import dynamic from "next/dynamic";
 import {
   AnimatePresence,
   m,
@@ -17,7 +18,6 @@ import { Thumb } from "./Thumbnail";
 import { cn } from "@/lib/utils";
 import { filterClassByVariant } from "./GalleryStyles";
 import { Spinner } from "./Spinner";
-import dynamic from "next/dynamic";
 
 const FullScreenModal = dynamic(() => import("./FullScreenModal"), {
   ssr: false,

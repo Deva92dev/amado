@@ -1,11 +1,11 @@
-import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { Button } from "../ui/button";
-import { LuShoppingCart } from "react-icons/lu";
 import { getCartCount } from "../Store/cart-read";
+import { getOptionalAuth } from "@/lib/clerk/authServer";
+import { ShoppingCart } from "lucide-react";
 
 const CartButton = async () => {
-  const { userId } = await auth();
+  const userId = await getOptionalAuth();
   const numOfItemsInCart = userId ? await getCartCount(userId) : 0;
 
   return (
@@ -16,7 +16,7 @@ const CartButton = async () => {
       className="flex flex-col items-center justify-center relative"
     >
       <Link href="/cart">
-        <LuShoppingCart />
+        <ShoppingCart />
         <span className="absolute -top-3 -right-3 bg-foreground text-background rounded-full h-6 w-6 flex items-center justify-center text-xs">
           {numOfItemsInCart}
         </span>

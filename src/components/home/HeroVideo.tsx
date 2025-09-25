@@ -18,8 +18,8 @@ const HeroVideo = ({ mp4Url, webMUrl }: HeroVideoProps) => {
   return (
     <>
       <Image
-        src="/media/HeroWeb.webp"
-        alt="Fashion model in trench coat sitting on outdoor iron stairs"
+        src="/Hero.webp"
+        alt="Fashion model's cloth is flying behind camera"
         fill
         priority
         className="object-cover"
@@ -34,7 +34,7 @@ const HeroVideo = ({ mp4Url, webMUrl }: HeroVideoProps) => {
         loop
         playsInline
         preload="metadata"
-        poster="/media/Hero.webp"
+        poster="/Hero.webp"
         onCanPlayThrough={handleVideoReady}
         aria-label="Hero background video"
       >

@@ -1,6 +1,5 @@
 "use client";
 
-import { useUser } from "@clerk/nextjs";
 import { useState } from "react";
 import { Button } from "../ui/button";
 import FormContainer from "../form/FormContainer";
@@ -9,10 +8,11 @@ import RatingInput from "./RatingInput";
 import TextAreaInput from "../form/TextAreaInput";
 import { SubmitButton } from "../form/Buttons";
 import { Card } from "../ui/card";
+import { useAuthUser } from "@/lib/clerk/authClient";
 
 const SubmitReview = ({ productId }: { productId: string }) => {
   const [isReviewFormVisible, setIsReviewFormVisible] = useState(false);
-  const { user } = useUser();
+  const { user } = useAuthUser();
 
   return (
     <div>
