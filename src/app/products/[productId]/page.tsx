@@ -1,20 +1,18 @@
-import { cache } from "react";
+import { cache, Suspense } from "react";
 import { Metadata } from "next";
-import ProductReviews from "@/components/reviews/ProductReviews";
-import SubmitReview from "@/components/reviews/SubmitReview";
 import BreadCrumbs from "@/components/single-product/BreadCrumbs";
 import GallerySection from "@/components/single-product/GallerySection";
 import ProductInfo from "@/components/single-product/ProductInfo";
-import {
-  checkProductPurchase,
-  fetchFavoriteId,
-  fetchSingleProduct,
-  findExistingReview,
-} from "@/utils/actions";
+import { fetchFavoriteId, fetchSingleProduct } from "@/utils/actions";
 import RelatedProducts from "@/components/single-product/RelatedProducts";
 import RecentlyViewedSection from "@/components/single-product/RecentlyViewed";
 import { TrackProductView } from "@/components/single-product/TrackProductView";
 import { getOptionalAuth } from "@/lib/clerk/authServer";
+import db from "@/utils/db";
+import ReviewsSection from "@/components/single-product/ReviewSection";
+import ReviewsSkeleton from "@/components/skeleton/ReviewSkeleton";
+import RecentlyViewedSkeleton from "@/components/skeleton/RecentlyViewedSkeleton";
+import RelatedProductsSkeleton from "@/components/skeleton/RelatedProductsSkeleton";
 
 type SingleProductPageProps = {
   params: Promise<{
@@ -22,8 +20,25 @@ type SingleProductPageProps = {
   }>;
 };
 
-const getSingleProduct = cache(fetchSingleProduct);
+export async function generateStaticParams() {
+  try {
+    const products = await db.product.findMany({
+      select: { id: true },
+      take: 10,
+      orderBy: [{ createdAt: "asc" }],
+    });
 
+    return products.map(({ id }) => ({ productId: id }));
+  } catch (error) {
+    console.error("Static generation error:", error);
+    return [];
+  }
+}
+
+export const revalidate = 1800;
+export const dynamicParams = true; // Allow non-static products via ISR
+
+const getSingleProduct = cache(fetchSingleProduct);
 export const generateMetadata = async ({
   params,
 }: SingleProductPageProps): Promise<Metadata> => {
@@ -64,13 +79,10 @@ export const generateMetadata = async ({
   };
 };
 
-// inline above the fold css
 const SingleProductPage = async ({ params }: SingleProductPageProps) => {
   const { productId } = await params;
   const product = await getSingleProduct(productId);
-
   if (!product) {
-    // Optionally render a 404 page or redirect
     return (
       <section className="py-20">
         <h1 className="text-3xl font-bold">Product not found</h1>
@@ -79,18 +91,7 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
   }
 
   const userId = await getOptionalAuth();
-
-  // parallel when signed-in; skip entirely for guests
-  const [favoriteId, hasPurchased, reviewExists] = await Promise.all([
-    userId ? fetchFavoriteId({ productId }) : Promise.resolve(null),
-    userId
-      ? checkProductPurchase({ userId, productId })
-      : Promise.resolve(false),
-    userId ? findExistingReview(userId, product.id) : Promise.resolve(true),
-  ]);
-
-  // A signed-in user can post a review only if they purchased and no review exists yet
-  const reviewDoesNotExist = Boolean(userId) && !reviewExists && hasPurchased;
+  const favoriteId = userId ? await fetchFavoriteId({ productId }) : null;
 
   const { category, description, image, price, name, colors, sizes, type } =
     product;
@@ -106,6 +107,13 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
         data-equal-cols-root
         style={{ ["--equal-h" as any]: "600px" }}
       >
+        <div className="md:mb-0 lg:[height:var(--equal-h)]">
+          <GallerySection
+            image={image}
+            equalHeightVar="--equal-h"
+            className="bg-gradient-metallic rounded-xl"
+          />
+        </div>
         <ProductInfo
           className="equal-height-source card-gradient-glass"
           name={name}
@@ -118,23 +126,19 @@ const SingleProductPage = async ({ params }: SingleProductPageProps) => {
           favoriteId={favoriteId}
           productId={productId}
         />
-        <div className="md:mb-0 lg:[height:var(--equal-h)]">
-          <GallerySection
-            image={image}
-            equalHeightVar="--equal-h"
-            className="bg-gradient-metallic rounded-xl"
-          />
-        </div>
         <div className="col-span-1 lg:col-span-2 mt-12">
-          <ProductReviews productId={productId} />
-          {hasPurchased && reviewDoesNotExist && (
-            <SubmitReview productId={productId} />
-          )}
+          <Suspense fallback={<ReviewsSkeleton />}>
+            <ReviewsSection productId={productId} userId={userId} />
+          </Suspense>
         </div>
       </div>
       <div className="col-span-1 lg:col-span-2">
-        <RelatedProducts productId={product.id} type={product.type} />
-        <RecentlyViewedSection />
+        <Suspense fallback={<RelatedProductsSkeleton />}>
+          <RelatedProducts productId={product.id} type={product.type} />
+        </Suspense>
+        <Suspense fallback={<RecentlyViewedSkeleton />}>
+          <RecentlyViewedSection />
+        </Suspense>
       </div>
       <TrackProductView productId={product.id} />
     </section>

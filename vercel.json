@@ -1,0 +1,11 @@
+{
+  "functions": {
+    "app/**": {
+      "runtime": "nodejs20.x",
+      "regions": ["bom1"],
+      "memory": 3008,
+      "maxDuration": 30
+    }
+  },
+  "regions": ["bom1"]
+}
