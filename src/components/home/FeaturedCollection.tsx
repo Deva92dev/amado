@@ -1,6 +1,7 @@
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { getFeaturedCollection } from "@/utils/actions";
+import { formatCurrency } from "@/utils/format";
 
 const MotionSection = dynamic(() =>
   import("../animations").then((mod) => mod.MotionSection)
@@ -15,6 +16,11 @@ const MotionButton = dynamic(() =>
   import("../animations").then((mod) => mod.MotionButton)
 );
 
+const getLowestPrice = (products: any[]) => {
+  if (!products || products.length === 0) return null;
+  return Math.min(...products.map((product) => product.price));
+};
+
 const FeaturedCollection = async () => {
   const collections = await getFeaturedCollection();
 
@@ -22,6 +28,14 @@ const FeaturedCollection = async () => {
     new Date().getMonth() >= 5 && new Date().getMonth() <= 8
       ? "summer"
       : "winter";
+
+  const categoryPrices = {
+    summer: getLowestPrice(collections.summer),
+    winter: getLowestPrice(collections.winter),
+    men: getLowestPrice(collections.men),
+    women: getLowestPrice(collections.women),
+    casual: getLowestPrice(collections.casual),
+  };
 
   const cardBaseClasses =
     "group relative overflow-hidden rounded-3xl cursor-pointer transition-all duration-500 transform-style-3d hover:shadow-2xl hover:-translate-y-3 hover:rotate-x-[8deg] hover:rotate-y-[2deg]";
@@ -90,12 +104,21 @@ const FeaturedCollection = async () => {
                     <div className="absolute inset-0 rounded-3xl border-2 border-transparent group-hover:border-metal-gold/30 group-hover:shadow-[0_0_30px_rgba(var(--metal-gold),0.3)] transition-all duration-500" />
                     <div className="absolute inset-0 p-8 lg:p-12 flex flex-col justify-end">
                       <div className="transform-gpu translate-y-4 group-hover:translate-y-0 transition-transform duration-500 ease-out">
-                        <h3 className="text-4xl lg:text-6xl xl:text-7xl font-bold text-white mb-4 font-primary-serif">
+                        <h3 className="text-4xl lg:text-6xl xl:text-7xl font-bold text-background mb-4 font-primary-serif">
                           {currentSeason === "summer" ? "Summer" : "Winter"}
                         </h3>
-                        <p className="text-white/90 text-lg lg:text-xl mb-6 font-secondary-sans opacity-80 group-hover:opacity-100 transition-opacity duration-500">
-                          {collections[currentSeason].length} Items Available
-                        </p>
+                        <div className="flex items-center gap-4 mb-4">
+                          {categoryPrices[currentSeason] && (
+                            <span className="text-2xl font-bold text-background font-secondary-sans">
+                              From{" "}
+                              {formatCurrency(categoryPrices[currentSeason])}
+                            </span>
+                          )}
+                          <span className="text-background/70">•</span>
+                          <span className="text-background/90 text-lg font-secondary-sans">
+                            {collections[currentSeason].length} Items Available
+                          </span>
+                        </div>
                       </div>
                     </div>
                     <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-all duration-500 delay-200">
@@ -105,7 +128,7 @@ const FeaturedCollection = async () => {
                           .map((product, index) => (
                             <div
                               key={product.id}
-                              className="w-16 h-16 rounded-lg overflow-hidden border-2 border-white/50 transform translate-x-4 group-hover:translate-x-0 transition-transform duration-300 relative"
+                              className="w-16 h-16 rounded-lg overflow-hidden border-2 border-background/50 transform translate-x-4 group-hover:translate-x-0 transition-transform duration-300 relative"
                               style={{ transitionDelay: `${index * 100}ms` }}
                             >
                               <Image
@@ -145,19 +168,26 @@ const FeaturedCollection = async () => {
                     <div className="absolute inset-0 rounded-3xl border border-transparent group-hover:border-background/20 group-hover:shadow-lg transition-all duration-300" />
                     <div className="absolute bottom-6 left-6 right-6">
                       <div className="transform translate-y-2 group-hover:translate-y-0 transition-transform duration-400 ease-out">
-                        <h4 className="text-2xl lg:text-3xl font-bold text-white mb-2 font-primary-serif">
+                        <h4 className="text-2xl lg:text-3xl font-bold text-background mb-2 font-primary-serif">
                           Men Essential
                         </h4>
-                        <p className="text-white/80 text-base font-secondary-sans opacity-70 group-hover:opacity-100 transition-opacity duration-300">
-                          {collections.men.length} Items
-                        </p>
+                        <div className="space-y-1">
+                          {categoryPrices.men && (
+                            <p className="text-background font-bold text-lg font-secondary-sans">
+                              From {formatCurrency(categoryPrices.men)}
+                            </p>
+                          )}
+                          <p className="text-background/80 text-base font-secondary-sans opacity-70 group-hover:opacity-100 transition-opacity duration-300">
+                            {collections.men.length} Items
+                          </p>
+                        </div>
                       </div>
                     </div>
                     <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all delay-150 duration-400">
                       {collections.men.slice(1, 3).map((product, index) => (
                         <div
                           key={product.id}
-                          className="w-12 h-12 relative rounded-md overflow-hidden border border-white/40 mb-1 transform translate-x-2 group-hover:translate-x-0 transition-transform duration-300"
+                          className="w-12 h-12 relative rounded-md overflow-hidden border border-background/40 mb-1 transform translate-x-2 group-hover:translate-x-0 transition-transform duration-300"
                           style={{ transitionDelay: `${index * 80}ms` }}
                         >
                           <Image
@@ -213,19 +243,23 @@ const FeaturedCollection = async () => {
                     />
                     <div className="absolute bottom-4 left-4 right-4">
                       <div className="transform translate-y-1 group-hover:translate-y-0 transition-transform duration-300">
-                        <h4 className="text-xl lg:text-2xl font-bold text-white mb-1 font-primary-serif">
+                        <h4 className="text-xl lg:text-2xl font-bold text-background mb-1 font-primary-serif">
                           {currentSeason === "summer"
                             ? "Winter Preview"
                             : "Summer Preview"}
                         </h4>
-                        <p className="text-white/80 text-sm font-secondary-sans">
-                          {
-                            collections[
-                              currentSeason === "summer" ? "winter" : "summer"
-                            ].length
-                          }
-                          Items
-                        </p>
+                        <div className="flex items-center gap-4 mb-4">
+                          {categoryPrices[currentSeason] && (
+                            <span className="text-2xl font-bold text-background  font-secondary-sans">
+                              From{" "}
+                              {formatCurrency(categoryPrices[currentSeason])}
+                            </span>
+                          )}
+                          <span className="text-background/70">•</span>
+                          <span className="text-background/90 text-lg font-secondary-sans">
+                            {collections[currentSeason].length} Items Available
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </MotionCard>
@@ -252,19 +286,26 @@ const FeaturedCollection = async () => {
                     <div className="absolute inset-0 rounded-3xl border border-transparent group-hover:border-ruby/30 group-hover:shadow-lg transition-all duration-300" />
                     <div className="absolute bottom-6 left-6 right-6">
                       <div className="transform translate-y-2 group-hover:translate-y-0 transition-transform duration-400 ease-out">
-                        <h4 className="text-2xl lg:text-3xl font-bold text-white mb-2 font-primary-serif">
+                        <h4 className="text-2xl lg:text-3xl font-bold text-background mb-2 font-primary-serif">
                           Women Elegance
                         </h4>
-                        <p className="text-white/80 text-base font-secondary-sans opacity-70 group-hover:opacity-100 transition-opacity duration-300">
-                          {collections.women.length} Items
-                        </p>
+                        <div className="space-y-1">
+                          {categoryPrices.women && (
+                            <p className="text-background font-bold text-lg font-secondary-sans">
+                              From {formatCurrency(categoryPrices.women)}
+                            </p>
+                          )}
+                          <p className="text-background/80 text-base font-secondary-sans opacity-70 group-hover:opacity-100 transition-opacity duration-300">
+                            {collections.women.length} Items
+                          </p>
+                        </div>
                       </div>
                     </div>
                     <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-400 delay-150">
                       {collections.women.slice(1, 3).map((product, index) => (
                         <div
                           key={product.id}
-                          className="w-12 h-12 relative rounded-md overflow-hidden border border-white/40 mb-1 transform translate-x-2 group-hover:translate-x-0 transition-transform duration-300"
+                          className="w-12 h-12 relative rounded-md overflow-hidden border border-background/40 mb-1 transform translate-x-2 group-hover:translate-x-0 transition-transform duration-300"
                           style={{ transitionDelay: `${index * 80}ms` }}
                         >
                           <Image
@@ -303,19 +344,26 @@ const FeaturedCollection = async () => {
                     <div className="absolute inset-0 rounded-3xl border border-transparent group-hover:border-emerald/30 transition-all duration-300" />
                     <div className="absolute bottom-4 left-4 right-4">
                       <div className="transform translate-y-1 group-hover:translate-y-0 transition-transform duration-300">
-                        <h4 className="text-lg lg:text-xl font-bold text-white mb-1 font-primary-serif">
+                        <h4 className="text-lg lg:text-xl font-bold text-background mb-1 font-primary-serif">
                           Casual Comfort
                         </h4>
-                        <p className="text-white/80 text-sm font-secondary-sans">
-                          {collections.casual.length} Items
-                        </p>
+                        <div className="space-y-1">
+                          {categoryPrices.casual && (
+                            <p className="text-background font-bold text-sm font-secondary-sans">
+                              From {formatCurrency(categoryPrices.casual)}
+                            </p>
+                          )}
+                          <p className="text-background/80 text-sm font-secondary-sans">
+                            {collections.casual.length} Items
+                          </p>
+                        </div>
                       </div>
                     </div>
                     <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-400 delay-100">
                       {collections.casual.slice(1, 2).map((product) => (
                         <div
                           key={product.id}
-                          className="w-10 h-10 rounded border border-white/40 overflow-hidden transform translate-x-1 group-hover:translate-x-0 transition-transform duration-300 relative"
+                          className="w-10 h-10 rounded border border-background/40 overflow-hidden transform translate-x-1 group-hover:translate-x-0 transition-transform duration-300 relative"
                         >
                           <Image
                             src={product.image}

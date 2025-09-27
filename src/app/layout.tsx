@@ -17,6 +17,7 @@ import CartDrawer from "@/components/cart/CartDrawer";
 import Script from "next/script";
 import { siteSchema } from "@/utils/jsonldSchema";
 import ClerkClientProvider from "./ClerkProvider";
+import BackToTopButton from "@/components/global/BackToTop";
 
 export const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -125,6 +126,7 @@ export default function RootLayout({
                   {children}
                   <Footer />
                   <CartDrawer />
+                  <BackToTopButton />
                 </MotionProvider>
               </LenisProvider>
             </Providers>

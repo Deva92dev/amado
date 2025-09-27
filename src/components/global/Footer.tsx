@@ -30,7 +30,7 @@ const Footer = () => {
         className="absolute inset-0 bg-gradient-to-t from-charcoal via-charcoal/80 to-charcoal/60"
         aria-hidden="true"
       />
-      <BackToTopButton />
+      {/* <BackToTopButton /> */}
       <div className="relative container mx-auto px-6 pt-20 pb-12">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 text-center md:text-left">
           <div className="md:col-span-4 flex flex-col items-center md:items-start">

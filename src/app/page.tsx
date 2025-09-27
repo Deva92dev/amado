@@ -1,5 +1,4 @@
 import dynamic from "next/dynamic";
-import { Suspense } from "react";
 import { Metadata } from "next";
 import Hero from "@/components/home/Hero";
 import FeaturedCollection from "@/components/home/FeaturedCollection";
@@ -11,6 +10,7 @@ import { TrendingProductsSkeleton } from "@/components/skeleton/TrendingProducts
 import BrandStorySkeleton from "@/components/skeleton/BrandStorySkeleton";
 import FeaturedCollectionSkeleton from "@/components/skeleton/featuredCollectionSkeleton";
 import NewsLetterSkeleton from "@/components/skeleton/NewsLetterSkeleton";
+import { AnimatedSection } from "@/components/home/SectionWrapper";
 
 const SocialProof = dynamic(() => import("@/components/home/SocialProof"), {
   loading: () => <SocialProofGridSkeleton />,
@@ -38,19 +38,21 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <Suspense fallback={<FeaturedCollectionSkeleton />}>
+      <AnimatedSection fallback={<FeaturedCollectionSkeleton />} delay={0.1}>
         <FeaturedCollection />
-      </Suspense>
-      <Suspense fallback={<BrandStorySkeleton />}>
+      </AnimatedSection>
+      <AnimatedSection fallback={<BrandStorySkeleton />} delay={0.2}>
         <BrandStory />
-      </Suspense>
-      <Suspense fallback={<TrendingProductsSkeleton />}>
+      </AnimatedSection>
+      <AnimatedSection fallback={<TrendingProductsSkeleton />} delay={0.3}>
         <TrendingProducts />
-      </Suspense>
-      <SocialProof />
-      <Suspense fallback={<NewsLetterSkeleton />}>
+      </AnimatedSection>
+      <AnimatedSection hasAsyncData={false} delay={0.4}>
+        <SocialProof />
+      </AnimatedSection>
+      <AnimatedSection fallback={<NewsLetterSkeleton />} delay={0.5}>
         <NewsLetter />
-      </Suspense>
+      </AnimatedSection>
     </>
   );
 }

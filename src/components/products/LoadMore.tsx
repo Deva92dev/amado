@@ -25,7 +25,6 @@ const LoadMore = ({ initialProducts, layout }: LoadMoreProps) => {
   const onLoadMore = useCallback(() => {
     if (!hasMore || isLoading) return;
     setIsLoading(true);
-    // Optional tiny delay for smoother UI; remove if not desired
     setTimeout(() => {
       setVisibleCount((v) => Math.min(v + BATCH_SIZE, total));
       setIsLoading(false);
@@ -51,8 +50,7 @@ const LoadMore = ({ initialProducts, layout }: LoadMoreProps) => {
             type="button"
             onClick={onLoadMore}
             disabled={isLoading}
-            className="mt-8 mx-auto block rounded-lg px-6 py-3 bg-gradient-electric text-background font-semibold shadow-md hover:shadow-lg transition duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2
-            focus:ring-brand-accent cursor-pointer"
+            className="mt-8 mx-auto block rounded-lg px-6 py-3 bg-gradient-electric text-background font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-accent cursor-pointer"
           >
             {isLoading ? "Loading…" : "Load more"}
           </button>

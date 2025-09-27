@@ -49,7 +49,13 @@ export const getFeaturedCollection = createCache(
     try {
       // Single DB round-trip, array filters are indexable via GIN on category[]
       const products = await db.product.findMany({
-        select: { id: true, name: true, image: true, category: true },
+        select: {
+          id: true,
+          name: true,
+          image: true,
+          category: true,
+          price: true,
+        },
         where: {
           OR: [
             { category: { has: "men" } },
@@ -152,6 +158,31 @@ const _fetchFeaturedProducts = createCache(
     keyPrefix: "fetchFeaturedProducts",
   }
 );
+
+export async function getSearchSuggestions(query: string): Promise<string[]> {
+  if (!query || query.length < 2) {
+    return [];
+  }
+
+  try {
+    const products = await db.product.findMany({
+      where: {
+        OR: [
+          { name: { contains: query, mode: "insensitive" } },
+          { description: { contains: query, mode: "insensitive" } },
+        ],
+      },
+      select: { name: true },
+      take: 6,
+      distinct: ["name"],
+    });
+
+    return products.map((p) => p.name);
+  } catch (error) {
+    console.error("Search suggestions error:", error);
+    return [];
+  }
+}
 
 export async function fetchFeaturedProducts(): Promise<FeaturedProduct[]> {
   const userId = await getOptionalAuth();

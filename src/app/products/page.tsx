@@ -77,7 +77,6 @@ const FilterDialog = dynamic(
   }
 );
 
-// inline above the fold css
 const ProductsPage = async ({ searchParams }: ProductPageProps) => {
   const {
     layout = "grid",

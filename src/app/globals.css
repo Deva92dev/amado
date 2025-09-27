@@ -231,6 +231,17 @@
     border: 1px solid hsla(var(--border) / 0.2);
   }
 
+  .nav-link-white {
+    color: hsl(var(--charcoal)) !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    font-weight: 500;
+  }
+
+  .nav-link-white:hover {
+    color: hsl(var(--warm-gray)) !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+  }
+
   /* Magnetic hover effect */
   .magnetic-hover {
     transition: transform 0.2s ease;
@@ -578,7 +589,6 @@
 
 /* ===== BRAND GRADIENT SYSTEM ===== */
 
-/* 1. HERO GRADIENT - Epic backdrop for main sections */
 @utility bg-gradient-hero {
   background: linear-gradient(
     135deg,
