@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     description:
       "Enjoy the different styles with various option at Amado. Discover our trending products, featured collections, and premium clothing that combines comfort with elegance.",
     type: "website",
-    url: "/opengraph-image.jpg",
+    url: "https://amado-three.vercel.app",
   },
   twitter: {
     title: "Amado – Where Leisure Meets Luxury",
