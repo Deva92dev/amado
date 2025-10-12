@@ -6,6 +6,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "../ui/button";
 import { useAuthUser } from "@/lib/clerk/authClient";
 import { toast } from "@/hooks/use-toast";
+import { env } from "../../../env";
 
 type RazorpayButtonProps = {
   orderId: string | null;
@@ -131,7 +132,7 @@ const RazorpayButton = ({ cartId, orderId }: RazorpayButtonProps) => {
       }
 
       const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
+        key: env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         order_id: order_Id,
         amount: amount * 100,
         currency: "INR",

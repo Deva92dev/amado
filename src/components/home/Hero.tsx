@@ -3,15 +3,15 @@ import { ArrowRight, PlayIcon } from "lucide-react";
 import { MouseTracker } from "./HeroClient";
 import { Button } from "../ui/button";
 import HeroVideo from "./HeroVideo";
+import { env } from "../../../env";
 
 const Hero = () => {
-  const mp4Url =
-    "https://res.cloudinary.com/deva-projects/video/upload/v1758442140/HeroVideo2_c1xutn.mp4";
-  const webMUrl =
-    "https://res.cloudinary.com/deva-projects/video/upload/v1758441091/HeroVideo_s0heve.webm";
+  const mp4Url = env.NEXT_PUBLIC_HERO_MP4;
+  const webMUrl = env.NEXT_PUBLIC_HERO_WEBM;
 
   return (
-    <MouseTracker className="relative bg-gradient-hero h-screen overflow-hidden">
+    <section className="relative bg-gradient-hero h-screen overflow-x-hidden">
+      {/* gradient overlay */}
       <div
         className="absolute inset-0 z-10 animate-gradient-x bg-[length:200%_200%]"
         style={{
@@ -42,43 +42,38 @@ const Hero = () => {
           <span className="text-white/70 text-xs font-medium">HD</span>
         </div>
       </div>
-      {/* ✅ Fixed mobile section - Force full coverage */}
-      <div className="md:hidden absolute inset-0 w-full h-full">
-        <Image
-          src="/media/Mobile.jpg"
-          alt="Elegant fashion model showcasing contemporary style"
-          sizes="(max-width: 768px) 100vw, 0px"
-          fill
-          priority
-          className="object-cover object-center"
-          style={{
-            width: "100%",
-            height: "100%",
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-          }}
-          quality={75}
-        />
-        <div
-          className="absolute inset-0 w-full h-full"
-          style={{
-            background: `linear-gradient(135deg, 
-        hsla(var(--background) / 0.85) 0%, 
-        hsla(var(--background) / 0.5) 35%, 
-        hsla(var(--background) / 0.2) 60%,
-        transparent 75%, 
-        hsla(var(--brand-accent) / 0.15) 100%)`,
-          }}
-        />
+      {/* mobile section */}
+      <div className="relative md:hidden w-full h-full isolate">
+        <div className="absolute inset-0 w-full h-full">
+          <Image
+            src="/media/Mobile.jpg"
+            alt="Elegant fashion model showcasing contemporary style"
+            sizes="(max-width: 768px) 100vw, 0px"
+            fill
+            priority
+            className="object-cover object-center"
+            quality={75}
+          />
+          <div
+            className="absolute inset-0 w-full h-full"
+            style={{
+              background: `linear-gradient(135deg, 
+                hsla(var(--background) / 0.85) 0%, 
+                hsla(var(--background) / 0.5) 35%, 
+                hsla(var(--background) / 0.2) 60%,
+                transparent 75%, 
+                hsla(var(--brand-accent) / 0.15) 100%)`,
+            }}
+          />
+        </div>
       </div>
-      {/* content section */}
-      <div className="absolute inset-0 flex items-center z-20">
+      {/* hero card content with subtle parallax */}
+      <MouseTracker
+        factor={0.015}
+        className="absolute inset-0 z-20 flex items-center"
+      >
         <div className="w-full md:w-[38%] ml-3 mr-3 md:ml-16 md:mr-0 max-w-[calc(100vw-24px)] sm:max-w-[calc(100vw-48px)] transform transition-all duration-1000 animate-slideInFromLeft">
           <div className="relative">
-            {/*  glassmorphism  */}
             <div className="bg-card/10 backdrop-blur-3xl p-4 sm:p-6 md:p-8 lg:p-12 rounded-2xl md:rounded-3xl border border-border/20 shadow-2xl relative overflow-hidden">
               <div className="relative z-10">
                 <h1
@@ -108,7 +103,7 @@ const Hero = () => {
                   meets timeless elegance. Each piece tells a story of
                   craftsmanship and innovation.
                 </p>
-                <div className="flex flex-col sm:flex-row gap-3 md:gap-4 transform transition-all duration-700 delay-700 animate-slideUpFromBottom">
+                <div className="flex flex-col lg:flex-row gap-3 md:gap-4 transform transition-all duration-700 delay-700 animate-slideUpFromBottom">
                   <Button className="group relative btn-brand px-4 sm:px-6 md:px-8 py-3 md:py-4 text-sm sm:text-base md:text-lg font-semibold overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-brand-accent/25 hover:ring-2 hover:ring-brand-accent/50 w-fit cursor-pointer">
                     <span className="relative z-10 flex flex-row gap-2 justify-center items-center transition-transform duration-300 group-hover:translate-x-1">
                       Shop Now
@@ -134,25 +129,32 @@ const Hero = () => {
             </div>
           </div>
         </div>
-      </div>
-      <div
-        className="absolute top-1/4 right-0 w-1/2 h-1/2 bg-gradient-to-bl from-brand-accent/10 via-sapphire/5 to-transparent animate-pulse opacity-30 hover:opacity-40 transition-opacity duration-500"
-        style={{
-          clipPath:
-            "polygon(100% 0%, 100% 60%, 80% 100%, 60% 80%, 40% 100%, 20% 60%, 0% 80%, 0% 0%)",
-          filter: "blur(0.5px)",
-        }}
-      />
-      <div
-        className="absolute bottom-1/4 left-0 w-1/3 h-1/3 bg-gradient-to-tr from-emerald/8 to-transparent animate-pulse delay-1000 opacity-20"
-        style={{
-          clipPath: "ellipse(70% 60% at 30% 70%)",
-          filter: "blur(1px)",
-        }}
-      />
-      <div className="absolute bottom-1/2 left-1/4 w-8 h-8 bg-brand-accent/10 rotate-45 animate-pulse delay-2000" />
-      <div className="absolute top-1/2 left-0 w-1/3 h-px bg-gradient-to-r from-transparent via-brand-accent/40 to-transparent opacity-60 animate-pulse" />
-      <div className="absolute top-3/5 right-0 w-1/4 h-px bg-gradient-to-l from-transparent via-emerald/30 to-transparent opacity-40 animate-pulse delay-500" />
+      </MouseTracker>
+      {/* floating shapes with strong parallax */}
+      <MouseTracker
+        factor={0.04}
+        className="absolute inset-0 z-10 pointer-events-none"
+      >
+        <div
+          className="absolute top-1/4 right-0 w-1/2 h-1/2 bg-gradient-to-bl from-brand-accent/10 via-sapphire/5 to-transparent animate-pulse opacity-30 hover:opacity-40 transition-opacity duration-500"
+          style={{
+            clipPath:
+              "polygon(100% 0%, 100% 60%, 80% 100%, 60% 80%, 40% 100%, 20% 60%, 0% 80%, 0% 0%)",
+            filter: "blur(0.5px)",
+          }}
+        />
+        <div
+          className="absolute bottom-1/4 left-0 w-1/3 h-1/3 bg-gradient-to-tr from-emerald/8 to-transparent animate-pulse delay-1000 opacity-20"
+          style={{
+            clipPath: "ellipse(70% 60% at 30% 70%)",
+            filter: "blur(1px)",
+          }}
+        />
+        <div className="absolute bottom-1/2 left-1/4 w-8 h-8 bg-brand-accent/10 rotate-45 animate-pulse delay-2000" />
+        <div className="absolute top-1/2 left-0 w-1/3 h-px bg-gradient-to-r from-transparent via-brand-accent/40 to-transparent opacity-60 animate-pulse" />
+        <div className="absolute top-3/5 right-0 w-1/4 h-px bg-gradient-to-l from-transparent via-emerald/30 to-transparent opacity-40 animate-pulse delay-500" />
+      </MouseTracker>
+      {/* bottom gradients & wave */}
       <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background via-background/50 to-transparent z-10" />
       <svg
         className="absolute bottom-0 left-0 right-0 w-full h-24 z-[11]"
@@ -166,6 +168,7 @@ const Hero = () => {
           className="animate-pulse"
         />
       </svg>
+      {/* scroll indicator */}
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20">
         <div className="flex flex-col items-center gap-2 group cursor-pointer">
           <div className="w-6 h-10 border-2 border-muted-foreground/40 rounded-lg flex justify-center relative overflow-hidden group-hover:border-brand-accent/60 transition-colors duration-300">
@@ -176,7 +179,7 @@ const Hero = () => {
           </span>
         </div>
       </div>
-    </MouseTracker>
+    </section>
   );
 };
 

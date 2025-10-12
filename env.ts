@@ -19,6 +19,8 @@ export const env = createEnv({
     NEXT_PUBLIC_RAZORPAY_KEY_ID: z
       .string()
       .min(1, "Razorpay Key ID is required"),
+    NEXT_PUBLIC_HERO_MP4: z.string(),
+    NEXT_PUBLIC_HERO_WEBM: z.string(),
   },
   runtimeEnv: {
     DB_PASSWORD: process.env.DB_PASSWORD,
@@ -34,5 +36,7 @@ export const env = createEnv({
       process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
     NEXT_PUBLIC_WEBSITE_URL: process.env.NEXT_PUBLIC_WEBSITE_URL,
     NEXT_PUBLIC_RAZORPAY_KEY_ID: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+    NEXT_PUBLIC_HERO_MP4: process.env.NEXT_PUBLIC_HERO_MP4,
+    NEXT_PUBLIC_HERO_WEBM: process.env.NEXT_PUBLIC_HERO_WEBM,
   },
 });

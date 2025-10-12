@@ -12,8 +12,8 @@ const useMousePosition = () => {
     const handleMouseMove = (e: MouseEvent) => {
       startTransition(() => {
         setMousePosition({
-          x: (e.clientX / window.innerWidth) * 100,
-          y: (e.clientY / window.innerHeight) * 100,
+          x: (e.clientX / window.innerWidth) * 100 - 50, // center at 0
+          y: (e.clientY / window.innerHeight) * 100 - 50,
         });
       });
     };
@@ -28,13 +28,20 @@ const useMousePosition = () => {
 type MouseTrackerProps = {
   children: React.ReactNode;
   className?: string;
+  factor?: number; // strength of parallax (default 0.02)
 };
 
-export const MouseTracker = ({ children, className }: MouseTrackerProps) => {
+export const MouseTracker = ({
+  children,
+  className,
+  factor = 0.02,
+}: MouseTrackerProps) => {
   const { mousePosition, isLoaded, isPending } = useMousePosition();
 
-  // Don't render until loaded to prevent hydration mismatch
-  if (!isLoaded) {
+  const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
+
+  // Don't render parallax on mobile
+  if (!isLoaded || isMobile) {
     return <section className={className}>{children}</section>;
   }
 
@@ -42,10 +49,10 @@ export const MouseTracker = ({ children, className }: MouseTrackerProps) => {
     <section
       className={className}
       style={{
-        transform: `translate(${mousePosition.x * 0.08}px, ${
-          mousePosition.y * 0.08
+        transform: `translate(${mousePosition.x * factor * 100}px, ${
+          mousePosition.y * factor * 60
         }px)`,
-        transition: isPending ? "none" : "transform 0.2s ease-out",
+        transition: isPending ? "none" : "transform 0.25s ease-out",
         willChange: "transform",
       }}
     >
