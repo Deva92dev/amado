@@ -70,7 +70,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     title: "Amado – Where Leisure Meets Luxury",
     description: "Enjoy the different styles with various option at Amado.",
-    url: "/",
+    url: "https://amado-three.vercel.app",
     siteName: "Amado",
     images: [
       {
