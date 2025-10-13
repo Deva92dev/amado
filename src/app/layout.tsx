@@ -74,7 +74,7 @@ export const metadata: Metadata = {
     siteName: "Amado",
     images: [
       {
-        url: "/opengraph-image.jpg",
+        url: "https://amado-three.vercel.app/opengraph-image.jpg",
         width: 1200,
         height: 630,
         alt: "Amado clothing banner",
@@ -85,7 +85,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Amado – Where Leisure Meets Luxury",
     description: "Explore styles of different colors with Amado.",
-    images: ["/opengraph-image.jpg"],
+    images: ["https://amado-three.vercel.app/opengraph-image.jpg"],
   },
   applicationName: "Amado",
 };
