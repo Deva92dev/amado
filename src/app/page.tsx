@@ -26,11 +26,13 @@ export const metadata: Metadata = {
       "Enjoy the different styles with various option at Amado. Discover our trending products, featured collections, and premium clothing that combines comfort with elegance.",
     type: "website",
     url: "https://amado-three.vercel.app",
+    images: ["/opengraph-image.jpg"],
   },
   twitter: {
     title: "Amado – Where Leisure Meets Luxury",
     description:
       "Enjoy the different styles with various option at Amado. Discover our trending products, featured collections, and premium clothing that combines comfort with elegance.",
+    images: ["/opengraph-image.jpg"],
   },
 };
 

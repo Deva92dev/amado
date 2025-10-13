@@ -74,7 +74,7 @@ export const metadata: Metadata = {
     siteName: "Amado",
     images: [
       {
-        url: "https://amado-three.vercel.app/opengraph-image.jpg",
+        url: "/opengraph-image.jpg",
         width: 1200,
         height: 630,
         alt: "Amado clothing banner",
