@@ -95,6 +95,8 @@ const FeaturedCollection = async () => {
                       alt={collections[currentSeason][0].name}
                       fill
                       loading="lazy"
+                      placeholder="blur"
+                      blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/x8AAwMBAWqhCJYAAAAASUVORK5CYII="
                       quality={75}
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, (max-width: 1280px) 60vw, 50vw"
                       className="object-cover object-top"
@@ -159,6 +161,8 @@ const FeaturedCollection = async () => {
                       fill
                       loading="lazy"
                       quality={75}
+                      placeholder="blur"
+                      blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/x8AAwMBAWqhCJYAAAAASUVORK5CYII="
                       sizes="320px"
                       className="w-full h-full object-cover"
                       hover={{ scale: 1.05, duration: 0.7 }}
@@ -230,6 +234,8 @@ const FeaturedCollection = async () => {
                       loading="lazy"
                       sizes="384px"
                       quality={75}
+                      placeholder="blur"
+                      blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/x8AAwMBAWqhCJYAAAAASUVORK5CYII="
                       className="w-full h-full object-cover"
                       hover={{ scale: 1.05, duration: 0.6 }}
                       triggerOnce={true}
@@ -277,6 +283,8 @@ const FeaturedCollection = async () => {
                       fill
                       loading="lazy"
                       quality={75}
+                      placeholder="blur"
+                      blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/x8AAwMBAWqhCJYAAAAASUVORK5CYII="
                       sizes="(max-width: 1200px) 50vw, 40vw"
                       className="w-full h-full object-cover"
                       hover={{ scale: 1.05, duration: 0.7 }}
@@ -336,6 +344,8 @@ const FeaturedCollection = async () => {
                       loading="lazy"
                       quality={75}
                       sizes="320px"
+                      placeholder="blur"
+                      blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/x8AAwMBAWqhCJYAAAAASUVORK5CYII="
                       className="w-full h-full object-cover"
                       hover={{ scale: 1.05, duration: 0.6 }}
                       triggerOnce={true}
@@ -395,7 +405,9 @@ const FeaturedCollection = async () => {
                       alt={collections[currentSeason][1].name}
                       fill
                       loading="lazy"
-                      quality={75}
+                      quality={60}
+                      placeholder="blur"
+                      blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/x8AAwMBAWqhCJYAAAAASUVORK5CYII="
                       sizes="(min-width: 768px) 62.5vw, 100vw"
                       className="object-cover object-top"
                       hover={{ scale: 1.05, duration: 0.7 }}
@@ -422,7 +434,9 @@ const FeaturedCollection = async () => {
                       alt={collections.men[2].name}
                       fill
                       loading="lazy"
-                      quality={75}
+                      quality={60}
+                      placeholder="blur"
+                      blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/x8AAwMBAWqhCJYAAAAASUVORK5CYII="
                       sizes="(max-width: 1024px) 40vw, 30vw"
                       className="object-cover"
                       hover={{ scale: 1.05, duration: 0.7 }}
@@ -449,7 +463,9 @@ const FeaturedCollection = async () => {
                       alt={collections.women[0].name}
                       fill
                       loading="lazy"
-                      quality={75}
+                      quality={60}
+                      placeholder="blur"
+                      blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/x8AAwMBAWqhCJYAAAAASUVORK5CYII="
                       sizes="(max-width: 1024px) 40vw, 30vw"
                       className="object-cover"
                       hover={{ scale: 1.05, duration: 0.7 }}
@@ -474,7 +490,9 @@ const FeaturedCollection = async () => {
                       alt={collections.casual[0].name}
                       fill
                       loading="lazy"
-                      quality={75}
+                      quality={60}
+                      placeholder="blur"
+                      blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/x8AAwMBAWqhCJYAAAAASUVORK5CYII="
                       sizes="(max-width: 1024px) 50vw, 40vw"
                       className="object-cover"
                       hover={{ scale: 1.05, duration: 0.6 }}
@@ -508,7 +526,9 @@ const FeaturedCollection = async () => {
                       }
                       fill
                       loading="lazy"
-                      quality={75}
+                      quality={60}
+                      placeholder="blur"
+                      blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/x8AAwMBAWqhCJYAAAAASUVORK5CYII="
                       sizes="(max-width: 1024px) 50vw, 40vw"
                       className="object-cover"
                       hover={{ scale: 1.05, duration: 0.6 }}
@@ -549,8 +569,10 @@ const FeaturedCollection = async () => {
                     src={collections[currentSeason][1].image}
                     alt={collections[currentSeason][1].name}
                     fill
+                    placeholder="blur"
+                    blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/x8AAwMBAWqhCJYAAAAASUVORK5CYII="
                     loading="lazy"
-                    quality={75}
+                    quality={60}
                     sizes="100vw"
                     className="object-cover object-top"
                   />
@@ -576,7 +598,9 @@ const FeaturedCollection = async () => {
                       alt={collections.men[2].name}
                       fill
                       loading="lazy"
-                      quality={75}
+                      quality={60}
+                      placeholder="blur"
+                      blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/x8AAwMBAWqhCJYAAAAASUVORK5CYII="
                       sizes="(max-width: 768px) 50vw, 33vw"
                       className="object-cover"
                     />
@@ -600,7 +624,9 @@ const FeaturedCollection = async () => {
                       alt={collections.women[0].name}
                       fill
                       loading="lazy"
-                      quality={75}
+                      quality={60}
+                      placeholder="blur"
+                      blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/x8AAwMBAWqhCJYAAAAASUVORK5CYII="
                       sizes="(max-width: 768px) 50vw, 33vw"
                       className="object-cover"
                     />
@@ -626,7 +652,9 @@ const FeaturedCollection = async () => {
                       src={collections.casual[0].image}
                       alt={collections.casual[0].name}
                       fill
-                      quality={75}
+                      quality={60}
+                      placeholder="blur"
+                      blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/x8AAwMBAWqhCJYAAAAASUVORK5CYII="
                       loading="lazy"
                       sizes="(max-width: 768px) 100vw, 50vw"
                       className="object-cover"
