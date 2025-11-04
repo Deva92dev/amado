@@ -96,7 +96,7 @@ const FeaturedCollection = async () => {
                       fill
                       loading="lazy"
                       quality={75}
-                      sizes="(min-width: 1280px) 50vw, 60vw"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, (max-width: 1280px) 60vw, 50vw"
                       className="object-cover object-top"
                       hover={{ scale: 1.05, duration: 0.7 }}
                     />

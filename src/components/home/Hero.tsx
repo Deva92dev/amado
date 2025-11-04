@@ -15,10 +15,10 @@ const Hero = () => {
       <div
         className="absolute inset-0 z-10 animate-gradient-x bg-[length:200%_200%]"
         style={{
-          backgroundImage: `linear-gradient(135deg, 
-            hsla(var(--brand-accent) / 0.1), 
-            hsla(var(--metal-gold) / 0.05),
-            hsla(var(--brand-accent) / 0.08))`,
+          backgroundImage: `linear-gradient(135deg,
+            hsla(var(--brand-accent)/0.1),
+            hsla(var(--metal-gold)/0.05),
+            hsla(var(--brand-accent)/0.08))`,
         }}
       />
       {/* desktop video section */}
@@ -27,42 +27,42 @@ const Hero = () => {
         <div
           className="absolute inset-0 z-[5]"
           style={{
-            background: `linear-gradient(110deg, 
-              hsla(var(--background) / 0.95) 0%, 
-              hsla(var(--background) / 0.85) 18%, 
-              hsla(var(--background) / 0.6) 32%, 
-              hsla(var(--background) / 0.3) 45%, 
-              hsla(var(--background) / 0.1) 58%, 
-              transparent 70%, 
-              hsla(var(--brand-accent) / 0.1) 90%,
-              hsla(var(--brand-accent) / 0.15) 100%)`,
+            background: `linear-gradient(110deg,
+              hsla(var(--background)/0.95) 0%,
+              hsla(var(--background)/0.85) 18%,
+              hsla(var(--background)/0.6) 32%,
+              hsla(var(--background)/0.3) 45%,
+              hsla(var(--background)/0.1) 58%,
+              transparent 70%,
+              hsla(var(--brand-accent)/0.1) 90%,
+              hsla(var(--brand-accent)/0.15) 100%)`,
           }}
         />
-        <div className="absolute top-4 right-4 z-[7] bg-black/20 backdrop-blur-sm rounded-full px-3 py-1">
-          <span className="text-white/70 text-xs font-medium">HD</span>
-        </div>
       </div>
-      {/* mobile section */}
+      {/* mobile static section */}
       <div className="relative md:hidden w-full h-full isolate">
         <div className="absolute inset-0 w-full h-full">
           <Image
-            src="/media/Mobile.jpg"
+            src="/media/Mobile.webp"
             alt="Elegant fashion model showcasing contemporary style"
-            sizes="(max-width: 768px) 100vw, 0px"
             fill
-            priority
+            priority={false}
+            loading="lazy"
+            sizes="(max-width: 768px) 100vw, 0px"
+            quality={60}
             className="object-cover object-center"
-            quality={75}
+            placeholder="blur"
+            blurDataURL="data:image/webp;base64,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"
           />
           <div
             className="absolute inset-0 w-full h-full"
             style={{
-              background: `linear-gradient(135deg, 
-                hsla(var(--background) / 0.85) 0%, 
-                hsla(var(--background) / 0.5) 35%, 
-                hsla(var(--background) / 0.2) 60%,
-                transparent 75%, 
-                hsla(var(--brand-accent) / 0.15) 100%)`,
+              background: `linear-gradient(135deg,
+                hsla(var(--background)/0.85) 0%,
+                hsla(var(--background)/0.5) 35%,
+                hsla(var(--background)/0.2) 60%,
+                transparent 75%,
+                hsla(var(--brand-accent)/0.15) 100%)`,
             }}
           />
         </div>
