@@ -103,6 +103,8 @@ export default function RootLayout({
             name="description"
             content="Enjoy the different styles with various option at Amado."
           />
+          <link rel="preload" as="image" href="/Hero.webp" type="image/webp" />
+          <meta name="lcp-target" content="#lcp-element" />
         </head>
         <body
           className={`

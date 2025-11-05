@@ -11,6 +11,8 @@ import BrandStorySkeleton from "@/components/skeleton/BrandStorySkeleton";
 import FeaturedCollectionSkeleton from "@/components/skeleton/featuredCollectionSkeleton";
 import NewsLetterSkeleton from "@/components/skeleton/NewsLetterSkeleton";
 import { AnimatedSection } from "@/components/home/SectionWrapper";
+import { Suspense } from "react";
+import HeroSkeleton from "@/components/home/HeroSkeleton";
 
 const SocialProof = dynamic(() => import("@/components/home/SocialProof"), {
   loading: () => <SocialProofGridSkeleton />,
@@ -37,7 +39,9 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <>
-      <Hero />
+      <Suspense fallback={<HeroSkeleton />}>
+        <Hero />
+      </Suspense>
       <AnimatedSection fallback={<FeaturedCollectionSkeleton />} delay={0.1}>
         <FeaturedCollection />
       </AnimatedSection>
