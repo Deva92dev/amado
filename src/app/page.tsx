@@ -11,8 +11,6 @@ import BrandStorySkeleton from "@/components/skeleton/BrandStorySkeleton";
 import FeaturedCollectionSkeleton from "@/components/skeleton/featuredCollectionSkeleton";
 import NewsLetterSkeleton from "@/components/skeleton/NewsLetterSkeleton";
 import { AnimatedSection } from "@/components/home/SectionWrapper";
-import { Suspense } from "react";
-import HeroSkeleton from "@/components/home/HeroSkeleton";
 
 const SocialProof = dynamic(() => import("@/components/home/SocialProof"), {
   loading: () => <SocialProofGridSkeleton />,
@@ -27,7 +25,7 @@ export const metadata: Metadata = {
     description:
       "Enjoy the different styles with various option at Amado. Discover our trending products, featured collections, and premium clothing that combines comfort with elegance.",
     type: "website",
-    url: "https://amado-three.vercel.app",
+    url: "https://amado-zeta.vercel.app/",
   },
   twitter: {
     title: "Amado – Where Leisure Meets Luxury",
@@ -39,9 +37,7 @@ export const metadata: Metadata = {
 export default function Home() {
   return (
     <>
-      <Suspense fallback={<HeroSkeleton />}>
-        <Hero />
-      </Suspense>
+      <Hero />
       <AnimatedSection fallback={<FeaturedCollectionSkeleton />} delay={0.1}>
         <FeaturedCollection />
       </AnimatedSection>

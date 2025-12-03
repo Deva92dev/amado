@@ -8,22 +8,18 @@ import {
 } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/navbar/Navbar";
-import Providers from "./providers";
 import Footer from "@/components/global/Footer";
-import { LenisProvider } from "./LenisProvider";
-import { MotionProvider } from "./MotionProvider";
-import QueryProvider from "./QueryProvider";
 import CartDrawer from "@/components/cart/CartDrawer";
 import Script from "next/script";
 import { siteSchema } from "@/utils/jsonldSchema";
-import ClerkClientProvider from "./ClerkProvider";
 import BackToTopButton from "@/components/global/BackToTop";
+import GlobalWrapper from "./ClientProvider";
 
 export const playfair = Playfair_Display({
   subsets: ["latin"],
-  variable: "--font-playfair-display", // maps to CSS var
+  variable: "--font-playfair-display",
   display: "swap",
-  weight: ["400", "700"], // regular + bold
+  weight: ["400", "700"],
 });
 
 export const abril = Abril_Fatface({
@@ -70,11 +66,11 @@ export const metadata: Metadata = {
     locale: "en_US",
     title: "Amado – Where Leisure Meets Luxury",
     description: "Enjoy the different styles with various option at Amado.",
-    url: "https://amado-three.vercel.app",
+    url: "https://amado-zeta.vercel.app",
     siteName: "Amado",
     images: [
       {
-        url: "https://amado-three.vercel.app/opengraph-image.jpg",
+        url: "/opengraph-image.jpg",
         width: 1200,
         height: 630,
         alt: "Amado clothing banner",
@@ -85,7 +81,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Amado – Where Leisure Meets Luxury",
     description: "Explore styles of different colors with Amado.",
-    images: ["https://amado-three.vercel.app/opengraph-image.jpg"],
+    images: ["/opengraph-image.jpg"],
   },
   applicationName: "Amado",
 };
@@ -96,45 +92,37 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkClientProvider>
-      <html lang="en" suppressHydrationWarning>
-        <head>
-          <meta
-            name="description"
-            content="Enjoy the different styles with various option at Amado."
-          />
-          <link rel="preload" as="image" href="/Hero.webp" type="image/webp" />
-          <meta name="lcp-target" content="#lcp-element" />
-        </head>
-        <body
-          className={`
-        ${playfair.variable}   /* headline serif */
-        ${inter.variable}      /* body sans-serif */
-        ${italiana.variable}   /* accent script */
-      `}
-        >
-          <Script
-            id="site-schema"
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{
-              __html: JSON.stringify(siteSchema).replace(/</g, "\\u003c"),
-            }}
-          />
-          <QueryProvider>
-            <Providers>
-              <LenisProvider>
-                <MotionProvider>
-                  <Navbar />
-                  {children}
-                  <Footer />
-                  <CartDrawer />
-                  <BackToTopButton />
-                </MotionProvider>
-              </LenisProvider>
-            </Providers>
-          </QueryProvider>
-        </body>
-      </html>
-    </ClerkClientProvider>
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <meta
+          name="description"
+          content="Enjoy the different styles with various option at Amado."
+        />
+        <meta name="lcp-target" content="#lcp-element" />
+      </head>
+      <body
+        className={`
+          ${playfair.variable} 
+          ${inter.variable} 
+          ${italiana.variable}
+          antialiased
+        `}
+      >
+        <Script
+          id="site-schema"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(siteSchema).replace(/</g, "\\u003c"),
+          }}
+        />
+        <GlobalWrapper>
+          <Navbar />
+          {children}
+          <Footer />
+          <CartDrawer />
+          <BackToTopButton />
+        </GlobalWrapper>
+      </body>
+    </html>
   );
 }

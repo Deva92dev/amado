@@ -1,34 +1,11 @@
 "use client";
 
-import { useEffect, useState, useTransition } from "react";
-
-const useMousePosition = () => {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [isPending, startTransition] = useTransition();
-
-  useEffect(() => {
-    setIsLoaded(true);
-    const handleMouseMove = (e: MouseEvent) => {
-      startTransition(() => {
-        setMousePosition({
-          x: (e.clientX / window.innerWidth) * 100 - 50, // center at 0
-          y: (e.clientY / window.innerHeight) * 100 - 50,
-        });
-      });
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
-
-  return { mousePosition, isLoaded, isPending };
-};
+import { useEffect, useRef } from "react";
 
 type MouseTrackerProps = {
   children: React.ReactNode;
   className?: string;
-  factor?: number; // strength of parallax (default 0.02)
+  factor?: number; // Strength of parallax
 };
 
 export const MouseTracker = ({
@@ -36,27 +13,34 @@ export const MouseTracker = ({
   className,
   factor = 0.02,
 }: MouseTrackerProps) => {
-  const { mousePosition, isLoaded, isPending } = useMousePosition();
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
+  useEffect(() => {
+    if (typeof window === "undefined" || window.innerWidth < 768) return;
 
-  // Don't render parallax on mobile
-  if (!isLoaded || isMobile) {
-    return <section className={className}>{children}</section>;
-  }
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!containerRef.current) return;
+
+      const x = (e.clientX / window.innerWidth) * 100 - 50;
+      const y = (e.clientY / window.innerHeight) * 100 - 50;
+
+      // Direct DOM manipulation (No React Render), translate3d for GPU acceleration
+      containerRef.current.style.transform = `translate3d(${
+        x * factor * 100
+      }px, ${y * factor * 60}px, 0)`;
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, [factor]);
 
   return (
-    <section
+    <div
+      ref={containerRef}
       className={className}
-      style={{
-        transform: `translate(${mousePosition.x * factor * 100}px, ${
-          mousePosition.y * factor * 60
-        }px)`,
-        transition: isPending ? "none" : "transform 0.25s ease-out",
-        willChange: "transform",
-      }}
+      style={{ willChange: "transform", transition: "transform 0.1s ease-out" }}
     >
       {children}
-    </section>
+    </div>
   );
 };

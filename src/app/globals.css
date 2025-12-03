@@ -335,6 +335,25 @@
   background-color: hsl(215, 100%, 38%); /* Slightly darker on hover */
 }
 
+@utility overlay-hero-scrim {
+  /* Fades from 70% black on the left (behind text) to transparent on the right */
+  background: linear-gradient(
+    90deg,
+    hsla(0, 0%, 0%, 0.7) 0%,
+    hsla(0, 0%, 0%, 0.4) 40%,
+    transparent 100%
+  );
+  position: absolute;
+  inset: 0;
+  z-index: 1; /* Sits above image, below text */
+}
+
+/* Update your glow-text to be more readable on images */
+.glow-text-enhanced {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5),
+    /* Hard shadow for legibility */ 0 0 20px hsla(var(--brand-accent) / 0.6); /* Brand glow */
+}
+
 @utility btn-brand {
   @apply text-primary-foreground rounded-[--radius];
   background-color: hsl(var(--brand-accent));

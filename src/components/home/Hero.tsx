@@ -1,99 +1,49 @@
-"use client";
-
 import Image from "next/image";
 import { ArrowRight, PlayIcon } from "lucide-react";
 import { MouseTracker } from "./HeroClient";
 import { Button } from "../ui/button";
-import HeroVideo from "./HeroVideo";
-import { env } from "../../../env";
 
 const Hero = () => {
-  const mp4Url = env.NEXT_PUBLIC_HERO_MP4;
-  const webMUrl = env.NEXT_PUBLIC_HERO_WEBM;
-
   return (
-    <section className="relative bg-gradient-hero h-screen overflow-x-hidden">
-      {/* gradient overlay */}
-      <div
-        className="absolute inset-0 z-10 animate-gradient-x bg-[length:200%_200%]"
-        style={{
-          backgroundImage: `linear-gradient(135deg,
-            hsla(215 100% 40% 0.1),
-            hsla(46 63% 52% 0.05),
-            hsla(215 100% 40% 0.08))`,
-        }}
-      />
-      {/* desktop video section */}
-      <div className="hidden md:block absolute inset-0 w-full h-full">
-        <HeroVideo mp4Url={mp4Url} webMUrl={webMUrl} />
-        <div
-          className="absolute inset-0 z-[5]"
-          style={{
-            background: `linear-gradient(110deg,
-              hsla(0 0% 100% 0.95) 0%,
-              hsla(0 0% 100% 0.85) 18%,
-              hsla(0 0% 100% 0.6) 32%,
-              hsla(0 0% 100% 0.3) 45%,
-              hsla(0 0% 100% 0.1) 58%,
-              transparent 70%, 
-              hsla(215 100% 40% 0.1) 90%,
-              hsla(215 100% 40% 0.15) 100%)`,
-          }}
+    <section className="relative w-full h-[100dvh] overflow-hidden bg-gradient-hero">
+      <div className="absolute inset-0 z-0">
+        <Image
+          src="/Main.webp"
+          alt="Elegant fashion model showcasing contemporary style"
+          fill
+          priority
+          sizes="100vw"
+          quality={80}
+          className="object-cover object-center"
+          placeholder="blur"
+          blurDataURL="data:image/webp;base64,UklGRj4AAABXRUJQVlA4IDIAAACwAQCdASoKAAUAAgA0JZwAAu0SUHLAAP7ydPuPi+5HSP8E3Uo7tRBrMt1LZJGZOAAAAA=="
         />
+        {/* Gradient Overlay for Text Readability */}
+        <div className="overlay-hero-scrim" />
       </div>
-      {/* mobile static section */}
-      <div className="relative md:hidden w-full h-full isolate">
-        <div className="absolute inset-0 w-full h-full">
-          <Image
-            src="/media/Mobile.webp"
-            alt="Elegant fashion model showcasing contemporary style"
-            fill
-            priority={false}
-            loading="lazy"
-            sizes="(max-width: 768px) 100vw, 0px"
-            quality={60}
-            className="object-cover object-center"
-            placeholder="blur"
-            blurDataURL="data:image/webp;base64,UklGRj4AAABXRUJQVlA4IDIAAACwAQCdASoKAAUAAgA0JZwAAu0SUHLAAP7ydPuPi+5HSP8E3Uo7tRBrMt1LZJGZOAAAAA=="
-          />
-          <div
-            className="absolute inset-0 w-full h-full"
-            style={{
-              background: `linear-gradient(135deg,
-                hsla(0 0% 100% 0.85) 0%,
-                hsla(0 0% 100% 0.5) 35%,
-                hsla(0 0% 100% 0.2) 60%,
-                transparent 75%,
-                hsla(215 100% 40% 0.15) 100%)`,
-            }}
-          />
-        </div>
-      </div>
-      {/* hero card content with subtle parallax */}
+      {/* 3. HERO CONTENT */}
       <MouseTracker
         factor={0.015}
         className="absolute inset-0 z-20 flex items-center"
       >
-        <div className="w-full md:w-[38%] ml-3 mr-3 md:ml-16 md:mr-0 max-w-[calc(100vw-24px)] sm:max-w-[calc(100vw-48px)] transform transition-all duration-1000 animate-slideInFromLeft">
+        <div className="w-full md:w-[45%] ml-4 md:ml-16 max-w-full">
           <div className="relative">
-            <div className="bg-card/10 backdrop-blur-3xl p-4 sm:p-6 md:p-8 lg:p-12 rounded-2xl md:rounded-3xl border border-border/20 shadow-2xl relative overflow-hidden">
+            <div className="bg-card/10 backdrop-blur-md p-6 md:p-12 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden">
               <div className="relative z-10">
                 <h1
                   id="lcp-element"
-                  className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl text-foreground mb-4 md:mb-6 leading-tight transform transition-all duration-700 delay-300 glow-text animate-slideUpFromBottom"
+                  className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-white mb-6 leading-tight animate-slideUpFromBottom"
                   style={{
-                    textShadow: "0 0 30px hsla(var(--brand-accent) / 0.4)",
-                    filter:
-                      "drop-shadow(0 4px 12px hsla(var(--foreground) / 0.15))",
+                    textShadow: "0 2px 10px rgba(0,0,0,0.3)",
                   }}
                 >
                   Redefine Your
                   <span
-                    className="block text-transparent bg-clip-text animate-gradient-x bg-[length:200%_200%] font-bold"
+                    className="block text-transparent bg-clip-text animate-gradient-x bg-[length:200%_200%] font-extrabold mt-2"
                     style={{
                       backgroundImage: `linear-gradient(90deg, 
                         hsl(var(--brand-accent)), 
-                        hsl(var(--sapphire)), 
+                        #fff, 
                         hsl(var(--emerald)), 
                         hsl(var(--brand-accent)))`,
                     }}
@@ -101,30 +51,28 @@ const Hero = () => {
                     Style
                   </span>
                 </h1>
-                <p className="text-sm sm:text-base md:text-lg lg:text-xl text-muted-foreground mb-6 md:mb-10 leading-relaxed transform transition-all duration-700 delay-500 animate-slideUpFromBottom">
+
+                <p className="text-base md:text-xl text-white/90 mb-8 leading-relaxed max-w-lg">
                   Discover our curated collection where contemporary fashion
                   meets timeless elegance. Each piece tells a story of
                   craftsmanship and innovation.
                 </p>
-                <div className="flex flex-col lg:flex-row gap-3 md:gap-4 transform transition-all duration-700 delay-700 animate-slideUpFromBottom">
-                  <Button className="group relative btn-brand px-4 sm:px-6 md:px-8 py-3 md:py-4 text-sm sm:text-base md:text-lg font-semibold overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-brand-accent/25 hover:ring-2 hover:ring-brand-accent/50 w-fit cursor-pointer">
-                    <span className="relative z-10 flex flex-row gap-2 justify-center items-center transition-transform duration-300 group-hover:translate-x-1">
+
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button className="btn-brand px-8 py-6 text-lg font-bold rounded-xl transition-transform hover:scale-105">
+                    <span className="flex items-center gap-2">
                       Shop Now
-                      <ArrowRight className="w-3 sm:w-4 h-3 sm:h-4 transition-transform duration-300 group-hover:translate-x-1" />
+                      <ArrowRight className="w-5 h-5" />
                     </span>
-                    <div
-                      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                      style={{
-                        background: `linear-gradient(45deg, 
-                          hsl(var(--sapphire)), 
-                          hsl(var(--emerald)))`,
-                      }}
-                    />
                   </Button>
-                  <Button className="group px-4 sm:px-6 md:px-8 py-3 md:py-4 text-sm sm:text-base md:text-lg font-semibold text-foreground border-2 border-border/30 rounded-[--radius] bg-card/5 backdrop-blur-sm hover:bg-accent/20 hover:border-border/50 transition-all duration-300 hover:scale-105 hover:shadow-lg w-fit cursor-pointer">
+
+                  <Button
+                    variant="outline"
+                    className="px-8 py-6 text-lg font-bold bg-white/10 backdrop-blur-sm border-white/20 text-white hover:bg-white/20 hover:text-white rounded-xl transition-transform hover:scale-105"
+                  >
                     <span className="flex items-center gap-2">
                       Watch Story
-                      <PlayIcon className="w-3 sm:w-4 h-3 sm:h-4 transition-transform duration-300 group-hover:scale-110" />
+                      <PlayIcon className="w-5 h-5" />
                     </span>
                   </Button>
                 </div>
@@ -133,51 +81,26 @@ const Hero = () => {
           </div>
         </div>
       </MouseTracker>
-      {/* floating shapes with strong parallax */}
+      {/* 4. PARALLAX SHAPES */}
       <MouseTracker
         factor={0.04}
-        className="absolute inset-0 z-10 pointer-events-none"
+        className="absolute inset-0 z-10 pointer-events-none hidden md:block"
       >
-        <div
-          className="absolute top-1/4 right-0 w-1/2 h-1/2 bg-gradient-to-bl from-brand-accent/10 via-sapphire/5 to-transparent animate-pulse opacity-30 hover:opacity-40 transition-opacity duration-500"
-          style={{
-            clipPath:
-              "polygon(100% 0%, 100% 60%, 80% 100%, 60% 80%, 40% 100%, 20% 60%, 0% 80%, 0% 0%)",
-            filter: "blur(0.5px)",
-          }}
-        />
-        <div
-          className="absolute bottom-1/4 left-0 w-1/3 h-1/3 bg-gradient-to-tr from-emerald/8 to-transparent animate-pulse delay-1000 opacity-20"
-          style={{
-            clipPath: "ellipse(70% 60% at 30% 70%)",
-            filter: "blur(1px)",
-          }}
-        />
-        <div className="absolute bottom-1/2 left-1/4 w-8 h-8 bg-brand-accent/10 rotate-45 animate-pulse delay-2000" />
-        <div className="absolute top-1/2 left-0 w-1/3 h-px bg-gradient-to-r from-transparent via-brand-accent/40 to-transparent opacity-60 animate-pulse" />
-        <div className="absolute top-3/5 right-0 w-1/4 h-px bg-gradient-to-l from-transparent via-emerald/30 to-transparent opacity-40 animate-pulse delay-500" />
+        {/* Simplified shapes for better performance */}
+        <div className="absolute top-[20%] right-[10%] w-64 h-64 bg-brand-accent/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-[20%] left-[10%] w-48 h-48 bg-emerald/20 rounded-full blur-3xl animate-pulse delay-700" />
       </MouseTracker>
-      {/* bottom gradients & wave */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background via-background/50 to-transparent z-10" />
-      <svg
-        className="absolute bottom-0 left-0 right-0 w-full h-24 z-[11]"
-        viewBox="0 0 1200 120"
-        preserveAspectRatio="none"
-        aria-hidden="true"
-      >
-        <path
-          d="M0,120 C300,40 600,10 900,30 C1050,40 1150,70 1200,80 L1200,120 L0,120 Z"
-          fill="hsl(var(--background))"
-          className="animate-pulse"
-        />
-      </svg>
-      {/* scroll indicator */}
+
+      {/* 5. BOTTOM DECORATION */}
+      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-background to-transparent z-10" />
+
+      {/* Scroll Indicator */}
       <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20">
-        <div className="flex flex-col items-center gap-2 group cursor-pointer">
-          <div className="w-6 h-10 border-2 border-muted-foreground/40 rounded-lg flex justify-center relative overflow-hidden group-hover:border-brand-accent/60 transition-colors duration-300">
-            <div className="w-1 h-3 bg-gradient-to-b from-brand-accent to-emerald rounded-sm mt-2 animate-bounce" />
+        <div className="flex flex-col items-center gap-2 animate-bounce">
+          <div className="w-1 h-12 bg-white/50 rounded-full relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-1/2 bg-brand-accent animate-slideDown" />
           </div>
-          <span className="text-muted-foreground text-xs font-medium tracking-widest font-accent group-hover:text-brand-accent/80 transition-colors duration-300">
+          <span className="text-[10px] font-bold tracking-[0.2em] text-white/70">
             SCROLL
           </span>
         </div>
