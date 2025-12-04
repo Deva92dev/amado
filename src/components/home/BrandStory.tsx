@@ -1,5 +1,6 @@
 import dynamic from "next/dynamic";
 import Image from "next/image";
+import brandImage from "@/assets/Brand.webp";
 
 const MotionSection = dynamic(() =>
   import("../animations").then((mod) => mod.MotionSection)
@@ -120,7 +121,7 @@ const BrandStory = () => {
           className="relative h-full min-h-[400px] lg:min-h-[600px] rounded-2xl overflow-hidden"
         >
           <Image
-            src="/media/Brand.webp"
+            src={brandImage}
             alt="Woman measuring the length of tucked cloth"
             fill
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px"
