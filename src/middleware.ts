@@ -37,7 +37,15 @@ export default clerkMiddleware(async (auth, req) => {
 
 export const config = {
   matcher: [
-    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
-    "/(api|trpc)(.*)",
+    "/admin/:path*",
+    "/orders/:path*",
+    "/favorites/:path*",
+    "/reviews/:path*",
+    "/checkout/:path*",
+    "/cart/:path*",
+    "/products/:path*",
+    // API & Backend Routes (Always run)
+    "/api/:path*",
+    "/trpc/:path*",
   ],
 };

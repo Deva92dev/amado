@@ -9,8 +9,9 @@ import {
   SignOutButton,
   SignedIn,
   SignedOut,
+  useClerk,
 } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export function useAuthUser() {
   const { user, isSignedIn, isLoaded } = useUser();
@@ -41,25 +42,26 @@ export function useAuthUserWithLoading() {
 
 export function useAuthActions() {
   const { signOut } = useAuth();
+  const { openSignIn, openUserProfile } = useClerk();
   const router = useRouter();
+  const pathname = usePathname();
 
   const handleSignOut = async () => {
-    await signOut();
-    router.push("/");
+    await signOut({ redirectUrl: pathname || "/" });
   };
 
-  const redirectToSignIn = () => {
-    router.push("/sign-in");
+  const openSignInModal = () => {
+    openSignIn();
   };
 
-  const redirectToProfile = () => {
-    router.push("/profile");
+  const openProfileModal = () => {
+    openUserProfile();
   };
 
   return {
     handleSignOut,
-    redirectToSignIn,
-    redirectToProfile,
+    openSignInModal,
+    openProfileModal,
   };
 }
 
@@ -86,7 +88,7 @@ export function AuthSignedOut({
 export function AuthSignInButton({
   children,
   className = "",
-  mode = "modal",
+  mode = "modal", // Default is modal
   ...props
 }: {
   children?: React.ReactNode;
@@ -134,7 +136,7 @@ export function AuthSignUpButton({
 export function AuthSignOutButton({
   children,
   className = "",
-  redirectUrl = "/",
+  redirectUrl,
   ...props
 }: {
   children?: React.ReactNode;
@@ -142,8 +144,11 @@ export function AuthSignOutButton({
   redirectUrl?: string;
   [key: string]: any;
 }) {
+  const pathname = usePathname();
+  const finalRedirectUrl = redirectUrl || pathname || "/";
+
   return (
-    <SignOutButton redirectUrl={redirectUrl} {...props}>
+    <SignOutButton redirectUrl={finalRedirectUrl} {...props}>
       {children || (
         <button
           className={`px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded transition-colors ${className}`}

@@ -12,6 +12,7 @@ import {
   AlertCircle,
   Clock,
 } from "lucide-react";
+import AboutImage from "@/assets/About.webp";
 
 export const metadata: Metadata = {
   title: "Terms & Conditions - Legal Agreement | Amado",
@@ -95,7 +96,7 @@ export default function TermsConditionsPage() {
         {/* Header Section */}
         <section className="relative w-full h-[50vh] min-h-[400px] mb-16 overflow-hidden">
           <Image
-            src="/media/About.webp"
+            src={AboutImage}
             alt="Terms & Conditions"
             width={1920}
             height={800}

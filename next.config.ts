@@ -7,10 +7,10 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "www.pexels.com", pathname: "/**" },
       { protocol: "https", hostname: "img.clerk.com", pathname: "/**" },
     ],
+    qualities: [40, 60, 75, 80, 85, 90, 100],
     formats: ["image/avif", "image/webp"],
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048],
+    deviceSizes: [375, 425, 640, 750, 828, 1080, 1200, 1920, 2048],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 320, 384, 450, 512, 640],
-    qualities: [25, 40, 50, 60, 75, 80, 85, 90],
     minimumCacheTTL: 31536000,
   },
 
@@ -40,14 +40,6 @@ const nextConfig: NextConfig = {
             value: "public, max-age=31536000, immutable",
           },
         ],
-      },
-      {
-        source: "/:path*.mp4",
-        headers: [{ key: "Cache-Control", value: "public, max-age=31536000" }],
-      },
-      {
-        source: "/:path*.webm",
-        headers: [{ key: "Cache-Control", value: "public, max-age=31536000" }],
       },
       {
         source: "/robots.txt",

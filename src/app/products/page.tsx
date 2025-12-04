@@ -87,7 +87,6 @@ const ProductsPage = async ({ searchParams }: ProductPageProps) => {
     size = "",
   } = await searchParams;
 
-  // Optimize data fetching - use Promise.all for better performance
   // Only use Promise.allSettled if you need the page to render even when APIs fail
   try {
     const [meta, totalProducts] = await Promise.all([

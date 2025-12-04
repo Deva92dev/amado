@@ -2,25 +2,29 @@ import { Users, Award, Heart, CheckCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import AboutImage from "@/assets/About.webp";
+import Testim1 from "@/assets/Testim1.webp";
+import Testim2 from "@/assets/Testim2.webp";
+import Testim3 from "@/assets/Testim3.webp";
 
 const team = [
   {
     name: "Alex Mercer",
     role: "Founder & Creative Director",
-    image: "/media/Testim1.webp",
+    image: Testim1,
     description:
       "Fashion visionary dedicated to timeless designs and sustainable fabrics.",
   },
   {
     name: "Samira Patel",
     role: "Head of Design",
-    image: "/media/Testim2.webp",
+    image: Testim2,
     description: "Expert in modern silhouettes and trend forecasting.",
   },
   {
     name: "Rafael Gomez",
     role: "Lead Tailor",
-    image: "/media/Testim3.webp",
+    image: Testim3,
     description: "Craftsman with eye for detail and quality finishing.",
   },
 ];
@@ -31,7 +35,7 @@ export default function AboutPage() {
       {/* Hero Section */}
       <section className="relative w-full h-[60vh] min-h-[500px] mb-20 overflow-hidden">
         <Image
-          src="/media/About.webp"
+          src={AboutImage}
           alt="Amado Clothing"
           fill
           className="object-cover"

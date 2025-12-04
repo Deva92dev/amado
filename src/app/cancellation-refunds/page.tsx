@@ -15,6 +15,7 @@ import {
   CreditCard,
   Zap,
 } from "lucide-react";
+import AboutImage from "@/assets/About.webp";
 
 export const metadata: Metadata = {
   title: "Cancellation & Refund Policy - Fair & Flexible | Amado",
@@ -157,7 +158,7 @@ export default function CancellationRefunds() {
         {/* Hero Section */}
         <section className="relative w-full h-[50vh] min-h-[400px] mb-16 overflow-hidden">
           <Image
-            src="/media/About.webp"
+            src={AboutImage}
             alt="Amado Cancellation and Refund Policy"
             width={1920}
             height={800}

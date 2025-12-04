@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { Shield, Lock, Eye, Clock, Database, UserCheck } from "lucide-react";
+import AboutImage from "@/assets/About.webp";
 
 export const metadata: Metadata = {
   title: "Privacy Policy - Protecting Your Data | Amado",
@@ -85,7 +86,7 @@ export default function PrivacyPolicyPage() {
       <main className="relative overflow-hidden bg-[hsl(var(--background))] min-h-screen pb-24">
         <section className="relative w-full h-[50vh] min-h-[400px] mb-16 overflow-hidden">
           <Image
-            src="/media/About.webp"
+            src={AboutImage}
             alt="Privacy Protection"
             width={1920}
             height={800}
@@ -181,7 +182,6 @@ export default function PrivacyPolicyPage() {
             </div>
           </div>
         </section>
-        {/* Additional sections omitted for brevity */}
       </main>
     </>
   );
