@@ -1,12 +1,14 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import Container from "../global/Container";
-import CartButton from "./CartButton";
 import DarkMode from "./DarkMode";
-import LinksDropDown from "./LinksDropDown";
 import Logo from "./logo";
 import { publicNavLinks } from "@/utils/links";
-import SearchBar from "../products/SearchBar";
+import dynamic from "next/dynamic";
+
+const CartButton = dynamic(() => import("./CartButton"), { ssr: true });
+const LinksDropDown = dynamic(() => import("./LinksDropDown"), { ssr: true });
+const SearchBar = dynamic(() => import("../products/SearchBar"), { ssr: true });
 
 const styles = {
   nav: "fixed top-0 w-full z-50 transition-all duration-300",
