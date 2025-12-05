@@ -42,6 +42,9 @@ const FeaturedCollection = async () => {
   const shimmerEffectClasses =
     "absolute top-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-metal-gold/20 to-transparent group-hover:left-full transition-all duration-700 ease-in-out z-10";
 
+  const cardTextBase = "text-white drop-shadow-md";
+  const cardSubText = "text-warm-gray font-medium drop-shadow-sm";
+
   return (
     <MotionSection
       animation={{
@@ -49,7 +52,7 @@ const FeaturedCollection = async () => {
         direction: "up",
         duration: 0.8,
         ease: "easeOut",
-        stagger: 0.1, // This will apply to MotionCard children
+        stagger: 0.1,
       }}
       mobile={{
         disableParallax: true,
@@ -64,7 +67,7 @@ const FeaturedCollection = async () => {
         <div className="container mx-auto px-6">
           {/* Section Header */}
           <div className="text-center mb-20">
-            <span className="px-6 py-3 text-sm font-medium tracking-wider text-gold bg-gradient-to-r from-pastel-blush to-warm-gray rounded-full border border-gold/30 inline-block mb-6 font-accent">
+            <span className="px-6 py-3 text-sm font-medium tracking-wider text-charcoal dark:text-metal-gold bg-gradient-to-r from-pastel-blush to-warm-gray rounded-full border border-gold/30 inline-block mb-6 font-accent">
               Curated Collections
             </span>
             <h2 className="h1 bg-gradient-to-r from-charcoal via-foreground to-metal-gold bg-clip-text text-transparent mb-8 glass-effect magnetic-hover glow-text">
@@ -78,7 +81,7 @@ const FeaturedCollection = async () => {
               style
             </p>
           </div>
-          {/* Magazine-Style Asymmetrical Layout */}
+
           <div className="relative perspective">
             {/* Desktop Layout */}
             <div className="hidden lg:block">
@@ -102,27 +105,34 @@ const FeaturedCollection = async () => {
                       className="object-cover object-top"
                       hover={{ scale: 1.05, duration: 0.7 }}
                     />
-                    <div className="absolute inset-0 bg-charcoal/60 group-hover:bg-charcoal/20 transition-all duration-700 ease-out" />
+                    <div className="absolute inset-0 bg-charcoal/60 group-hover:bg-charcoal/40 transition-all duration-700 ease-out" />
                     <div className="absolute inset-0 rounded-3xl border-2 border-transparent group-hover:border-metal-gold/30 group-hover:shadow-[0_0_30px_rgba(var(--metal-gold),0.3)] transition-all duration-500" />
                     <div className="absolute inset-0 p-8 lg:p-12 flex flex-col justify-end">
                       <div className="transform-gpu translate-y-4 group-hover:translate-y-0 transition-transform duration-500 ease-out">
-                        <h3 className="text-4xl lg:text-6xl xl:text-7xl font-bold text-background mb-4 font-primary-serif">
+                        <h3
+                          className={`text-4xl lg:text-6xl xl:text-7xl font-bold mb-4 font-primary-serif ${cardTextBase}`}
+                        >
                           {currentSeason === "summer" ? "Summer" : "Winter"}
                         </h3>
                         <div className="flex items-center gap-4 mb-4">
                           {categoryPrices[currentSeason] && (
-                            <span className="text-2xl font-bold text-background font-secondary-sans">
+                            <span
+                              className={`text-2xl font-bold font-secondary-sans ${cardTextBase}`}
+                            >
                               From{" "}
                               {formatCurrency(categoryPrices[currentSeason])}
                             </span>
                           )}
-                          <span className="text-background/70">•</span>
-                          <span className="text-background/90 text-lg font-secondary-sans">
+                          <span className="text-warm-gray">•</span>
+                          <span
+                            className={`text-lg font-secondary-sans ${cardSubText}`}
+                          >
                             {collections[currentSeason].length} Items Available
                           </span>
                         </div>
                       </div>
                     </div>
+                    {/* Hover Product Preview */}
                     <div className="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-all duration-500 delay-200">
                       <div className="flex gap-2">
                         {collections[currentSeason]
@@ -130,7 +140,7 @@ const FeaturedCollection = async () => {
                           .map((product, index) => (
                             <div
                               key={product.id}
-                              className="w-16 h-16 rounded-lg overflow-hidden border-2 border-background/50 transform translate-x-4 group-hover:translate-x-0 transition-transform duration-300 relative"
+                              className="w-16 h-16 rounded-lg overflow-hidden border-2 border-white/50 transform translate-x-4 group-hover:translate-x-0 transition-transform duration-300 relative"
                               style={{ transitionDelay: `${index * 100}ms` }}
                             >
                               <Image
@@ -168,30 +178,37 @@ const FeaturedCollection = async () => {
                       hover={{ scale: 1.05, duration: 0.7 }}
                       triggerOnce={true}
                     />
-                    <div className="absolute inset-0 bg-charcoal/70 group-hover:bg-charcoal/40 transition-all duration-500" />
-                    <div className="absolute inset-0 rounded-3xl border border-transparent group-hover:border-background/20 group-hover:shadow-lg transition-all duration-300" />
+                    <div className="absolute inset-0 bg-charcoal/70 group-hover:bg-charcoal/50 transition-all duration-500" />
+                    <div className="absolute inset-0 rounded-3xl border border-transparent group-hover:border-white/20 group-hover:shadow-lg transition-all duration-300" />
                     <div className="absolute bottom-6 left-6 right-6">
                       <div className="transform translate-y-2 group-hover:translate-y-0 transition-transform duration-400 ease-out">
-                        <h4 className="text-2xl lg:text-3xl font-bold text-background mb-2 font-primary-serif">
+                        <h4
+                          className={`text-2xl lg:text-3xl font-bold mb-2 font-primary-serif ${cardTextBase}`}
+                        >
                           Men Essential
                         </h4>
                         <div className="space-y-1">
                           {categoryPrices.men && (
-                            <p className="text-background font-bold text-lg font-secondary-sans">
+                            <p
+                              className={`font-bold text-lg font-secondary-sans ${cardTextBase}`}
+                            >
                               From {formatCurrency(categoryPrices.men)}
                             </p>
                           )}
-                          <p className="text-background/80 text-base font-secondary-sans opacity-70 group-hover:opacity-100 transition-opacity duration-300">
+                          <p
+                            className={`text-base font-secondary-sans opacity-70 group-hover:opacity-100 transition-opacity duration-300 ${cardSubText}`}
+                          >
                             {collections.men.length} Items
                           </p>
                         </div>
                       </div>
                     </div>
+                    {/* Small preview images */}
                     <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all delay-150 duration-400">
                       {collections.men.slice(1, 3).map((product, index) => (
                         <div
                           key={product.id}
-                          className="w-12 h-12 relative rounded-md overflow-hidden border border-background/40 mb-1 transform translate-x-2 group-hover:translate-x-0 transition-transform duration-300"
+                          className="w-12 h-12 relative rounded-md overflow-hidden border border-white/40 mb-1 transform translate-x-2 group-hover:translate-x-0 transition-transform duration-300"
                           style={{ transitionDelay: `${index * 80}ms` }}
                         >
                           <Image
@@ -243,26 +260,32 @@ const FeaturedCollection = async () => {
                     <div
                       className={`absolute inset-0 ${
                         currentSeason === "summer"
-                          ? "bg-charcoal/70 group-hover:bg-charcoal/40"
-                          : "bg-metal-gold/70 group-hover:bg-metal-gold/40"
+                          ? "bg-charcoal/70 group-hover:bg-charcoal/50"
+                          : "bg-metal-gold/80 group-hover:bg-metal-gold/60"
                       } transition-all duration-500`}
                     />
                     <div className="absolute bottom-4 left-4 right-4">
                       <div className="transform translate-y-1 group-hover:translate-y-0 transition-transform duration-300">
-                        <h4 className="text-xl lg:text-2xl font-bold text-background mb-1 font-primary-serif">
+                        <h4
+                          className={`text-xl lg:text-2xl font-bold mb-1 font-primary-serif ${cardTextBase}`}
+                        >
                           {currentSeason === "summer"
                             ? "Winter Preview"
                             : "Summer Preview"}
                         </h4>
                         <div className="flex items-center gap-4 mb-4">
                           {categoryPrices[currentSeason] && (
-                            <span className="text-2xl font-bold text-background  font-secondary-sans">
+                            <span
+                              className={`text-2xl font-bold font-secondary-sans ${cardTextBase}`}
+                            >
                               From{" "}
                               {formatCurrency(categoryPrices[currentSeason])}
                             </span>
                           )}
-                          <span className="text-background/70">•</span>
-                          <span className="text-background/90 text-lg font-secondary-sans">
+                          <span className="text-warm-gray">•</span>
+                          <span
+                            className={`text-lg font-secondary-sans ${cardSubText}`}
+                          >
                             {collections[currentSeason].length} Items Available
                           </span>
                         </div>
@@ -290,20 +313,26 @@ const FeaturedCollection = async () => {
                       hover={{ scale: 1.05, duration: 0.7 }}
                       triggerOnce={true}
                     />
-                    <div className="absolute inset-0 bg-ruby/60 group-hover:bg-ruby/30 transition-all duration-500" />
+                    <div className="absolute inset-0 bg-ruby/60 group-hover:bg-ruby/40 transition-all duration-500" />
                     <div className="absolute inset-0 rounded-3xl border border-transparent group-hover:border-ruby/30 group-hover:shadow-lg transition-all duration-300" />
                     <div className="absolute bottom-6 left-6 right-6">
                       <div className="transform translate-y-2 group-hover:translate-y-0 transition-transform duration-400 ease-out">
-                        <h4 className="text-2xl lg:text-3xl font-bold text-background mb-2 font-primary-serif">
+                        <h4
+                          className={`text-2xl lg:text-3xl font-bold mb-2 font-primary-serif ${cardTextBase}`}
+                        >
                           Women Elegance
                         </h4>
                         <div className="space-y-1">
                           {categoryPrices.women && (
-                            <p className="text-background font-bold text-lg font-secondary-sans">
+                            <p
+                              className={`font-bold text-lg font-secondary-sans ${cardTextBase}`}
+                            >
                               From {formatCurrency(categoryPrices.women)}
                             </p>
                           )}
-                          <p className="text-background/80 text-base font-secondary-sans opacity-70 group-hover:opacity-100 transition-opacity duration-300">
+                          <p
+                            className={`text-base font-secondary-sans opacity-70 group-hover:opacity-100 transition-opacity duration-300 ${cardSubText}`}
+                          >
                             {collections.women.length} Items
                           </p>
                         </div>
@@ -313,7 +342,7 @@ const FeaturedCollection = async () => {
                       {collections.women.slice(1, 3).map((product, index) => (
                         <div
                           key={product.id}
-                          className="w-12 h-12 relative rounded-md overflow-hidden border border-background/40 mb-1 transform translate-x-2 group-hover:translate-x-0 transition-transform duration-300"
+                          className="w-12 h-12 relative rounded-md overflow-hidden border border-white/40 mb-1 transform translate-x-2 group-hover:translate-x-0 transition-transform duration-300"
                           style={{ transitionDelay: `${index * 80}ms` }}
                         >
                           <Image
@@ -350,20 +379,26 @@ const FeaturedCollection = async () => {
                       hover={{ scale: 1.05, duration: 0.6 }}
                       triggerOnce={true}
                     />
-                    <div className="absolute inset-0 bg-emerald/70 group-hover:bg-emerald/40 transition-all duration-500" />
+                    <div className="absolute inset-0 bg-emerald/70 group-hover:bg-emerald/50 transition-all duration-500" />
                     <div className="absolute inset-0 rounded-3xl border border-transparent group-hover:border-emerald/30 transition-all duration-300" />
                     <div className="absolute bottom-4 left-4 right-4">
                       <div className="transform translate-y-1 group-hover:translate-y-0 transition-transform duration-300">
-                        <h4 className="text-lg lg:text-xl font-bold text-background mb-1 font-primary-serif">
+                        <h4
+                          className={`text-lg lg:text-xl font-bold mb-1 font-primary-serif ${cardTextBase}`}
+                        >
                           Casual Comfort
                         </h4>
                         <div className="space-y-1">
                           {categoryPrices.casual && (
-                            <p className="text-background font-bold text-sm font-secondary-sans">
+                            <p
+                              className={`font-bold text-sm font-secondary-sans ${cardTextBase}`}
+                            >
                               From {formatCurrency(categoryPrices.casual)}
                             </p>
                           )}
-                          <p className="text-background/80 text-sm font-secondary-sans">
+                          <p
+                            className={`text-sm font-secondary-sans ${cardSubText}`}
+                          >
                             {collections.casual.length} Items
                           </p>
                         </div>
@@ -373,7 +408,7 @@ const FeaturedCollection = async () => {
                       {collections.casual.slice(1, 2).map((product) => (
                         <div
                           key={product.id}
-                          className="w-10 h-10 rounded border border-background/40 overflow-hidden transform translate-x-1 group-hover:translate-x-0 transition-transform duration-300 relative"
+                          className="w-10 h-10 rounded border border-white/40 overflow-hidden transform translate-x-1 group-hover:translate-x-0 transition-transform duration-300 relative"
                         >
                           <Image
                             src={product.image}
@@ -412,13 +447,17 @@ const FeaturedCollection = async () => {
                       className="object-cover object-top"
                       hover={{ scale: 1.05, duration: 0.7 }}
                     />
-                    <div className="absolute inset-0 bg-charcoal/60 group-hover:bg-charcoal/20 transition-all duration-700 ease-out" />
+                    <div className="absolute inset-0 bg-charcoal/60 group-hover:bg-charcoal/40 transition-all duration-700 ease-out" />
                     <div className="absolute inset-0 p-8 flex flex-col justify-end">
                       <div className="transform-gpu translate-y-4 group-hover:translate-y-0 transition-transform duration-500 ease-out">
-                        <h3 className="text-4xl font-bold text-white mb-4 font-primary-serif">
+                        <h3
+                          className={`text-4xl font-bold mb-4 font-primary-serif ${cardTextBase}`}
+                        >
                           {currentSeason === "summer" ? "Summer" : "Winter"}
                         </h3>
-                        <p className="text-white/90 text-lg font-secondary-sans opacity-80 group-hover:opacity-100 transition-opacity duration-500">
+                        <p
+                          className={`text-lg font-secondary-sans opacity-80 group-hover:opacity-100 transition-opacity duration-500 ${cardSubText}`}
+                        >
                           {collections[currentSeason].length} Items Available
                         </p>
                       </div>
@@ -441,12 +480,16 @@ const FeaturedCollection = async () => {
                       className="object-cover"
                       hover={{ scale: 1.05, duration: 0.7 }}
                     />
-                    <div className="absolute inset-0 bg-charcoal/70 group-hover:bg-charcoal/40 transition-all duration-500" />
+                    <div className="absolute inset-0 bg-charcoal/70 group-hover:bg-charcoal/50 transition-all duration-500" />
                     <div className="absolute bottom-4 left-4 right-4">
-                      <h4 className="text-xl font-bold text-white mb-1 font-primary-serif">
+                      <h4
+                        className={`text-xl font-bold mb-1 font-primary-serif ${cardTextBase}`}
+                      >
                         Men Essential
                       </h4>
-                      <p className="text-white/80 text-sm font-secondary-sans">
+                      <p
+                        className={`text-sm font-secondary-sans ${cardSubText}`}
+                      >
                         {collections.men.length} Items
                       </p>
                     </div>
@@ -470,12 +513,16 @@ const FeaturedCollection = async () => {
                       className="object-cover"
                       hover={{ scale: 1.05, duration: 0.7 }}
                     />
-                    <div className="absolute inset-0 bg-ruby/60 group-hover:bg-ruby/30 transition-all duration-500" />
+                    <div className="absolute inset-0 bg-ruby/60 group-hover:bg-ruby/40 transition-all duration-500" />
                     <div className="absolute bottom-4 left-4 right-4">
-                      <h4 className="text-xl font-bold text-white mb-1 font-primary-serif">
+                      <h4
+                        className={`text-xl font-bold mb-1 font-primary-serif ${cardTextBase}`}
+                      >
                         Women Elegance
                       </h4>
-                      <p className="text-white/80 text-sm font-secondary-sans">
+                      <p
+                        className={`text-sm font-secondary-sans ${cardSubText}`}
+                      >
                         {collections.women.length} Items
                       </p>
                     </div>
@@ -497,12 +544,16 @@ const FeaturedCollection = async () => {
                       className="object-cover"
                       hover={{ scale: 1.05, duration: 0.6 }}
                     />
-                    <div className="absolute inset-0 bg-emerald/70 group-hover:bg-emerald/40 transition-all duration-500" />
+                    <div className="absolute inset-0 bg-emerald/70 group-hover:bg-emerald/50 transition-all duration-500" />
                     <div className="absolute bottom-4 left-4 right-4">
-                      <h4 className="text-lg font-bold text-white mb-1 font-primary-serif">
+                      <h4
+                        className={`text-lg font-bold mb-1 font-primary-serif ${cardTextBase}`}
+                      >
                         Casual Comfort
                       </h4>
-                      <p className="text-white/80 text-sm font-secondary-sans">
+                      <p
+                        className={`text-sm font-secondary-sans ${cardSubText}`}
+                      >
                         {collections.casual.length} Items
                       </p>
                     </div>
@@ -536,17 +587,21 @@ const FeaturedCollection = async () => {
                     <div
                       className={`absolute inset-0 ${
                         currentSeason === "summer"
-                          ? "bg-charcoal/70 group-hover:bg-charcoal/40"
-                          : "bg-metal-gold/70 group-hover:bg-metal-gold/40"
+                          ? "bg-charcoal/70 group-hover:bg-charcoal/50"
+                          : "bg-metal-gold/80 group-hover:bg-metal-gold/60"
                       } transition-all duration-500`}
                     />
                     <div className="absolute bottom-4 left-4 right-4">
-                      <h4 className="text-lg font-bold text-white mb-1 font-primary-serif">
+                      <h4
+                        className={`text-lg font-bold mb-1 font-primary-serif ${cardTextBase}`}
+                      >
                         {currentSeason === "summer"
                           ? "Winter Preview"
                           : "Summer Preview"}
                       </h4>
-                      <p className="text-white/80 text-sm font-secondary-sans">
+                      <p
+                        className={`text-sm font-secondary-sans ${cardSubText}`}
+                      >
                         {
                           collections[
                             currentSeason === "summer" ? "winter" : "summer"
@@ -576,12 +631,16 @@ const FeaturedCollection = async () => {
                     sizes="100vw"
                     className="object-cover object-top"
                   />
-                  <div className="absolute inset-0 bg-charcoal/60 group-hover:bg-charcoal/20 transition-all duration-700" />
+                  <div className="absolute inset-0 bg-charcoal/60 group-hover:bg-charcoal/40 transition-all duration-700" />
                   <div className="absolute inset-0 p-6 flex flex-col justify-end">
-                    <h3 className="text-3xl font-bold text-white mb-2 font-primary-serif">
+                    <h3
+                      className={`text-3xl font-bold mb-2 font-primary-serif ${cardTextBase}`}
+                    >
                       {currentSeason === "summer" ? "Summer" : "Winter"}
                     </h3>
-                    <p className="text-white/90 text-base font-secondary-sans">
+                    <p
+                      className={`text-base font-secondary-sans ${cardSubText}`}
+                    >
                       {collections[currentSeason].length} Items Available
                     </p>
                   </div>
@@ -604,12 +663,16 @@ const FeaturedCollection = async () => {
                       sizes="(max-width: 768px) 50vw, 33vw"
                       className="object-cover"
                     />
-                    <div className="absolute inset-0 bg-charcoal/70 group-hover:bg-charcoal/40 transition-all duration-500" />
+                    <div className="absolute inset-0 bg-charcoal/70 group-hover:bg-charcoal/50 transition-all duration-500" />
                     <div className="absolute bottom-4 left-4 right-4">
-                      <h4 className="text-lg font-bold text-white mb-1 font-primary-serif">
+                      <h4
+                        className={`text-lg font-bold mb-1 font-primary-serif ${cardTextBase}`}
+                      >
                         Men Essential
                       </h4>
-                      <p className="text-white/80 text-xs font-secondary-sans">
+                      <p
+                        className={`text-xs font-secondary-sans ${cardSubText}`}
+                      >
                         {collections.men.length} Items
                       </p>
                     </div>
@@ -630,12 +693,16 @@ const FeaturedCollection = async () => {
                       sizes="(max-width: 768px) 50vw, 33vw"
                       className="object-cover"
                     />
-                    <div className="absolute inset-0 bg-ruby/60 group-hover:bg-ruby/30 transition-all duration-500" />
+                    <div className="absolute inset-0 bg-ruby/60 group-hover:bg-ruby/40 transition-all duration-500" />
                     <div className="absolute bottom-4 left-4 right-4">
-                      <h4 className="text-lg font-bold text-white mb-1 font-primary-serif">
+                      <h4
+                        className={`text-lg font-bold mb-1 font-primary-serif ${cardTextBase}`}
+                      >
                         Women Elegance
                       </h4>
-                      <p className="text-white/80 text-xs font-secondary-sans">
+                      <p
+                        className={`text-xs font-secondary-sans ${cardSubText}`}
+                      >
                         {collections.women.length} Items
                       </p>
                     </div>
@@ -659,12 +726,16 @@ const FeaturedCollection = async () => {
                       sizes="(max-width: 768px) 100vw, 50vw"
                       className="object-cover"
                     />
-                    <div className="absolute inset-0 bg-emerald/70 group-hover:bg-emerald/40 transition-all duration-500" />
+                    <div className="absolute inset-0 bg-emerald/70 group-hover:bg-emerald/50 transition-all duration-500" />
                     <div className="absolute bottom-4 left-4 right-4">
-                      <h4 className="text-lg font-bold text-white mb-1 font-primary-serif">
+                      <h4
+                        className={`text-lg font-bold mb-1 font-primary-serif ${cardTextBase}`}
+                      >
                         Casual Comfort
                       </h4>
-                      <p className="text-white/80 text-sm font-secondary-sans">
+                      <p
+                        className={`text-sm font-secondary-sans ${cardSubText}`}
+                      >
                         {collections.casual.length} Items
                       </p>
                     </div>
@@ -695,17 +766,21 @@ const FeaturedCollection = async () => {
                     <div
                       className={`absolute inset-0 ${
                         currentSeason === "summer"
-                          ? "bg-charcoal/70 group-hover:bg-charcoal/40"
-                          : "bg-metal-gold/70 group-hover:bg-metal-gold/40"
+                          ? "bg-charcoal/70 group-hover:bg-charcoal/50"
+                          : "bg-metal-gold/80 group-hover:bg-metal-gold/60"
                       } transition-all duration-500`}
                     />
                     <div className="absolute bottom-4 left-4 right-4">
-                      <h4 className="text-lg font-bold text-white mb-1 font-primary-serif">
+                      <h4
+                        className={`text-lg font-bold mb-1 font-primary-serif ${cardTextBase}`}
+                      >
                         {currentSeason === "summer"
                           ? "Winter Preview"
                           : "Summer Preview"}
                       </h4>
-                      <p className="text-white/80 text-sm font-secondary-sans">
+                      <p
+                        className={`text-sm font-secondary-sans ${cardSubText}`}
+                      >
                         {
                           collections[
                             currentSeason === "summer" ? "winter" : "summer"

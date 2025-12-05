@@ -49,7 +49,6 @@ const Hero = () => {
                     Style
                   </span>
                 </h1>
-
                 <p className="text-base md:text-xl text-gray-100 font-normal mb-8 leading-relaxed max-w-lg">
                   Discover our curated collection where contemporary fashion
                   meets timeless elegance. Each piece tells a story of

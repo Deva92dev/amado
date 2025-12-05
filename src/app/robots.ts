@@ -1,6 +1,11 @@
 import { MetadataRoute } from "next";
 
-const BASE_URL = process.env.NEXT_PUBLIC_WEBSITE_URL || "http://localhost:3000";
+const rawBaseUrl =
+  process.env.NEXT_PUBLIC_WEBSITE_URL || "http://localhost:3000";
+
+const baseUrl = rawBaseUrl.startsWith("http")
+  ? rawBaseUrl
+  : `https://${rawBaseUrl}`;
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -29,6 +34,6 @@ export default function robots(): MetadataRoute.Robots {
         ],
       },
     ],
-    sitemap: `${BASE_URL}/sitemap.xml`,
+    sitemap: `${baseUrl}/sitemap.xml`,
   };
 }

@@ -6,53 +6,64 @@ import DarkMode from "./DarkMode";
 import LinksDropDown from "./LinksDropDown";
 import Logo from "./logo";
 import { publicNavLinks } from "@/utils/links";
-import { getOptionalAuth } from "@/lib/clerk/authServer";
 import SearchBar from "../products/SearchBar";
 
-const Navbar = async () => {
-  const userId = await getOptionalAuth();
+const styles = {
+  nav: "fixed top-0 w-full z-50 transition-all duration-300",
+  mobileWrapper:
+    "flex flex-row justify-between items-center lg:hidden " +
+    "bg-white/80 dark:bg-black/80 backdrop-blur-none border border-white/20 dark:border-white/10 " +
+    "rounded-2xl p-3 shadow-sm",
+  desktopWrapper:
+    "hidden lg:flex flex-row justify-between items-center " +
+    "bg-white/70 dark:bg-black/60 backdrop-blur-md border border-white/20 dark:border-white/10 " +
+    "rounded-3xl p-4 gap-6 shadow-sm hover:shadow-md transition-shadow",
+};
+
+const DesktopNavLinks = () => (
+  <ul className="flex flex-row gap-8 font-secondary-sans">
+    {publicNavLinks.map((link) => (
+      <li key={link.href}>
+        <Link
+          href={link.href}
+          className="capitalize text-sm font-bold tracking-wide 
+            text-gray-800 dark:text-gray-200 hover:text-[hsl(215_100%_40%)] 
+            transition-colors duration-200"
+        >
+          {link.label}
+        </Link>
+      </li>
+    ))}
+  </ul>
+);
+
+const Navbar = () => {
   return (
-    <nav
-      className="fixed top-0 w-full z-50"
-      style={{
-        background: "rgba(0, 0, 0, 0.1)",
-        backdropFilter: "blur(10px)",
-        borderBottom: "1px solid rgba(255, 255, 255, 0.1)",
-      }}
-    >
-      <Container className="py-5">
-        {/* Mobile & Tablet */}
-        <div className="flex flex-row justify-between items-center lg:hidden bg-gradient-glass backdrop-blur-lg border border-border/50 rounded-3xl p-4 shadow-md">
+    <nav className={styles.nav}>
+      <Container className="py-4 md:py-5">
+        {/* --- Mobile View --- */}
+        <div className={styles.mobileWrapper}>
           <DarkMode />
           <Suspense>
-            <div className="flex-1 mx-4 max-w-xs">
-              <SearchBar showSuggestions={true} />
+            <div className="flex-1 mx-2 max-w-[200px]">
+              <SearchBar showSuggestions={false} />
             </div>
           </Suspense>
           <LinksDropDown hidePublicLinks={false} />
         </div>
-        {/* Desktop*/}
-        <div className="hidden lg:flex flex-row justify-between items-center bg-gradient-glass backdrop-blur-lg border border-border/50 rounded-3xl p-4 gap-4 shadow-md">
+        {/*  Desktop View */}
+        <div className={styles.desktopWrapper}>
           <Logo />
-          <ul className="flex flex-row gap-8 font-secondary-sans">
-            {publicNavLinks.map((link) => (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  className="capitalize w-full magnetic-hover glow-text transition-all duration-300 nav-link-white"
-                >
-                  {link.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-          <div className="flex-1 max-w-sm mx-4">
+          <DesktopNavLinks />
+
+          <div className="flex-1 max-w-sm">
             <Suspense>
               <SearchBar showSuggestions={true} />
             </Suspense>
           </div>
+
           <div className="flex flex-row gap-4 items-center">
-            {userId && <CartButton />}
+            <CartButton />
             <DarkMode />
             <LinksDropDown hidePublicLinks={true} />
           </div>

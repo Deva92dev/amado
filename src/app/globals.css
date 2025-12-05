@@ -129,6 +129,15 @@
     --tight-tracking: -0.02em;
   }
 
+  @media (max-width: 768px) {
+    :root {
+      --h1: 3rem;
+      --h2: 2.25rem;
+      --h3: 1.75rem;
+      --tight-tracking: -0.01em;
+    }
+  }
+
   .dark {
     --background: 0 0% 10%; /* Dark Gray */
     --foreground: 0 0% 98%; /* Off White */

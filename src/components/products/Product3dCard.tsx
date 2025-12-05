@@ -84,8 +84,10 @@ const Product3dCard = ({ product, offset }: Product3dCardProps) => {
             textShadow: "0px 1px 4px rgba(0, 0, 0, 0.5)",
           }}
         >
-          <h3 className="font-bold text-xl md:text-2xl">{product.name}</h3>
-          <p className="text-gold font-semibold">{product.price}</p>
+          <h3 className="font-bold text-background dark:text-foreground text-xl md:text-2xl">
+            {product.name}
+          </h3>
+          <p className="text-gold font-bold">{product.price}</p>
         </m.div>
         {/* Parallax Layer 3: Button */}
         <m.button

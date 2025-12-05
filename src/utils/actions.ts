@@ -23,6 +23,7 @@ import {
   requireUserWithEmail,
 } from "@/lib/clerk/authServer";
 import { CachePresets, createCache } from "./cache";
+import { getCartCount } from "@/components/Store/cart-read";
 
 const folder = "Amado";
 
@@ -766,6 +767,18 @@ export const findExistingReview = async (userId: string, productId: string) => {
     select: { id: true },
   });
 };
+
+export async function fetchCartCount() {
+  // 1. Check auth safely on the server
+  const userId = await requireAuth();
+
+  if (!userId) {
+    return 0;
+  }
+
+  // 2. Fetch data
+  return await getCartCount(userId);
+}
 
 export const fetchCartItems = async () => {
   const userId = await requireAuth();

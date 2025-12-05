@@ -1,14 +1,15 @@
-import { unstable_cache } from "next/cache";
 import db from "@/utils/db";
 
-export const getCartCount = unstable_cache(
-  async (clerkId: string) => {
+export const getCartCount = async (clerkId: string) => {
+  try {
     const cart = await db.cart.findFirst({
       where: { clerkId },
       select: { numItemsInCart: true },
     });
     return cart?.numItemsInCart ?? 0;
-  },
-  ["cart:count:byUser"], // cache key seed
-  { tags: ["cart:summary"] } // attach a general tag for cart summaries
-);
+  } catch (error) {
+    // Safety fallback (return 0 instead of crashing the nav bar)
+    console.error("Failed to fetch cart count:", error);
+    return 0;
+  }
+};
