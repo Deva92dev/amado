@@ -12,8 +12,13 @@ export const metadata: Metadata = {
 
 const ReviewPage = async () => {
   const reviews = await fetchProductReviewsByUser();
-  if (reviews.length === 0)
-    return <SectionTitle text="You have no reviews yet" />;
+  if (reviews.length === 0) {
+    return (
+      <div className="w-full min-h-screen font-bold text-4xl flex justify-center items-center">
+        There are no Reviews.
+      </div>
+    );
+  }
 
   return (
     <>

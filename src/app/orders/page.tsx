@@ -19,6 +19,14 @@ export const metadata: Metadata = {
 const Orders = async () => {
   const orders = await fetchUserOrders();
 
+  if (orders.length === 0) {
+    return (
+      <div className="w-full min-h-screen font-bold text-4xl flex justify-center items-center">
+        There are no orders. Go buy something.
+      </div>
+    );
+  }
+
   return (
     <>
       <SectionTitle text="Your Orders" />

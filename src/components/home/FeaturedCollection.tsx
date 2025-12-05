@@ -38,12 +38,17 @@ const FeaturedCollection = async () => {
   };
 
   const cardBaseClasses =
-    "group relative overflow-hidden rounded-3xl cursor-pointer transition-all duration-500 transform-style-3d hover:shadow-2xl hover:-translate-y-3 hover:rotate-x-[8deg] hover:rotate-y-[2deg]";
+    "group relative overflow-hidden rounded-3xl cursor-pointer transition-all duration-500 hover:shadow-2xl hover:-translate-y-2";
+
   const shimmerEffectClasses =
-    "absolute top-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-metal-gold/20 to-transparent group-hover:left-full transition-all duration-700 ease-in-out z-10";
+    "absolute top-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent group-hover:left-full transition-all duration-700 ease-in-out z-10";
+
+  // use it for image readability
+  const overlayClasses =
+    "absolute inset-0 bg-black/60 group-hover:bg-black/40 transition-all duration-500";
 
   const cardTextBase = "text-white drop-shadow-md";
-  const cardSubText = "text-warm-gray font-medium drop-shadow-sm";
+  const cardSubText = "text-gray-200 font-medium drop-shadow-sm";
 
   return (
     <MotionSection
@@ -70,7 +75,7 @@ const FeaturedCollection = async () => {
             <span className="px-6 py-3 text-sm font-medium tracking-wider text-charcoal dark:text-metal-gold bg-gradient-to-r from-pastel-blush to-warm-gray rounded-full border border-gold/30 inline-block mb-6 font-accent">
               Curated Collections
             </span>
-            <h2 className="h1 bg-gradient-to-r from-charcoal via-foreground to-metal-gold bg-clip-text text-transparent mb-8 glass-effect magnetic-hover glow-text">
+            <h2 className="h1 bg-gradient-to-r from-charcoal via-foreground to-metal-gold bg-clip-text text-transparent mb-8 backdrop-blur-lg magnetic-hover glow-text font-primary-serif">
               Featured
               <span className="block font-accent italic font-light">
                 Collections
@@ -105,8 +110,8 @@ const FeaturedCollection = async () => {
                       className="object-cover object-top"
                       hover={{ scale: 1.05, duration: 0.7 }}
                     />
-                    <div className="absolute inset-0 bg-charcoal/60 group-hover:bg-charcoal/40 transition-all duration-700 ease-out" />
-                    <div className="absolute inset-0 rounded-3xl border-2 border-transparent group-hover:border-metal-gold/30 group-hover:shadow-[0_0_30px_rgba(var(--metal-gold),0.3)] transition-all duration-500" />
+                    <div className="absolute inset-0 transition-all duration-700 ease-out" />
+                    <div className="absolute inset-0 rounded-3xl border-2 border-transparent transition-all duration-500" />
                     <div className="absolute inset-0 p-8 lg:p-12 flex flex-col justify-end">
                       <div className="transform-gpu translate-y-4 group-hover:translate-y-0 transition-transform duration-500 ease-out">
                         <h3
@@ -178,7 +183,7 @@ const FeaturedCollection = async () => {
                       hover={{ scale: 1.05, duration: 0.7 }}
                       triggerOnce={true}
                     />
-                    <div className="absolute inset-0 bg-charcoal/70 group-hover:bg-charcoal/50 transition-all duration-500" />
+                    <div className="absolute inset-0 transition-all duration-500" />
                     <div className="absolute inset-0 rounded-3xl border border-transparent group-hover:border-white/20 group-hover:shadow-lg transition-all duration-300" />
                     <div className="absolute bottom-6 left-6 right-6">
                       <div className="transform translate-y-2 group-hover:translate-y-0 transition-transform duration-400 ease-out">
@@ -258,11 +263,7 @@ const FeaturedCollection = async () => {
                       triggerOnce={true}
                     />
                     <div
-                      className={`absolute inset-0 ${
-                        currentSeason === "summer"
-                          ? "bg-charcoal/70 group-hover:bg-charcoal/50"
-                          : "bg-metal-gold/80 group-hover:bg-metal-gold/60"
-                      } transition-all duration-500`}
+                      className={`absolute inset-0 transition-all duration-500`}
                     />
                     <div className="absolute bottom-4 left-4 right-4">
                       <div className="transform translate-y-1 group-hover:translate-y-0 transition-transform duration-300">
@@ -313,8 +314,8 @@ const FeaturedCollection = async () => {
                       hover={{ scale: 1.05, duration: 0.7 }}
                       triggerOnce={true}
                     />
-                    <div className="absolute inset-0 bg-ruby/60 group-hover:bg-ruby/40 transition-all duration-500" />
-                    <div className="absolute inset-0 rounded-3xl border border-transparent group-hover:border-ruby/30 group-hover:shadow-lg transition-all duration-300" />
+                    <div className="absolute inset-0 transition-all duration-500" />
+                    <div className="absolute inset-0 rounded-3xl border border-transparent group-hover:shadow-lg transition-all duration-300" />
                     <div className="absolute bottom-6 left-6 right-6">
                       <div className="transform translate-y-2 group-hover:translate-y-0 transition-transform duration-400 ease-out">
                         <h4
@@ -379,8 +380,8 @@ const FeaturedCollection = async () => {
                       hover={{ scale: 1.05, duration: 0.6 }}
                       triggerOnce={true}
                     />
-                    <div className="absolute inset-0 bg-emerald/70 group-hover:bg-emerald/50 transition-all duration-500" />
-                    <div className="absolute inset-0 rounded-3xl border border-transparent group-hover:border-emerald/30 transition-all duration-300" />
+                    <div className="absolute inset-0 transition-all duration-500" />
+                    <div className="absolute inset-0 rounded-3xl border border-transparent transition-all duration-300" />
                     <div className="absolute bottom-4 left-4 right-4">
                       <div className="transform translate-y-1 group-hover:translate-y-0 transition-transform duration-300">
                         <h4
@@ -447,7 +448,7 @@ const FeaturedCollection = async () => {
                       className="object-cover object-top"
                       hover={{ scale: 1.05, duration: 0.7 }}
                     />
-                    <div className="absolute inset-0 bg-charcoal/60 group-hover:bg-charcoal/40 transition-all duration-700 ease-out" />
+                    <div className="absolute inset-0 transition-all duration-700 ease-out" />
                     <div className="absolute inset-0 p-8 flex flex-col justify-end">
                       <div className="transform-gpu translate-y-4 group-hover:translate-y-0 transition-transform duration-500 ease-out">
                         <h3
@@ -480,7 +481,7 @@ const FeaturedCollection = async () => {
                       className="object-cover"
                       hover={{ scale: 1.05, duration: 0.7 }}
                     />
-                    <div className="absolute inset-0 bg-charcoal/70 group-hover:bg-charcoal/50 transition-all duration-500" />
+                    <div className="absolute inset-0 transition-all duration-500" />
                     <div className="absolute bottom-4 left-4 right-4">
                       <h4
                         className={`text-xl font-bold mb-1 font-primary-serif ${cardTextBase}`}
@@ -497,9 +498,7 @@ const FeaturedCollection = async () => {
                 )}
                 {/* Women's Collection */}
                 {collections.women?.length > 0 && (
-                  <MotionCard
-                    className={`${cardBaseClasses} col-span-3 bg-gradient-jewel`}
-                  >
+                  <MotionCard className={`${cardBaseClasses} col-span-3`}>
                     <div className={shimmerEffectClasses} />
                     <MotionImage
                       src={collections.women[0].image}
@@ -513,7 +512,7 @@ const FeaturedCollection = async () => {
                       className="object-cover"
                       hover={{ scale: 1.05, duration: 0.7 }}
                     />
-                    <div className="absolute inset-0 bg-ruby/60 group-hover:bg-ruby/40 transition-all duration-500" />
+                    <div className="absolute inset-0 transition-all duration-500" />
                     <div className="absolute bottom-4 left-4 right-4">
                       <h4
                         className={`text-xl font-bold mb-1 font-primary-serif ${cardTextBase}`}
@@ -544,7 +543,7 @@ const FeaturedCollection = async () => {
                       className="object-cover"
                       hover={{ scale: 1.05, duration: 0.6 }}
                     />
-                    <div className="absolute inset-0 bg-emerald/70 group-hover:bg-emerald/50 transition-all duration-500" />
+                    <div className="absolute inset-0 transition-all duration-500" />
                     <div className="absolute bottom-4 left-4 right-4">
                       <h4
                         className={`text-lg font-bold mb-1 font-primary-serif ${cardTextBase}`}
@@ -585,11 +584,7 @@ const FeaturedCollection = async () => {
                       hover={{ scale: 1.05, duration: 0.6 }}
                     />
                     <div
-                      className={`absolute inset-0 ${
-                        currentSeason === "summer"
-                          ? "bg-charcoal/70 group-hover:bg-charcoal/50"
-                          : "bg-metal-gold/80 group-hover:bg-metal-gold/60"
-                      } transition-all duration-500`}
+                      className={`absolute inset-0 transition-all duration-500`}
                     />
                     <div className="absolute bottom-4 left-4 right-4">
                       <h4
@@ -631,7 +626,7 @@ const FeaturedCollection = async () => {
                     sizes="100vw"
                     className="object-cover object-top"
                   />
-                  <div className="absolute inset-0 bg-charcoal/60 group-hover:bg-charcoal/40 transition-all duration-700" />
+                  <div className="absolute inset-0 transition-all duration-700" />
                   <div className="absolute inset-0 p-6 flex flex-col justify-end">
                     <h3
                       className={`text-3xl font-bold mb-2 font-primary-serif ${cardTextBase}`}
@@ -663,7 +658,7 @@ const FeaturedCollection = async () => {
                       sizes="(max-width: 768px) 50vw, 33vw"
                       className="object-cover"
                     />
-                    <div className="absolute inset-0 bg-charcoal/70 group-hover:bg-charcoal/50 transition-all duration-500" />
+                    <div className="absolute inset-0 transition-all duration-500" />
                     <div className="absolute bottom-4 left-4 right-4">
                       <h4
                         className={`text-lg font-bold mb-1 font-primary-serif ${cardTextBase}`}
@@ -680,7 +675,7 @@ const FeaturedCollection = async () => {
                 )}
                 {/* Women's Collection */}
                 {collections.women?.length > 0 && (
-                  <MotionCard className="relative overflow-hidden rounded-3xl group cursor-pointer shadow-xl h-[250px] bg-gradient-jewel">
+                  <MotionCard className="relative overflow-hidden rounded-3xl group cursor-pointer shadow-xl h-[250px]">
                     <div className={shimmerEffectClasses} />
                     <MotionImage
                       src={collections.women[0].image}
@@ -693,7 +688,7 @@ const FeaturedCollection = async () => {
                       sizes="(max-width: 768px) 50vw, 33vw"
                       className="object-cover"
                     />
-                    <div className="absolute inset-0 bg-ruby/60 group-hover:bg-ruby/40 transition-all duration-500" />
+                    <div className="absolute inset-0 transition-all duration-500" />
                     <div className="absolute bottom-4 left-4 right-4">
                       <h4
                         className={`text-lg font-bold mb-1 font-primary-serif ${cardTextBase}`}
@@ -726,7 +721,7 @@ const FeaturedCollection = async () => {
                       sizes="(max-width: 768px) 100vw, 50vw"
                       className="object-cover"
                     />
-                    <div className="absolute inset-0 bg-emerald/70 group-hover:bg-emerald/50 transition-all duration-500" />
+                    <div className="absolute inset-0 transition-all duration-500" />
                     <div className="absolute bottom-4 left-4 right-4">
                       <h4
                         className={`text-lg font-bold mb-1 font-primary-serif ${cardTextBase}`}
@@ -764,11 +759,7 @@ const FeaturedCollection = async () => {
                       className="object-cover"
                     />
                     <div
-                      className={`absolute inset-0 ${
-                        currentSeason === "summer"
-                          ? "bg-charcoal/70 group-hover:bg-charcoal/50"
-                          : "bg-metal-gold/80 group-hover:bg-metal-gold/60"
-                      } transition-all duration-500`}
+                      className={`absolute inset-0 transition-all duration-500`}
                     />
                     <div className="absolute bottom-4 left-4 right-4">
                       <h4

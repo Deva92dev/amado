@@ -1,44 +1,30 @@
 @import "tailwindcss";
-@plugin 'tailwindcss-animate';
+@plugin "tailwindcss-animate";
 
-/* Create a dark-class variant that also targets any
-   element inside a .dark ancestor */
-@custom-variant dark (&:is(.dark *));
+@config "../../tailwind.config.ts";
 
+/* 1. THEME VARIABLES (Keep exactly as is) */
 @theme {
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
-
   --color-card: hsl(var(--card));
   --color-card-foreground: hsl(var(--card-foreground));
-
   --color-popover: hsl(var(--popover));
   --color-popover-foreground: hsl(var(--popover-foreground));
-
   --color-primary: hsl(var(--primary));
   --color-primary-foreground: hsl(var(--primary-foreground));
-
   --color-secondary: hsl(var(--secondary));
   --color-secondary-foreground: hsl(var(--secondary-foreground));
-
   --color-muted: hsl(var(--muted));
   --color-muted-foreground: hsl(var(--muted-foreground));
-
   --color-accent: hsl(var(--accent));
   --color-accent-foreground: hsl(var(--accent-foreground));
-
   --color-destructive: hsl(var(--destructive));
   --color-destructive-foreground: hsl(var(--destructive-foreground));
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));
   --color-ring: hsl(var(--ring));
-  /* Optional chart colours */
-  --color-chart-1: hsl(var(--chart-1));
-  --color-chart-2: hsl(var(--chart-2));
-  --color-chart-3: hsl(var(--chart-3));
-  --color-chart-4: hsl(var(--chart-4));
-  --color-chart-5: hsl(var(--chart-5));
-  /* Radii */
+
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
@@ -52,127 +38,6 @@
   ::file-selector-button {
     border-color: var(--color-gray-200, currentcolor);
   }
-}
-
-@layer base {
-  :root {
-    /* Monochrome base */
-    --background: 0 0% 100%; /* Pure White */
-    --foreground: 0 0% 7%; /* Near Black */
-
-    --card: 0 0% 100%; /* Pure White */
-    --card-foreground: 0 0% 10%; /* Dark Gray */
-
-    --popover: 0 0% 100%; /* Pure White */
-    --popover-foreground: 0 0% 10%; /* Dark Gray */
-
-    /* Primary action (light) */
-    --primary: 0 0% 0%; /* Pure Black */
-    --primary-foreground: 0 0% 100%; /* Pure White */
-
-    /* Neutrals */
-    --secondary: 0 0% 96%; /* Light Gray */
-    --secondary-foreground: 0 0% 20%; /* Dark Gray */
-
-    --muted: 0 0% 93%; /* Light Gray */
-    --muted-foreground: 0 0% 35%; /* Medium Gray */
-
-    /* Surface accent */
-    --accent: 0 0% 90%; /* Light Gray */
-    --accent-foreground: 0 0% 10%; /* Dark Gray */
-
-    /* Functional */
-    --destructive: 0 73% 42%; /* Red */
-    --destructive-foreground: 0 0% 100%; /* Pure White */
-
-    --border: 0 0% 89%; /* Light Gray */
-    --input: 0 0% 100%; /* Pure White */
-    --ring: 0 0% 60%; /* Medium Gray */
-    --radius: 0.5rem;
-
-    /* Brand accent — default Electric-Blue */
-    --brand-accent: 215 100% 40%; /* Electric Blue */ /* hsl(215,100%,50%) */
-    /* Swap to orange by uncommenting line below */
-    /* --brand-accent: 17 100% 60%; */ /* Orange */
-
-    /* Extra greys */
-    --charcoal: 0 0% 10%; /* Charcoal Gray */
-    --warm-gray: 0 0% 96%; /* Warm Gray */
-
-    /* Metallic touches */
-    --metal-gold: 46 63% 52%; /* Gold */
-    --metal-silver: 0 0% 75%; /* Silver */
-
-    /* Seasonal pastels */
-    --pastel-blush: 10 70% 90%; /* Light Pink */
-    --pastel-mint: 150 45% 90%; /* Light Mint Green */
-    --pastel-lavender: 265 40% 92%; /* Light Lavender */
-
-    /* Jewel tones */
-    --emerald: 152 61% 30%; /* Dark Emerald Green */
-    --sapphire: 205 63% 35%; /* Dark Sapphire Blue */
-    --ruby: 350 70% 40%; /* Dark Ruby Red */
-
-    /* Convenience */
-    --link: var(--brand-accent);
-    --ring-brand: var(--brand-accent);
-
-    /* Typography vars (populated with @next/font) */
-    --font-primary-serif: var(--font-playfair-display, ui-serif);
-    --font-secondary-sans: var(--font-inter, ui-sans-serif);
-    --font-accent: var(--font-italiana, var(--font-script, ui-serif));
-
-    /* Headline scale */
-    --h1: 6rem;
-    --h2: 4rem;
-    --h3: 3rem;
-    --tight-tracking: -0.02em;
-  }
-
-  @media (max-width: 768px) {
-    :root {
-      --h1: 3rem;
-      --h2: 2.25rem;
-      --h3: 1.75rem;
-      --tight-tracking: -0.01em;
-    }
-  }
-
-  .dark {
-    --background: 0 0% 10%; /* Dark Gray */
-    --foreground: 0 0% 98%; /* Off White */
-
-    --card: 0 0% 13%; /* Dark Gray */
-    --card-foreground: 0 0% 98%; /* Off White */
-
-    --popover: 0 0% 13%; /* Dark Gray */
-    --popover-foreground: 0 0% 98%; /* Off White */
-
-    --primary: 0 0% 100%; /* Pure White */
-    --primary-foreground: 0 0% 10%; /* Dark Gray */
-
-    --secondary: 0 0% 18%; /* Dark Gray */
-    --secondary-foreground: 0 0% 90%; /* Light Gray */
-
-    --muted: 0 0% 22%; /* Medium Dark Gray */
-    --muted-foreground: 0 0% 75%; /* Light Gray */
-
-    --accent: 0 0% 25%; /* Medium Dark Gray */
-    --accent-foreground: 0 0% 95%; /* Off White */
-
-    --destructive: 0 62% 31%; /* Dark Red */
-    --destructive-foreground: 210 40% 98%; /* Light Blue White */
-
-    --border: 0 0% 25%; /* Medium Dark Gray */
-    --input: 0 0% 18%; /* Dark Gray */
-    --ring: var(--ring-brand);
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
 
   html,
   body {
@@ -180,25 +45,26 @@
     overflow-x: hidden;
   }
 
-  /* stopped layout shift for select of Shadcn */
+  /* Fix Shadcn Scroll Lock Shift */
   html body[data-scroll-locked] {
-    margin-right: 0px !important; /* For LTR layout */
-    margin-left: 0px !important; /* For RTL layout */
+    margin-right: 0px !important;
+    margin-left: 0px !important;
     overflow: visible !important;
   }
 
   body {
-    @apply bg-background text-foreground;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
     font-family: var(--font-secondary-sans);
   }
 
-  /* Text selection uses brand accent */
+  /* Brand Selection Color */
   ::selection {
     background-color: hsla(var(--brand-accent) / 0.25);
     color: hsl(var(--primary));
   }
 
-  /* Luxury headings */
+  /* TYPOGRAPHY RESETS (With Mobile Optimization) */
   h1,
   .h1 {
     font-family: var(--font-primary-serif);
@@ -221,13 +87,12 @@
     line-height: 1.05;
   }
 
-  /* Accent font utility */
   .font-accent {
     font-family: var(--font-accent);
     letter-spacing: -0.01em;
   }
 
-  /* Links + focus ring */
+  /* Global Link Styles */
   a {
     color: hsl(var(--link));
     text-underline-offset: 3px;
@@ -239,746 +104,90 @@
     outline: 2px solid hsl(var(--ring-brand));
     outline-offset: 2px;
   }
+}
 
-  .glass-effect {
-    background: hsla(var(--background) / 0.8);
-    backdrop-filter: blur(12px);
-    border: 1px solid hsla(var(--border) / 0.2);
+@layer base {
+  :root {
+    /* --- COLOR PALETTE --- */
+    --background: 0 0% 100%;
+    --foreground: 0 0% 7%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
+    --primary: 0 0% 0%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 20%;
+    --muted: 0 0% 93%;
+    --muted-foreground: 0 0% 35%;
+    --accent: 0 0% 90%;
+    --accent-foreground: 0 0% 10%;
+    --destructive: 0 73% 42%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 89%;
+    --input: 0 0% 100%;
+    --ring: 0 0% 60%;
+    --radius: 0.5rem;
+
+    /* Custom Colors */
+    --brand-accent: 215 100% 40%;
+    --charcoal: 0 0% 10%;
+    --warm-gray: 0 0% 96%;
+    --metal-gold: 46 63% 52%;
+    --metal-silver: 0 0% 75%;
+    --pastel-blush: 10 70% 90%;
+    --pastel-mint: 150 45% 90%;
+    --pastel-lavender: 265 40% 92%;
+    --emerald: 152 61% 30%;
+    --sapphire: 205 63% 35%;
+    --ruby: 350 70% 40%;
+
+    /* Aliases */
+    --link: var(--brand-accent);
+    --ring-brand: var(--brand-accent);
+
+    /* Fonts */
+    --font-primary-serif: var(--font-playfair-display, ui-serif);
+    --font-secondary-sans: var(--font-inter, ui-sans-serif);
+    --font-accent: var(--font-italiana, var(--font-script, ui-serif));
+
+    /* SCALING TYPOGRAPHY (Desktop Defaults) */
+    --h1: 6rem;
+    --h2: 4rem;
+    --h3: 3rem;
+    --tight-tracking: -0.02em;
   }
 
-  .nav-link-white {
-    color: hsl(var(--charcoal)) !important;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-    font-weight: 500;
-  }
-
-  .nav-link-white:hover {
-    color: hsl(var(--warm-gray)) !important;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
-  }
-
-  /* Magnetic hover effect */
-  .magnetic-hover {
-    transition: transform 0.2s ease;
-  }
-
-  .magnetic-hover:hover {
-    transform: translate(2px, -2px);
-  }
-
-  /* Glowing text effect */
-  .glow-text {
-    text-shadow: 0 0 5px hsla(var(--brand-accent) / 0.5),
-      0 0 10px hsla(var(--brand-accent) / 0.3),
-      0 0 15px hsla(var(--brand-accent) / 0.2);
-  }
-
-  .animate-gradient-x {
-    animation: gradient-x 3s ease infinite;
-  }
-
-  .animate-slideInFromLeft {
-    animation: slideInFromLeft 0.7s ease-out 0.3s forwards;
-    transform: translateX(-100%);
-    opacity: 0;
-  }
-
-  .animate-slideInFromLeftSlow {
-    animation: slideInFromLeft 0.9s ease-out 0.1s forwards;
-    transform: translateX(-100%);
-    opacity: 0;
-  }
-
-  .animate-slideUpFromBottom {
-    animation: slideUpFromBottom 0.6s ease-out 0.4s forwards;
-    transform: translateY(2rem);
-    opacity: 0;
-  }
-
-  .animate-slideUpFromBottomSlow {
-    animation: slideUpFromBottom 0.8s ease-out 0.6s forwards;
-    transform: translateY(2rem);
-    opacity: 0;
-  }
-
-  .animate-blink {
-    animation: blink 1.06s infinite;
-  }
-
-  .animate-spin-slow {
-    animation: spin-slow 20s linear infinite;
-  }
-
+  /* MOBILE TYPOGRAPHY OVERRIDES */
   @media (max-width: 768px) {
-    .animate-slideInFromLeft,
-    .animate-slideInFromLeftSlow {
-      animation-delay: 0.1s;
-    }
-    .animate-slideUpFromBottom {
-      animation-delay: 0.2s;
-    }
-    .animate-slideUpFromBottomSlow {
-      animation-delay: 0.3s;
+    :root {
+      --h1: 3rem;
+      --h2: 2.25rem;
+      --h3: 1.75rem;
+      --tight-tracking: -0.01em;
     }
   }
 
-  /* Accessibility: Respect reduced motion preferences */
-  @media (prefers-reduced-motion: reduce) {
-    .animate-slideInFromLeft,
-    .animate-slideInFromLeftSlow,
-    .animate-slideUpFromBottom,
-    .animate-slideUpFromBottomSlow {
-      animation: none;
-      transform: none;
-      opacity: 1;
-    }
-  }
-}
-
-.btn-brand {
-  border: 1px solid hsla(var(--brand-accent) / 0.8);
-  box-shadow: 0 0 10px hsla(var(--brand-accent) / 0.4);
-}
-
-.btn-brand:hover {
-  background-color: hsl(215, 100%, 38%); /* Slightly darker on hover */
-}
-
-@utility overlay-hero-scrim {
-  /* Fades from 70% black on the left (behind text) to transparent on the right */
-  background: linear-gradient(
-    90deg,
-    hsla(0, 0%, 0%, 0.7) 0%,
-    hsla(0, 0%, 0%, 0.4) 40%,
-    transparent 100%
-  );
-  position: absolute;
-  inset: 0;
-  z-index: 1; /* Sits above image, below text */
-}
-
-/* Update your glow-text to be more readable on images */
-.glow-text-enhanced {
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5),
-    /* Hard shadow for legibility */ 0 0 20px hsla(var(--brand-accent) / 0.6); /* Brand glow */
-}
-
-@utility btn-brand {
-  @apply text-primary-foreground rounded-[--radius];
-  background-color: hsl(var(--brand-accent));
-  &:hover {
-    filter: brightness(0.95);
-  }
-}
-@utility link-brand {
-  color: hsl(var(--brand-accent));
-}
-@utility ring-brand {
-  box-shadow: 0 0 0 3px hsla(var(--brand-accent) / 0.35);
-}
-
-/* Metallic utilities */
-@utility border-gold {
-  border-color: hsl(var(--metal-gold));
-}
-@utility text-gold {
-  color: hsl(var(--metal-gold));
-}
-@utility border-silver {
-  border-color: hsl(var(--metal-silver));
-}
-@utility text-silver {
-  color: hsl(var(--metal-silver));
-}
-
-/* Metallic separators */
-@utility rule-gold {
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    hsla(var(--metal-gold) / 0),
-    hsl(var(--metal-gold)),
-    hsla(var(--metal-gold) / 0)
-  );
-}
-@utility rule-silver {
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    hsla(var(--metal-silver) / 0),
-    hsl(var(--metal-silver)),
-    hsla(var(--metal-silver) / 0)
-  );
-}
-
-/* Seasonal & jewel helpers */
-@utility bg-pastel-blush {
-  background-color: hsl(var(--pastel-blush));
-}
-@utility bg-pastel-mint {
-  background-color: hsl(var(--pastel-mint));
-}
-@utility bg-pastel-lavender {
-  background-color: hsl(var(--pastel-lavender));
-}
-
-@utility text-emerald {
-  color: hsl(var(--emerald));
-}
-@utility text-sapphire {
-  color: hsl(var(--sapphire));
-}
-@utility text-ruby {
-  color: hsl(var(--ruby));
-}
-
-@keyframes shimmer {
-  0% {
-    background-position: -400% 0;
-  }
-  100% {
-    background-position: 400% 0;
-  }
-}
-
-.animate-shimmer {
-  animation: shimmer 1.5s linear infinite;
-  background: linear-gradient(
-    90deg,
-    #f0f0f0 0%,
-    #e0e0e0 25%,
-    #f0f0f0 50%,
-    #e0e0e0 75%,
-    #f0f0f0 100%
-  );
-  background-size: 400% 100%;
-  background-repeat: no-repeat;
-}
-
-@keyframes fadeInGallery {
-  from {
-    opacity: 0;
-    pointer-events: none;
-  }
-  to {
-    opacity: 1;
-    pointer-events: auto;
-  }
-}
-
-@keyframes gradient-x {
-  0%,
-  100% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-}
-
-@keyframes slideInFromLeft {
-  from {
-    transform: translateX(-100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateX(0);
-    opacity: 1;
-  }
-}
-
-/* Slide up from bottom animation */
-@keyframes slideUpFromBottom {
-  from {
-    transform: translateY(2rem); /* equivalent to translate-y-8 */
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
-@keyframes blink {
-  0%,
-  50% {
-    opacity: 1;
-  }
-  51%,
-  100% {
-    opacity: 0;
-  }
-}
-@keyframes spin-slow {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  33% {
-    transform: translateY(-10px) rotate(1deg);
-  }
-  66% {
-    transform: translateY(-5px) rotate(-1deg);
-  }
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.05);
-    opacity: 0.9;
-  }
-}
-
-@keyframes fade-in-up {
-  from {
-    opacity: 0;
-    transform: translateY(var(--tw-translate-y, 20px));
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fade-in-up {
-  animation: fade-in-up 0.6s ease-out forwards;
-}
-
-.animation-fill-forwards {
-  animation-fill-mode: forwards;
-}
-
-/* Enhanced hover effects for product cards */
-.product-card-hover {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.product-card-hover:hover {
-  transform: translateY(-8px) scale(1.02);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-}
-
-/* Staggered color swatch animations */
-@keyframes color-swatch-appear {
-  from {
-    opacity: 0;
-    transform: scale(0.8);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.color-swatch {
-  animation: color-swatch-appear 0.3s ease-out forwards;
-}
-
-/* Filter button animations */
-@keyframes filter-button-select {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(0.95);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-.filter-button-selected {
-  animation: filter-button-select 0.2s ease-out;
-}
-
-/* Loading skeleton animation */
-@keyframes skeleton-loading {
-  0% {
-    background-position: -200px 0;
-  }
-  100% {
-    background-position: calc(200px + 100%) 0;
-  }
-}
-
-.skeleton {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 37%, #f0f0f0 63%);
-  background-size: 400px 100%;
-  animation: skeleton-loading 1.4s ease-in-out infinite;
-}
-
-/* ===== BRAND GRADIENT SYSTEM ===== */
-
-@utility bg-gradient-hero {
-  background: linear-gradient(
-    135deg,
-    hsl(var(--background)) 0%,
-    hsla(var(--brand-accent) / 0.03) 25%,
-    hsla(var(--brand-accent) / 0.08) 50%,
-    hsla(var(--metal-silver) / 0.05) 75%,
-    hsl(var(--background)) 100%
-  );
-  position: relative;
-}
-
-.bg-gradient-hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    ellipse at top right,
-    hsla(var(--brand-accent) / 0.06) 0%,
-    transparent 50%
-  );
-  pointer-events: none;
-}
-
-/* 2. BRAND ELECTRIC - Signature electric blue energy */
-@utility bg-gradient-electric {
-  background: linear-gradient(
-    45deg,
-    hsl(var(--brand-accent)) 0%,
-    hsl(215 100% 65%) 35%,
-    hsl(200 100% 70%) 70%,
-    hsl(var(--brand-accent)) 100%
-  );
-  background-size: 300% 300%;
-  animation: gradient-shift 8s ease infinite;
-}
-
-/* 3. METALLIC LUXURY - Gold/Silver sophisticated blend */
-@utility bg-gradient-metallic {
-  background: linear-gradient(
-    120deg,
-    hsl(var(--background)) 0%,
-    hsla(var(--metal-gold) / 0.15) 25%,
-    hsla(var(--metal-silver) / 0.2) 50%,
-    hsla(var(--metal-gold) / 0.1) 75%,
-    hsl(var(--background)) 100%
-  );
-  position: relative;
-}
-
-.bg-gradient-metallic::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    45deg,
-    transparent 30%,
-    hsla(var(--metal-gold) / 0.08) 50%,
-    transparent 70%
-  );
-  pointer-events: none;
-}
-
-/* 4. GLASS MORPH - Modern glassmorphism with brand accent */
-@utility bg-gradient-glass {
-  background: linear-gradient(
-    135deg,
-    hsla(var(--background) / 0.8) 0%,
-    hsla(var(--brand-accent) / 0.05) 25%,
-    hsla(var(--background) / 0.9) 50%,
-    hsla(var(--brand-accent) / 0.03) 75%,
-    hsla(var(--background) / 0.85) 100%
-  );
-  backdrop-filter: blur(20px) saturate(1.2);
-  border: 1px solid hsla(var(--brand-accent) / 0.1);
-  box-shadow: 0 8px 32px hsla(var(--brand-accent) / 0.1),
-    inset 0 1px 0 hsla(var(--foreground) / 0.1);
-}
-
-/* 5. JEWEL ACCENT - Subtle jewel tone sophistication */
-@utility bg-gradient-jewel {
-  background: linear-gradient(
-    160deg,
-    hsl(var(--background)) 0%,
-    hsla(var(--emerald) / 0.05) 20%,
-    hsla(var(--sapphire) / 0.08) 40%,
-    hsla(var(--brand-accent) / 0.06) 60%,
-    hsla(var(--ruby) / 0.04) 80%,
-    hsl(var(--background)) 100%
-  );
-}
-
-/* 6. MONOCHROME DEPTH - Pure B&W with subtle variations */
-@utility bg-gradient-mono {
-  background: linear-gradient(
-    180deg,
-    hsl(var(--background)) 0%,
-    hsla(var(--foreground) / 0.02) 25%,
-    hsla(var(--foreground) / 0.05) 50%,
-    hsla(var(--foreground) / 0.03) 75%,
-    hsl(var(--background)) 100%
-  );
-  position: relative;
-}
-
-.bg-gradient-mono::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    circle at center,
-    transparent 40%,
-    hsla(var(--brand-accent) / 0.02) 70%,
-    transparent 100%
-  );
-  pointer-events: none;
-}
-
-/* ===== CONTEXT-AWARE BUTTON VARIANTS ===== */
-
-/* Electric Button Styles */
-.btn-gradient-electric {
-  @apply text-white font-medium rounded-lg px-6 py-3;
-  background: linear-gradient(
-    45deg,
-    hsl(var(--brand-accent)) 0%,
-    hsl(215 100% 65%) 35%,
-    hsl(200 100% 70%) 70%,
-    hsl(var(--brand-accent)) 100%
-  );
-  background-size: 300% 300%;
-  animation: gradient-shift 8s ease infinite;
-  box-shadow: 0 4px 15px hsla(var(--brand-accent) / 0.4),
-    0 2px 4px hsla(var(--brand-accent) / 0.2);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.btn-gradient-electric:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px hsla(var(--brand-accent) / 0.5),
-    0 4px 8px hsla(var(--brand-accent) / 0.3);
-}
-
-/* Glass Button Styles */
-.btn-gradient-glass {
-  @apply text-foreground font-medium rounded-lg px-6 py-3;
-  background: linear-gradient(
-    135deg,
-    hsla(var(--background) / 0.8) 0%,
-    hsla(var(--brand-accent) / 0.05) 25%,
-    hsla(var(--background) / 0.9) 50%,
-    hsla(var(--brand-accent) / 0.03) 75%,
-    hsla(var(--background) / 0.85) 100%
-  );
-  backdrop-filter: blur(20px) saturate(1.2);
-  border: 1px solid hsla(var(--brand-accent) / 0.1);
-  transition: all 0.3s ease;
-}
-
-.btn-gradient-glass:hover {
-  background: linear-gradient(
-    135deg,
-    hsla(var(--background) / 0.9) 0%,
-    hsla(var(--brand-accent) / 0.08) 25%,
-    hsla(var(--background) / 0.95) 50%,
-    hsla(var(--brand-accent) / 0.06) 75%,
-    hsla(var(--background) / 0.9) 100%
-  );
-  transform: translateY(-1px);
-}
-
-/* ===== CONTEXT-AWARE CARD VARIANTS ===== */
-
-/* Hero Card Styles */
-.card-gradient-hero {
-  @apply rounded-xl border;
-  background: linear-gradient(
-    135deg,
-    hsl(var(--background)) 0%,
-    hsla(var(--brand-accent) / 0.03) 25%,
-    hsla(var(--brand-accent) / 0.08) 50%,
-    hsla(var(--metal-silver) / 0.05) 75%,
-    hsl(var(--background)) 100%
-  );
-  border-color: hsla(var(--border) / 0.5);
-  box-shadow: 0 10px 40px hsla(var(--foreground) / 0.05);
-  position: relative;
-}
-
-.card-gradient-hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    ellipse at top right,
-    hsla(var(--brand-accent) / 0.06) 0%,
-    transparent 50%
-  );
-  pointer-events: none;
-  border-radius: inherit;
-}
-
-/* Glass Card Styles */
-.card-gradient-glass {
-  @apply rounded-xl;
-  background: linear-gradient(
-    135deg,
-    hsla(var(--background) / 0.8) 0%,
-    hsla(var(--brand-accent) / 0.05) 25%,
-    hsla(var(--background) / 0.9) 50%,
-    hsla(var(--brand-accent) / 0.03) 75%,
-    hsla(var(--background) / 0.85) 100%
-  );
-  backdrop-filter: blur(20px) saturate(1.2);
-  border: 1px solid hsla(var(--brand-accent) / 0.1);
-  box-shadow: 0 20px 40px hsla(var(--brand-accent) / 0.1),
-    0 8px 16px hsla(var(--foreground) / 0.05);
-}
-
-/* ===== IMAGE OVERLAY VARIANTS ===== */
-
-/* Dark Overlay */
-.overlay-gradient-dark {
-  background: linear-gradient(
-    180deg,
-    transparent 0%,
-    hsla(var(--foreground) / 0.2) 40%,
-    hsla(var(--foreground) / 0.7) 100%
-  );
-}
-
-/* Brand Overlay */
-.overlay-gradient-brand {
-  background: linear-gradient(
-    135deg,
-    hsla(var(--brand-accent) / 0.8) 0%,
-    hsla(var(--brand-accent) / 0.4) 50%,
-    hsla(var(--foreground) / 0.6) 100%
-  );
-}
-
-/* ===== DARK MODE ADAPTATIONS ===== */
-
-.dark .bg-gradient-hero {
-  background: linear-gradient(
-    135deg,
-    hsl(var(--background)) 0%,
-    hsla(var(--brand-accent) / 0.05) 25%,
-    hsla(var(--brand-accent) / 0.12) 50%,
-    hsla(var(--metal-silver) / 0.08) 75%,
-    hsl(var(--background)) 100%
-  );
-}
-
-.dark .bg-gradient-glass {
-  background: linear-gradient(
-    135deg,
-    hsla(var(--background) / 0.6) 0%,
-    hsla(var(--brand-accent) / 0.08) 25%,
-    hsla(var(--background) / 0.7) 50%,
-    hsla(var(--brand-accent) / 0.06) 75%,
-    hsla(var(--background) / 0.65) 100%
-  );
-  border-color: hsla(var(--brand-accent) / 0.15);
-}
-
-.dark .bg-gradient-mono {
-  background: linear-gradient(
-    180deg,
-    hsl(var(--background)) 0%,
-    hsla(var(--foreground) / 0.08) 25%,
-    hsla(var(--foreground) / 0.12) 50%,
-    hsla(var(--foreground) / 0.1) 75%,
-    hsl(var(--background)) 100%
-  );
-}
-
-.dark .btn-gradient-glass {
-  background: linear-gradient(
-    135deg,
-    hsla(var(--background) / 0.6) 0%,
-    hsla(var(--brand-accent) / 0.08) 25%,
-    hsla(var(--background) / 0.7) 50%,
-    hsla(var(--brand-accent) / 0.06) 75%,
-    hsla(var(--background) / 0.65) 100%
-  );
-}
-
-.dark .btn-gradient-glass:hover {
-  background: linear-gradient(
-    135deg,
-    hsla(var(--background) / 0.7) 0%,
-    hsla(var(--brand-accent) / 0.12) 25%,
-    hsla(var(--background) / 0.8) 50%,
-    hsla(var(--brand-accent) / 0.1) 75%,
-    hsla(var(--background) / 0.75) 100%
-  );
-}
-
-.dark .card-gradient-glass {
-  background: linear-gradient(
-    135deg,
-    hsla(var(--background) / 0.6) 0%,
-    hsla(var(--brand-accent) / 0.08) 25%,
-    hsla(var(--background) / 0.7) 50%,
-    hsla(var(--brand-accent) / 0.06) 75%,
-    hsla(var(--background) / 0.65) 100%
-  );
-  border-color: hsla(var(--brand-accent) / 0.15);
-}
-
-/* ===== ANIMATION KEYFRAMES ===== */
-
-@keyframes gradient-shift {
-  0%,
-  100% {
-    background-position: 0% 50%;
-  }
-  25% {
-    background-position: 100% 50%;
-  }
-  50% {
-    background-position: 100% 100%;
-  }
-  75% {
-    background-position: 0% 100%;
-  }
-}
-
-/* ===== RESPONSIVE OPTIMIZATIONS ===== */
-
-@media (max-width: 768px) {
-  .bg-gradient-hero::before,
-  .bg-gradient-metallic::after,
-  .bg-gradient-mono::before,
-  .card-gradient-hero::before {
-    opacity: 0.7; /* Reduce complexity on mobile */
-  }
-
-  .bg-gradient-glass,
-  .btn-gradient-glass,
-  .card-gradient-glass {
-    backdrop-filter: blur(12px) saturate(1.1); /* Less intensive blur */
-  }
-}
-
-/* ===== REDUCED MOTION SUPPORT ===== */
-
-@media (prefers-reduced-motion: reduce) {
-  .bg-gradient-electric,
-  .btn-gradient-electric {
-    animation: none;
-    background: linear-gradient(
-      45deg,
-      hsl(var(--brand-accent)) 0%,
-      hsl(215 100% 65%) 100%
-    );
+  .dark {
+    --background: 0 0% 10%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 13%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 13%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 10%;
+    --secondary: 0 0% 18%;
+    --secondary-foreground: 0 0% 90%;
+    --muted: 0 0% 22%;
+    --muted-foreground: 0 0% 75%;
+    --accent: 0 0% 25%;
+    --accent-foreground: 0 0% 95%;
+    --destructive: 0 62% 31%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 0 0% 25%;
+    --input: 0 0% 18%;
+    --ring: var(--ring-brand);
   }
 }

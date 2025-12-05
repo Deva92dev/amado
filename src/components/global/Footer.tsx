@@ -10,13 +10,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { footerLinks } from "@/utils/links";
-import BackToTopButton from "./BackToTop";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="relative bg-foreground text-warm-gray overflow-hidden border-t-2 border-border">
+    <footer className="relative bg-foreground dark:bg-foreground text-warm-gray overflow-hidden border-t-2 border-border">
       <div
         className="absolute inset-0 opacity-5"
         style={{

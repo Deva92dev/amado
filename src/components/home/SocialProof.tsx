@@ -25,7 +25,7 @@ const SocialProof = () => {
           Our Community Style
         </h2>
         <m.div
-          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 auto-rows-[280px] gap-4 bg-gradient-to-r from-metal-gold/10 to-metal-silver/10"
+          className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 auto-rows-[280px] gap-4"
           variants={cardVariants}
           whileHover={{ scale: 1.03 }}
           transition={{ type: "spring", stiffness: 300 }}
