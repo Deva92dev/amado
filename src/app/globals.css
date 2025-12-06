@@ -169,6 +169,16 @@
     }
   }
 
+  @media (max-width: 768px) {
+    .backdrop-blur-md,
+    .backdrop-blur-lg,
+    .shadow-xl,
+    .shadow-2xl {
+      backdrop-filter: none !important;
+      box-shadow: none !important;
+    }
+  }
+
   .dark {
     --background: 0 0% 10%;
     --foreground: 0 0% 98%;

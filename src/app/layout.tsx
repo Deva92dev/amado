@@ -9,11 +9,18 @@ import {
 import "./globals.css";
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/global/Footer";
-import CartDrawer from "@/components/cart/CartDrawer";
 import Script from "next/script";
 import { siteSchema } from "@/utils/jsonldSchema";
-import BackToTopButton from "@/components/global/BackToTop";
 import GlobalWrapper from "./ClientProvider";
+import dynamic from "next/dynamic";
+
+const CartDrawer = dynamic(() => import("@/components/cart/CartDrawer"), {
+  loading: () => null,
+});
+
+const BackToTopButton = dynamic(() => import("@/components/global/BackToTop"), {
+  loading: () => null,
+});
 
 export const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -98,7 +105,6 @@ export default function RootLayout({
           name="description"
           content="Enjoy the different styles with various option at Amado."
         />
-        <meta name="lcp-target" content="#lcp-element" />
       </head>
       <body
         className={`

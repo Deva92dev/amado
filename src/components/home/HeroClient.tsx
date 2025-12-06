@@ -16,18 +16,19 @@ export const MouseTracker = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (typeof window === "undefined" || window.innerWidth < 768) return;
+    if (typeof window === "undefined") return;
+    if (window.innerWidth < 768) return;
 
     const handleMouseMove = (e: MouseEvent) => {
-      if (!containerRef.current) return;
+      const el = containerRef.current;
+      if (!el) return;
 
       const x = (e.clientX / window.innerWidth) * 100 - 50;
       const y = (e.clientY / window.innerHeight) * 100 - 50;
 
-      // Direct DOM manipulation (No React Render), translate3d for GPU acceleration
-      containerRef.current.style.transform = `translate3d(${
-        x * factor * 100
-      }px, ${y * factor * 60}px, 0)`;
+      el.style.transform = `translate3d(${x * factor * 100}px, ${
+        y * factor * 60
+      }px, 0)`;
     };
 
     window.addEventListener("mousemove", handleMouseMove);
@@ -38,9 +39,14 @@ export const MouseTracker = ({
     <div
       ref={containerRef}
       className={className}
-      style={{ willChange: "transform", transition: "transform 0.1s ease-out" }}
+      style={{
+        willChange: "transform",
+        transition: "transform 0.1s ease-out",
+      }}
     >
       {children}
     </div>
   );
 };
+
+export default MouseTracker;
