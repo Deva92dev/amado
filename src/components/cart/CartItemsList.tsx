@@ -45,7 +45,7 @@ const CartItemsList = ({ cartItems }: Props) => {
           >
             <FirstColumn image={image} name={name} />
             <SecondColumn
-              category={category}
+              category={category ?? []}
               name={name}
               productId={productId}
               color={color}

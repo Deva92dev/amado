@@ -2,12 +2,12 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { Grid2X2, List } from "lucide-react";
 import { fetchAllProducts } from "@/utils/actions";
-import { Button } from "../ui/button";
-import { Separator } from "../ui/separator";
-import { SortOption } from "@/app/products/page";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import SortSelect from "./SortSelect";
 import LoadMoreSkeleton from "./LoadMoreSkeleton";
 import { getOptionalAuth } from "@/lib/clerk/authServer";
+import { SortOption } from "@/app/products/page";
 
 export type ProductWithFavorite = Awaited<
   ReturnType<typeof fetchAllProducts>
@@ -15,28 +15,33 @@ export type ProductWithFavorite = Awaited<
   favoriteId: string | null;
 };
 
-type ProductContainerProps = {
-  layout?: string;
-  search?: string;
-  category?: string;
-  color?: string;
-  size?: string;
-  sortBy?: SortOption;
-};
-
 const LoadMore = dynamic(() => import("@/components/products/LoadMore"), {
   loading: () => <LoadMoreSkeleton />,
 });
 
-const ProductsContainer = async ({
-  layout = "grid",
-  search = "",
-  category = "all",
-  sortBy = "name-a-z",
-  color = "",
-  size = "",
-}: ProductContainerProps) => {
+type ProductsContainerProps = {
+  paramsPromise: Promise<{
+    layout?: "grid" | "list";
+    search?: string;
+    category?: string;
+    color?: string;
+    size?: string;
+    sortBy?: SortOption;
+  }>;
+};
+
+const ProductsContainer = async ({ paramsPromise }: ProductsContainerProps) => {
+  const {
+    layout = "grid",
+    search = "",
+    category = "all",
+    sortBy = "name-a-z",
+    color = "",
+    size = "",
+  } = await paramsPromise;
+
   const userId = await getOptionalAuth();
+
   const initialProductsRaw = await fetchAllProducts({
     search,
     category,
@@ -45,18 +50,19 @@ const ProductsContainer = async ({
     userId: userId ?? null,
   });
 
-  // Products already include isFavorited/favoriteIds from the single query
   const initialProducts = sortProducts(initialProductsRaw, sortBy);
   const totalProducts = initialProducts.length;
 
   const createUrl = (newParams: Record<string, string>) => {
     const params = new URLSearchParams();
     if (search) params.set("search", search);
-    if (category !== "all") params.set("category", category);
+    if (category && category !== "all") params.set("category", category);
     if (sortBy) params.set("sortBy", sortBy);
     if (color) params.set("color", color);
     if (size) params.set("size", size);
+
     Object.entries(newParams).forEach(([key, value]) => params.set(key, value));
+
     return `/products?${params.toString()}`;
   };
 
@@ -119,7 +125,7 @@ const ProductsContainer = async ({
   );
 };
 
-function sortProducts(products: any, sortBy: SortOption) {
+function sortProducts(products: any[], sortBy: SortOption) {
   switch (sortBy) {
     case "price-low":
       return [...products].sort((a, b) => a.price - b.price);

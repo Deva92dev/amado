@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import crypto from "crypto";
-import db from "@/utils/db";
+import crypto, { randomUUID } from "crypto";
 import Razorpay from "razorpay";
 import { revalidatePath } from "next/cache";
 import { env } from "../../../../env";
+import { db } from "@/db";
+import { order, cart, cartItem, orderItem } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 const razorpay = new Razorpay({
   key_id: env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
@@ -25,7 +27,7 @@ export async function POST(req: NextRequest) {
 
     // Verify signature
     const generated_signature = crypto
-      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET!)
+      .createHmac("sha256", env.RAZORPAY_KEY_SECRET)
       .update(`${razorpay_order_id}|${razorpay_payment_id}`)
       .digest("hex");
 
@@ -36,8 +38,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const result = await db.$transaction(async (tx) => {
-      // 1. Get Razorpay order details
+    const result = await db.transaction(async (tx) => {
       const razorpayOrder = await razorpay.orders.fetch(razorpay_order_id);
 
       const notes = razorpayOrder.notes as Record<string, string> | undefined;
@@ -45,64 +46,72 @@ export async function POST(req: NextRequest) {
         throw new Error("Cart ID missing in payment notes");
       }
 
-      // 2. Validate cart ID from Razorpay notes
       const cartId = notes.cartId;
-      if (typeof cartId !== "string") {
-        throw new Error("Invalid cart ID format");
-      }
 
-      // 3. Get cart with items
-      const cart = await tx.cart.findUnique({
-        where: { id: cartId },
-        include: {
+      // Get cart with items & products
+      const userCart = await tx.query.cart.findFirst({
+        where: eq(cart.id, cartId),
+        with: {
           cartItems: {
-            include: {
+            with: {
               product: true,
             },
           },
         },
       });
 
-      if (!cart) throw new Error("Cart not found");
-      if (!cart.cartItems?.length) throw new Error("Empty cart");
+      if (!userCart) throw new Error("Cart not found");
+      if (!userCart.cartItems || userCart.cartItems.length === 0) {
+        throw new Error("Empty cart");
+      }
 
-      // 4. Update order status
-      const updatedOrder = await tx.order.update({
-        where: { razorpayOrderId: razorpay_order_id },
-        data: {
+      // Update order status
+      // 'returning()' to get the updated order ID for the next step
+      const [updatedOrder] = await tx
+        .update(order)
+        .set({
           razorpayPaymentId: razorpay_payment_id,
           paymentStatus: "COMPLETED",
           isPaid: true,
-        },
-      });
+        })
+        .where(eq(order.razorpayOrderId, razorpay_order_id))
+        .returning();
 
-      // 5. Create order items from cart
-      await tx.orderItem.createMany({
-        data: cart.cartItems.map((item) => ({
+      if (!updatedOrder) {
+        throw new Error("Order not found matching this Razorpay ID");
+      }
+
+      // Create order items from cart (Bulk Insert)
+      // Drizzle insert takes an array for bulk operations
+      await tx.insert(orderItem).values(
+        userCart.cartItems.map((item) => ({
+          id: randomUUID(),
           productId: item.productId,
           orderId: updatedOrder.id,
           quantity: item.amount,
           price: item.product.price,
-        })),
-      });
+        }))
+      );
 
-      // 6. Cleanup cart
-      await tx.cartItem.deleteMany({ where: { cartId } });
-      await tx.cart.delete({ where: { id: cartId } });
+      // Cleanup cart
+      // Delete items first (FK constraints), then the cart
+      await tx.delete(cartItem).where(eq(cartItem.cartId, cartId));
+      await tx.delete(cart).where(eq(cart.id, cartId));
 
       return updatedOrder;
     });
 
-    // Revalidate paths
     revalidatePath("/");
     revalidatePath("/cart");
     revalidatePath("/orders");
-    revalidatePath(`/products/${result.id}`);
+    // Only revalidate if successfully got an ID
+    if (result?.id) {
+      revalidatePath(`/products/${result.id}`);
+    }
 
     return NextResponse.json({
       success: true,
       message: "Payment Verified & Cart Cleared",
-      // orderId: result.id,
     });
   } catch (error: any) {
     console.error("Payment verification error:", error);

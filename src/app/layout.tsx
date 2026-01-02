@@ -1,11 +1,5 @@
 import type { Metadata } from "next";
-import {
-  Playfair_Display,
-  Abril_Fatface,
-  Inter,
-  Manrope,
-  Italiana,
-} from "next/font/google";
+import { Playfair_Display, Inter } from "next/font/google";
 import "./globals.css";
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/global/Footer";
@@ -29,32 +23,11 @@ export const playfair = Playfair_Display({
   weight: ["400", "700"],
 });
 
-export const abril = Abril_Fatface({
-  subsets: ["latin"],
-  variable: "--font-abril-fatface",
-  display: "swap",
-  weight: "400",
-});
-
 export const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
   display: "swap",
   weight: ["400", "700"],
-});
-
-export const manrope = Manrope({
-  subsets: ["latin"],
-  variable: "--font-manrope",
-  display: "swap",
-  weight: ["400", "700"],
-});
-
-export const italiana = Italiana({
-  subsets: ["latin"],
-  variable: "--font-italiana",
-  display: "swap",
-  weight: "400",
 });
 
 export const metadata: Metadata = {
@@ -110,7 +83,6 @@ export default function RootLayout({
         className={`
           ${playfair.variable} 
           ${inter.variable} 
-          ${italiana.variable}
           antialiased
         `}
       >
