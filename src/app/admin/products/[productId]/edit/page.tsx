@@ -24,7 +24,7 @@ const EditProductPage = async ({ params }: EditPageProps) => {
   const { category, name, price, featured, description } = product;
 
   return (
-    <section>
+    <section className="py-16">
       <h1 className="text-2xl font-semibold capitalize mb-8">Update {name}</h1>
       <div className="border p-8 rounded-md">
         <ImageInputContainer

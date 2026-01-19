@@ -9,7 +9,7 @@ const Sidebar = () => {
   const pathname = usePathname();
 
   return (
-    <aside>
+    <aside className="py-16">
       {adminLinks.map((link) => {
         const isActivePage = pathname === link.href;
         const variant = isActivePage ? "default" : "ghost";

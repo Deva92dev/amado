@@ -10,7 +10,7 @@ import { createProductAction } from "@/utils/actions";
 
 const CreateProductPage = () => {
   return (
-    <section>
+    <section className="py-16">
       <h1 className="text-2xl font-semibold capitalize mb-8">Create Product</h1>
       <div className="border p-8 rounded-md">
         <FormContainer action={createProductAction}>

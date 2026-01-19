@@ -14,7 +14,8 @@ const SalesPage = async () => {
   const orders = await fetchAdminOrders();
 
   return (
-    <div>
+    <div className="py-16 min-h-screen">
+      <h2 className="mb-8">Dashboard</h2>
       <Table>
         <TableCaption>Total Order : {orders.length}</TableCaption>
         <TableHeader>

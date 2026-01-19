@@ -19,7 +19,7 @@ const ProductAdminPage = async () => {
   const items = await fetchAdminProducts();
   if (items.length === 0) return <EmptyList />;
   return (
-    <section>
+    <section className="py-16">
       <Table>
         <TableCaption className="capitalize">
           Total Products : {items.length}
