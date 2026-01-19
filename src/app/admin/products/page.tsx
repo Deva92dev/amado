@@ -45,7 +45,7 @@ const ProductAdminPage = async () => {
                     {name}
                   </Link>
                 </TableCell>
-                <TableCell>{category.join(", ")}</TableCell>
+                <TableCell>{category?.join(", ")}</TableCell>
                 <TableCell>{formatCurrency(price)}</TableCell>
                 <TableCell className="flex items-center gap-x-2">
                   <Link href={`/admin/products/${productId}/edit`}>

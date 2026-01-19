@@ -89,41 +89,45 @@ const ProductsList = ({ products }: ProductListProps) => {
                       {/* Color Swatches */}
                       {colors && colors.length > 0 && (
                         <div className="flex flex-row gap-2 flex-wrap">
-                          {colors.slice(0, 6).map((c, colorIndex) => {
-                            const COLOR_HEX: Record<string, string> = {
-                              black: "#0a0a0a",
-                              white: "#f5f5f5",
-                              red: "#ef4444",
-                              blue: "#3b82f6",
-                              green: "#22c55e",
-                              beige: "#f5f5dc",
-                              gray: "#9ca3af",
-                              navy: "#1f2a44",
-                              yellow: "#FFFF00",
-                              silver: "#C0C0C0",
-                              olive: "#808000",
-                            };
+                          {colors
+                            .slice(0, 6)
+                            .map(
+                              (c: string | undefined, colorIndex: number) => {
+                                const COLOR_HEX: Record<string, string> = {
+                                  black: "#0a0a0a",
+                                  white: "#f5f5f5",
+                                  red: "#ef4444",
+                                  blue: "#3b82f6",
+                                  green: "#22c55e",
+                                  beige: "#f5f5dc",
+                                  gray: "#9ca3af",
+                                  navy: "#1f2a44",
+                                  yellow: "#FFFF00",
+                                  silver: "#C0C0C0",
+                                  olive: "#808000",
+                                };
 
-                            function toHex(c: string | undefined) {
-                              if (!c) return undefined;
-                              if (c.startsWith("#") || c.startsWith("rgb"))
-                                return c;
-                              return COLOR_HEX[c] ?? undefined;
-                            }
+                                function toHex(c: string | undefined) {
+                                  if (!c) return undefined;
+                                  if (c.startsWith("#") || c.startsWith("rgb"))
+                                    return c;
+                                  return COLOR_HEX[c] ?? undefined;
+                                }
 
-                            const bg = toHex(c);
-                            return (
-                              <span
-                                key={`${productId}-${c}`}
-                                className="inline-block h-6 w-6 rounded-full ring-2 ring-background shadow-md group-hover:scale-110 transition-transform duration-200"
-                                title={c}
-                                style={{
-                                  backgroundColor: bg,
-                                  animationDelay: `${colorIndex * 50}ms`,
-                                }}
-                              />
-                            );
-                          })}
+                                const bg = toHex(c);
+                                return (
+                                  <span
+                                    key={`${productId}-${c}`}
+                                    className="inline-block h-6 w-6 rounded-full ring-2 ring-background shadow-md group-hover:scale-110 transition-transform duration-200"
+                                    title={c}
+                                    style={{
+                                      backgroundColor: bg,
+                                      animationDelay: `${colorIndex * 50}ms`,
+                                    }}
+                                  />
+                                );
+                              }
+                            )}
                           {colors.length > 6 && (
                             <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-muted text-muted-foreground text-xs font-medium">
                               +{colors.length - 6}
@@ -134,7 +138,7 @@ const ProductsList = ({ products }: ProductListProps) => {
                       {/* Size Indicator */}
                       {sizes && sizes.length > 0 && (
                         <div className="flex flex-wrap gap-2">
-                          {sizes.slice(0, 6).map((size) => (
+                          {sizes.slice(0, 6).map((size: any) => (
                             <span
                               key={`${productId}-${size}`}
                               className="text-sm bg-secondary text-secondary-foreground px-3 py-1 rounded-md font-medium uppercase tracking-wider opacity-70 group-hover:opacity-100 transition-opacity duration-200"

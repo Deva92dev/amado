@@ -1,12 +1,14 @@
 import { redirect } from "next/navigation";
 import { Metadata } from "next";
-import db from "@/utils/db";
 import CartItemsList from "@/components/cart/CartItemsList";
 import CartTotals from "@/components/cart/CartTotals";
 import SectionTitle from "@/components/global/SectionTitle";
 import ClearCartButton from "@/components/cart/ClearCartButton";
 import { fetchOrCreateCartId, updateCart } from "@/utils/actions";
 import { requireAuth } from "@/lib/clerk/authServer";
+import { db } from "@/db";
+import { asc, eq } from "drizzle-orm";
+import { cartItem } from "@/db/schema";
 
 export const metadata: Metadata = { title: "Cart" };
 
@@ -15,15 +17,21 @@ const CartPage = async () => {
   if (!userId) redirect("/");
   const cartInfo = await fetchOrCreateCartId(userId);
   const currentCart = await updateCart(cartInfo);
-  // 3) Items with product only for this page render
-  const cartItems = await db.cartItem.findMany({
-    where: { cartId: currentCart.id },
-    include: { product: true },
-    orderBy: { createdAt: "asc" },
+  // Items with product only for this page render
+  const cartItems = await db.query.cartItem.findMany({
+    where: eq(cartItem.cartId, currentCart.id),
+    with: {
+      product: true,
+    },
+    orderBy: asc(cartItem.createdAt),
   });
 
   if (cartItems.length === 0) {
-    return <SectionTitle text="Empty Cart" />;
+    return (
+      <div className="min-h-screen py-24 flex items-center justify-center">
+        <SectionTitle text="Empty Cart" />
+      </div>
+    );
   }
 
   return (

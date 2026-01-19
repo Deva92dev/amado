@@ -1,7 +1,9 @@
 import { NextRequest } from "next/server";
 import Razorpay from "razorpay";
-import db from "@/utils/db";
 import { env } from "../../../../env";
+import { db } from "@/db";
+import { order, cart } from "@/db/schema";
+import { eq } from "drizzle-orm";
 
 const razorpay = new Razorpay({
   key_id: env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
@@ -20,9 +22,11 @@ export const POST = async (req: NextRequest) => {
     }
 
     // Transaction for atomic operations
-    const result = await db.$transaction(async (tx) => {
-      const existingOrder = await tx.order.findUnique({
-        where: { id: orderId },
+    const result = await db.transaction(async (tx) => {
+      // Fetch Existing Order
+      const existingOrder = await tx.query.order.findFirst({
+        where: eq(order.id, orderId),
+        columns: { isPaid: true }, // Optimization: only select what we need to check
       });
 
       if (!existingOrder) {
@@ -32,22 +36,25 @@ export const POST = async (req: NextRequest) => {
         throw new Error("Order already paid");
       }
 
-      const cart = await tx.cart.findUnique({
-        where: { id: cartId },
-        include: {
+      // Fetch Cart with Nested Relations (Items -> Product)
+      const userCart = await tx.query.cart.findFirst({
+        where: eq(cart.id, cartId),
+        with: {
           cartItems: {
-            include: {
+            with: {
               product: true,
             },
           },
         },
       });
 
-      if (!cart) throw new Error("Cart not found");
-      if (!cart.cartItems?.length) throw new Error("Empty cart");
+      if (!userCart) throw new Error("Cart not found");
+      if (!userCart.cartItems || userCart.cartItems.length === 0) {
+        throw new Error("Empty cart");
+      }
 
-      // 3. Calculate total amount
-      const orderAmountInPaise = cart.cartItems.reduce((total, item) => {
+      // Calculate total amount
+      const orderAmountInPaise = userCart.cartItems.reduce((total, item) => {
         return total + item.product.price * 100 * item.amount;
       }, 0);
 
@@ -70,11 +77,11 @@ export const POST = async (req: NextRequest) => {
         throw new Error("Failed to create Razorpay order");
       }
 
-      // 5. Update order with Razorpay ID
-      const updatedOrder = await tx.order.update({
-        where: { id: orderId },
-        data: { razorpayOrderId: razorpayOrder.id },
-      });
+      // Update order with Razorpay ID
+      await tx
+        .update(order)
+        .set({ razorpayOrderId: razorpayOrder.id })
+        .where(eq(order.id, orderId));
 
       return {
         razorpayOrderId: razorpayOrder.id,

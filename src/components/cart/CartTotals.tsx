@@ -1,10 +1,10 @@
-import { Cart } from "@prisma/client";
 import { Card, CardTitle } from "../ui/card";
 import { formatCurrency } from "@/utils/format";
 import { Separator } from "@radix-ui/react-dropdown-menu";
 import FormContainer from "../form/FormContainer";
 import { createOrderAction } from "@/utils/actions";
 import { SubmitButton } from "../form/Buttons";
+import { Cart } from "@/utils/types";
 
 const CartTotals = ({ cart }: { cart: Cart }) => {
   const { cartTotal, orderTotal, shipping, tax } = cart;

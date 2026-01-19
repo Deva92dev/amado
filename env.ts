@@ -12,6 +12,7 @@ export const env = createEnv({
     ADMIN_USER_ID: z.string().min(1, "Clerk Admin Id is required"),
     RAZORPAY_KEY_SECRET: z.string().min(1, "RazorPat Key secret is required"),
     NODE_ENV: z.string().min(1),
+    STRIPE_SECRET_KEY: z.string().min(1, "Stripe Secret Key is Required"),
   },
   client: {
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string(),
@@ -19,6 +20,9 @@ export const env = createEnv({
     NEXT_PUBLIC_RAZORPAY_KEY_ID: z
       .string()
       .min(1, "Razorpay Key ID is required"),
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z
+      .string()
+      .min(1, "Stripe Public Key is Required"),
   },
   runtimeEnv: {
     DB_PASSWORD: process.env.DB_PASSWORD,
@@ -29,10 +33,13 @@ export const env = createEnv({
     DATABASE_URL: process.env.DATABASE_URL,
     ADMIN_USER_ID: process.env.ADMIN_USER_ID,
     RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET,
+    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
     NODE_ENV: process.env.NODE_ENV,
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
       process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
     NEXT_PUBLIC_WEBSITE_URL: process.env.NEXT_PUBLIC_WEBSITE_URL,
     NEXT_PUBLIC_RAZORPAY_KEY_ID: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+    NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:
+      process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
   },
 });

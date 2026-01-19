@@ -49,7 +49,7 @@ const EditProductPage = async ({ params }: EditPageProps) => {
               type="text"
               name="category"
               label="category"
-              defaultValue={category}
+              defaultValue={category ?? []}
             />
             <PriceInput defaultValue={price} />
           </div>

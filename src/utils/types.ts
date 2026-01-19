@@ -1,21 +1,30 @@
-import { Prisma } from "@prisma/client";
+import { type InferSelectModel } from "drizzle-orm";
+import { cart, cartItem, product } from "@/db/schema";
 import { fetchFeaturedProducts } from "./actions";
+
+type Product = InferSelectModel<typeof product>;
+export type Cart = InferSelectModel<typeof cart>;
+
+type CartItemBase = InferSelectModel<typeof cartItem>;
+export type CartItemWithProduct = CartItemBase & {
+  product: Product;
+};
 
 export type actionFunction = (
   prevState: any
 ) => Promise<{ message: string }> | { message: string };
 
 export type CartItem = {
+  id: string;
   productId: string;
-  title: string;
-  image: string;
-  price: string;
+  cartId: string;
   amount: number;
-  category: string[];
+  color: string | null;
+  size: string | null;
 };
 
 export type CartState = {
-  cartItems: CartItem[];
+  cartItems: CartItemWithProduct[];
   numItemsInCart: number;
   cartTotal: number;
   shipping: number;
@@ -23,10 +32,7 @@ export type CartState = {
   orderTotal: number;
 };
 
-export type CartItemWithProduct = Prisma.CartItemGetPayload<{
-  include: { product: true };
-}>;
-
+// ... rest of your types (FeaturedProduct, etc.) remain the same
 export type FeaturedProduct = {
   id: string;
   name: string;
@@ -40,6 +46,7 @@ export interface FeaturedCollectionType {
   name: string;
   image: string;
   category: string[];
+  price: number;
 }
 
 export interface FeaturedCollectionCategoryType {
@@ -55,14 +62,14 @@ export type FeaturedProducts = Awaited<
 >[0];
 
 export type ProductCardItem = {
-  id: string; // product id
-  name: string; // product name
+  id: string;
+  name: string;
   type: string;
   colors: string;
   sizes: string;
-  price: number; // product price (in minor units if you use cents)
-  image: string; // product main image URL
-  favoriteIds: string[]; // aggregated favorite IDs
+  price: number;
+  image: string;
+  favoriteIds: string[];
 };
 
 export type ToggleFavoriteInput = {

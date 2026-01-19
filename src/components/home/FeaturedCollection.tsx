@@ -18,7 +18,15 @@ const MotionButton = dynamic(() =>
 
 const getLowestPrice = (products: any[]) => {
   if (!products || products.length === 0) return null;
-  return Math.min(...products.map((product) => product.price));
+
+  const validPrices = products
+    .map((product) => Number(product.price))
+    .filter((price) => !isNaN(price));
+
+  // Return null if no valid prices exist
+  if (validPrices.length === 0) return null;
+
+  return Math.min(...validPrices);
 };
 
 const FeaturedCollection = async () => {
