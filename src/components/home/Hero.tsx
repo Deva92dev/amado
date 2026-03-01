@@ -1,6 +1,7 @@
 import Image from "next/image";
 import MainImage from "@/assets/Main.webp";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 
 const HeroEnhancements = dynamic(() => import("./HeroEnhancements"), {
   loading: () => null,
@@ -39,18 +40,18 @@ export default function Hero() {
             innovation.
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
-            <a
-              href="/shop"
+            <Link
+              href="/products"
               className="inline-flex items-center justify-center px-8 py-4 text-base md:text-lg font-bold rounded-xl bg-[hsl(215_100%_40%)] text-white transition-transform duration-200 active:scale-95 touch-manipulation select-none md:hover:scale-105 md:hover:brightness-110"
             >
               Shop Now →
-            </a>
-            <a
-              href="/story"
+            </Link>
+            <Link
+              href="/about"
               className="inline-flex items-center justify-center px-8 py-4 text-base md:text-lg font-bold rounded-xl border border-white/20 bg-white/10 text-white transition-transform duration-200 active:scale-95 touch-manipulation select-none md:hover:bg-white/20 md:hover:scale-105"
             >
-              Watch Story
-            </a>
+              About Us
+            </Link>
           </div>
         </div>
       </div>
