@@ -13,7 +13,7 @@ export const dynamic = "force-static";
 
 const FeaturedCollection = dynamicImport(
   () => import("@/components/home/FeaturedCollection"),
-  { loading: () => <FeaturedCollectionSkeleton /> }
+  { loading: () => <FeaturedCollectionSkeleton /> },
 );
 
 const BrandStory = dynamicImport(() => import("@/components/home/BrandStory"), {
@@ -22,14 +22,14 @@ const BrandStory = dynamicImport(() => import("@/components/home/BrandStory"), {
 
 const TrendingProducts = dynamicImport(
   () => import("@/components/home/TrendingProducts"),
-  { loading: () => <TrendingProductsSkeleton /> }
+  { loading: () => <TrendingProductsSkeleton /> },
 );
 
 const SocialProof = dynamicImport(
   () => import("@/components/home/SocialProof"),
   {
     loading: () => <SocialProofGridSkeleton />,
-  }
+  },
 );
 
 const NewsLetter = dynamicImport(() => import("@/components/home/NewsLetter"), {

@@ -18,8 +18,10 @@ import {
 } from "react";
 import { useInView } from "react-intersection-observer";
 
-interface MotionButtonProps
-  extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "onClick"> {
+interface MotionButtonProps extends Omit<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  "onClick"
+> {
   children: ReactNode;
   className?: string;
   href?: string;
@@ -219,7 +221,7 @@ const MotionButton = ({
         const centerX = rect.left + rect.width / 2;
         const centerY = rect.top + rect.height / 2;
         const distance = Math.sqrt(
-          Math.pow(e.clientX - centerX, 2) + Math.pow(e.clientY - centerY, 2)
+          Math.pow(e.clientX - centerX, 2) + Math.pow(e.clientY - centerY, 2),
         );
 
         if (distance < (magnetic.radius || 100)) {
@@ -262,7 +264,7 @@ const MotionButton = ({
 
   // Ripple effect
   const createRipple = (
-    e: MouseEvent<HTMLButtonElement> | TouchEvent<HTMLButtonElement>
+    e: MouseEvent<HTMLButtonElement> | TouchEvent<HTMLButtonElement>,
   ) => {
     if (!ripple.enabled || disabled) return;
 
@@ -451,8 +453,8 @@ const MotionButton = ({
               repeat === true
                 ? Infinity
                 : typeof repeat === "number"
-                ? repeat
-                : 0,
+                  ? repeat
+                  : 0,
             repeatDelay,
           },
         },
@@ -470,8 +472,8 @@ const MotionButton = ({
               repeat === true
                 ? Infinity
                 : typeof repeat === "number"
-                ? repeat
-                : 0,
+                  ? repeat
+                  : 0,
             repeatDelay,
           },
         },

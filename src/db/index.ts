@@ -1,15 +1,16 @@
-import { drizzle } from "drizzle-orm/postgres-js";
-import postgres from "postgres";
+import { neon } from "@neondatabase/serverless";
+import { drizzle } from "drizzle-orm/neon-http";
 import * as schema from "./schema";
 import * as relations from "./relations";
 
-const connectionString = process.env.DATABASE_URL!;
+if (!process.env.DATABASE_URL) {
+  throw new Error("CRITICAL: DATABASE_URL is not defined in the environment.");
+}
 
-// Disable "prepare" because Supabase Transaction Mode (Port 6543) doesn't support it
-const client = postgres(connectionString, {
-  prepare: false,
-});
+const sql = neon(process.env.DATABASE_URL);
 
-export const db = drizzle(client, {
+export const db = drizzle(sql, {
   schema: { ...schema, ...relations },
 });
+
+export * from "./schema";

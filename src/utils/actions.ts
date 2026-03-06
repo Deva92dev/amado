@@ -24,7 +24,6 @@ import {
   reviewSchema,
   ValidateWithZodSchema,
 } from "./schemas";
-import { deleteImage, uploadImage, uploadVideo } from "./supabase";
 import { revalidatePath, revalidateTag } from "next/cache";
 import {
   FeaturedCollectionCategoryType,
@@ -64,14 +63,6 @@ const renderError = (error: unknown): { message: string } => {
   };
 };
 
-export async function uploadVideoAction(
-  video: File,
-  folder: string,
-  userId: string
-) {
-  return await uploadVideo(video, folder, userId);
-}
-
 export const getFeaturedCollection = createCache(
   async (): Promise<FeaturedCollectionCategoryType> => {
     try {
@@ -90,8 +81,8 @@ export const getFeaturedCollection = createCache(
             arrayContains(product.category, ["women"]),
             arrayContains(product.category, ["winter"]),
             arrayContains(product.category, ["summer"]),
-            arrayContains(product.category, ["casual"])
-          )
+            arrayContains(product.category, ["casual"]),
+          ),
         );
 
       // We map over the DB result and ensure 'category' is never null.
@@ -146,7 +137,7 @@ export const getFeaturedCollection = createCache(
       return { men: [], women: [], winter: [], summer: [], casual: [] };
     }
   },
-  CachePresets.daily(["featured_collection"])
+  CachePresets.daily(["featured_collection"]),
 );
 
 const _fetchFeaturedProducts = createCache(
@@ -180,7 +171,7 @@ const _fetchFeaturedProducts = createCache(
         // Count how many favorites exist for this product AND this user
         favoriteCount:
           sql<number>`(SELECT count(*) FROM "Favorite" WHERE "Favorite"."productId" = "Product"."id" AND "Favorite"."clerkId" = ${userId})`.mapWith(
-            Number
+            Number,
           ),
       })
       .from(product)
@@ -199,14 +190,14 @@ const _fetchFeaturedProducts = createCache(
         image: p.image,
         price: p.price,
         favoriteId: p.favoriteCount > 0 ? "favorited" : null,
-      })
+      }),
     );
   },
   {
     revalidate: 60 * 60 * 24,
     tags: ["featured_products", "products", "favorites"],
     keyPrefix: "fetchFeaturedProducts",
-  }
+  },
 );
 
 export async function getSearchSuggestions(query: string): Promise<string[]> {
@@ -221,8 +212,8 @@ export async function getSearchSuggestions(query: string): Promise<string[]> {
       .where(
         or(
           ilike(product.name, `%${query}%`),
-          ilike(product.description, `%${query}%`)
-        )
+          ilike(product.description, `%${query}%`),
+        ),
       )
       .limit(6);
 
@@ -268,8 +259,8 @@ export const fetchAllProducts = async ({
     conditions.push(
       or(
         ilike(product.name, `%${search}%`),
-        ilike(product.description, `%${search}%`)
-      )
+        ilike(product.description, `%${search}%`),
+      ),
     );
   }
 
@@ -321,7 +312,7 @@ export const fetchAllProducts = async ({
       sizes: product.sizes,
       favoriteCount:
         sql<number>`(SELECT count(*) FROM "Favorite" WHERE "Favorite"."productId" = "Product"."id" AND "Favorite"."clerkId" = ${userId})`.mapWith(
-          Number
+          Number,
         ),
     })
     .from(product)
@@ -359,8 +350,8 @@ export const countProducts = createCache(
       conditions.push(
         or(
           ilike(product.name, `%${search}%`),
-          ilike(product.description, `%${search}%`)
-        )
+          ilike(product.description, `%${search}%`),
+        ),
       );
     }
     if (category && category !== "all") {
@@ -380,19 +371,19 @@ export const countProducts = createCache(
 
     return result[0].count;
   },
-  CachePresets.dynamic(["products", "meta"])
+  CachePresets.dynamic(["products", "meta"]),
 );
 
 export const fetchProductMeta = async () => {
   const [cats, cols, siz] = await Promise.all([
     db.execute(
-      sql`SELECT DISTINCT unnest("category") AS v FROM "Product" WHERE cardinality("category") > 0`
+      sql`SELECT DISTINCT unnest("category") AS v FROM "Product" WHERE cardinality("category") > 0`,
     ),
     db.execute(
-      sql`SELECT DISTINCT unnest("colors") AS v FROM "Product" WHERE cardinality("colors") > 0`
+      sql`SELECT DISTINCT unnest("colors") AS v FROM "Product" WHERE cardinality("colors") > 0`,
     ),
     db.execute(
-      sql`SELECT DISTINCT unnest("sizes") AS v FROM "Product" WHERE cardinality("sizes") > 0`
+      sql`SELECT DISTINCT unnest("sizes") AS v FROM "Product" WHERE cardinality("sizes") > 0`,
     ),
   ]);
 
@@ -428,22 +419,25 @@ export const fetchSingleProduct = async (productId: string) => {
   return result;
 };
 
-export const fetchProductByIds = createCache(async (ids: string[]) => {
-  if (!ids.length) return [];
+export const fetchProductByIds = createCache(
+  async (ids: string[]) => {
+    if (!ids.length) return [];
 
-  const products = await db
-    .select({
-      id: product.id,
-      name: product.name,
-      image: product.image,
-      price: product.price,
-    })
-    .from(product)
-    .where(inArray(product.id, ids));
+    const products = await db
+      .select({
+        id: product.id,
+        name: product.name,
+        image: product.image,
+        price: product.price,
+      })
+      .from(product)
+      .where(inArray(product.id, ids));
 
-  const map = new Map(products.map((p: any) => [p.id, p]));
-  return ids.map((id) => map.get(id)).filter(Boolean) as typeof products;
-}, CachePresets.static(["products", "bulk"]));
+    const map = new Map(products.map((p: any) => [p.id, p]));
+    return ids.map((id) => map.get(id)).filter(Boolean) as typeof products;
+  },
+  CachePresets.static(["products", "bulk"]),
+);
 
 export const fetchRelatedProducts = createCache(
   async (params: { productId: string; type: string }) => {
@@ -461,60 +455,8 @@ export const fetchRelatedProducts = createCache(
 
     return related;
   },
-  CachePresets.weekly(["products", "related"])
+  CachePresets.weekly(["products", "related"]),
 );
-
-export const createProductAction = async (
-  prevState: FormState | undefined,
-  formData: FormData
-): Promise<{ message: string }> => {
-  const userId = await requireAuth();
-
-  try {
-    const rawData = Object.fromEntries(formData);
-
-    // category is an array of string
-    if (rawData.category) {
-      try {
-        rawData.category = JSON.parse(rawData.category as string);
-      } catch (error) {
-        throw new Error(
-          "Invalid category format. Expected an array of strings."
-        );
-      }
-    }
-
-    // ⚠️ IMPORTANT: You likely need to do the same JSON.parse for colors and sizes
-    // if they are being sent as stringified arrays from the client.
-    // If your client sends them differently, you can ignore this comment.
-    if (rawData.colors && typeof rawData.colors === "string") {
-      try {
-        rawData.colors = JSON.parse(rawData.colors);
-      } catch (e) {}
-    }
-    if (rawData.sizes && typeof rawData.sizes === "string") {
-      try {
-        rawData.sizes = JSON.parse(rawData.sizes);
-      } catch (e) {}
-    }
-
-    const validatedFields = ValidateWithZodSchema(productSchema, rawData);
-    const file = formData.get("image") as File;
-    const validatedFile = ValidateWithZodSchema(imageSchema, { image: file });
-    const fullImagePath = await uploadImage(validatedFile.image, folder);
-
-    await db.insert(product).values({
-      id: randomUUID(),
-      ...validatedFields,
-      image: fullImagePath,
-      clerkId: userId,
-    });
-  } catch (error) {
-    return renderError(error);
-  }
-
-  redirect("/admin/products");
-};
 
 export const fetchAdminProducts = async () => {
   await requireAdminAuth();
@@ -539,9 +481,6 @@ export const deleteProductAction = async (prevState: { productId: string }) => {
     if (!deletedProduct) {
       throw new Error("Product not found");
     }
-
-    await deleteImage(deletedProduct.image, folder);
-
     revalidatePath("/admin/products");
     return { message: "Product Removed" };
   } catch (error: any) {
@@ -561,7 +500,7 @@ export const fetchAdminProductDetails = async (productId: string) => {
 
 export const updateProductAction = async (
   prevState: FormState | undefined,
-  formData: FormData
+  formData: FormData,
 ) => {
   await requireAdminAuth();
   try {
@@ -602,35 +541,6 @@ export const updateProductAction = async (
   }
 };
 
-export const updateProductImageAction = async (
-  prevState: FormState | undefined,
-  formData: FormData
-) => {
-  await requireAdminAuth();
-
-  try {
-    const image = formData.get("image") as File;
-    const productId = formData.get("id") as string;
-    const oldImageUrl = formData.get("url") as string;
-    const oldImagePathUrl = decodeURIComponent(oldImageUrl);
-
-    const validatedFile = ValidateWithZodSchema(imageSchema, { image });
-    const fullPath = await uploadImage(validatedFile.image, folder);
-
-    await deleteImage(oldImagePathUrl, folder);
-
-    await db
-      .update(product)
-      .set({ image: fullPath })
-      .where(eq(product.id, productId));
-
-    revalidatePath(`/admin/products/${productId}/edit`);
-    return { message: "Product image updated successfully" };
-  } catch (error) {
-    return renderError(error);
-  }
-};
-
 export const fetchFavoriteIdsForProducts = async (productIds: string[]) => {
   let userId: string;
   try {
@@ -649,7 +559,10 @@ export const fetchFavoriteIdsForProducts = async (productIds: string[]) => {
     })
     .from(favorite)
     .where(
-      and(inArray(favorite.productId, productIds), eq(favorite.clerkId, userId))
+      and(
+        inArray(favorite.productId, productIds),
+        eq(favorite.clerkId, userId),
+      ),
     );
 
   return favorites;
@@ -738,7 +651,7 @@ export const fetchUserFavorites = createCache(
     revalidate: 60 * 2,
     tags: ["favorites", "user_favorites"],
     keyPrefix: "fetchUserFavorites",
-  }
+  },
 );
 
 export async function readUserFavorites(userId: string) {
@@ -751,7 +664,7 @@ export async function readUserFavorites(userId: string) {
 
 export const createReviewAction = async (
   prevState: FormState | undefined,
-  formData: FormData
+  formData: FormData,
 ) => {
   const userId = await requireAuth();
 
@@ -791,7 +704,7 @@ export const fetchProductReviews = createCache(
     revalidate: 60 * 15,
     tags: ["reviews", "product_reviews"],
     keyPrefix: "fetchProductReviews",
-  }
+  },
 );
 
 export const fetchProductRating = createCache(
@@ -819,7 +732,7 @@ export const fetchProductRating = createCache(
     revalidate: 60 * 10,
     tags: ["reviews", "product_ratings", "aggregates"],
     keyPrefix: "fetchProductRating",
-  }
+  },
 );
 
 export const fetchProductReviewsByUser = async () => {
@@ -1010,7 +923,7 @@ export const updateOrCreateCartItem = async ({
       eq(cartItem.cartId, cartId),
       // Dynamically switch between eq() and isNull()
       colorKey ? eq(cartItem.color, colorKey) : isNull(cartItem.color),
-      sizeKey ? eq(cartItem.size, sizeKey) : isNull(cartItem.size)
+      sizeKey ? eq(cartItem.size, sizeKey) : isNull(cartItem.size),
     ),
     columns: { id: true, amount: true },
   });
@@ -1055,43 +968,26 @@ export async function updateCart(cartObj: {
   taxRate: number;
   shipping: number;
 }) {
-  let numItemsInCart = 0;
-  let cartTotal = 0;
+  // 1. Native Drizzle Aggregation (Driver-Agnostic & Type-Safe)
+  const [aggregate] = await db
+    .select({
+      // Coerce the sums to numbers so they don't return as strings from Postgres BIGINT
+      numitems: sql<number>`COALESCE(SUM(${cartItem.amount}), 0)::INT`,
+      subtotal: sql<number>`COALESCE(SUM(${cartItem.amount} * ${product.price}), 0)::INT`,
+    })
+    .from(cartItem)
+    .innerJoin(product, eq(product.id, cartItem.productId))
+    .where(eq(cartItem.cartId, cartObj.id));
 
-  try {
-    const rows = await db.execute(sql`
-      SELECT
-        COALESCE(SUM(${cartItem.amount}), 0)::BIGINT        AS numitems,
-        COALESCE(SUM(${cartItem.amount} * ${product.price}), 0)::BIGINT  AS subtotal
-      FROM ${cartItem}
-      JOIN ${product} ON ${product.id} = ${cartItem.productId}
-      WHERE ${cartItem.cartId} = ${cartObj.id}
-    `);
+  const numItemsInCart = aggregate?.numitems ?? 0;
+  const cartTotal = aggregate?.subtotal ?? 0;
 
-    const row = rows[0];
-    numItemsInCart = toInt(row?.numitems ?? 0);
-    cartTotal = toInt(row?.subtotal ?? 0);
-  } catch (e) {
-    if (process.env.NODE_ENV !== "production") {
-      console.warn("[updateCartFast] raw aggregate failed, falling back:", e);
-
-      // Fallback: JS calculation
-      const lines = await db.query.cartItem.findMany({
-        where: eq(cartItem.cartId, cartObj.id),
-        with: { product: { columns: { price: true } } },
-      });
-
-      numItemsInCart = lines.reduce((n, l) => n + l.amount, 0);
-      cartTotal = lines.reduce((s, l) => s + l.amount * l.product.price, 0);
-    } else {
-      throw e;
-    }
-  }
-
+  // 2. JS Math for finalizing totals based on the aggregate
   const tax = Math.round(cartObj.taxRate * cartTotal);
-  const shipping = cartTotal ? cartObj.shipping : 0;
+  const shipping = cartTotal > 0 ? cartObj.shipping : 0;
   const orderTotal = cartTotal + tax + shipping;
 
+  // 3. Update and Return
   const [currentCart] = await db
     .update(cart)
     .set({ numItemsInCart, cartTotal, tax, orderTotal })
@@ -1153,7 +1049,7 @@ export const addToCartAction = async (prevState: any, formData: FormData) => {
 
 export const removeCartItemAction = async (
   _prevState: any,
-  formData: FormData
+  formData: FormData,
 ) => {
   const userId = await requireAuth();
   try {
@@ -1250,7 +1146,7 @@ export const clearCartAction = async () => {
 
 export const createOrderAction = async (
   _prevState: any,
-  _formData: FormData
+  _formData: FormData,
 ) => {
   const user = await requireUserWithEmail();
   let orderId: string | null = null;
@@ -1342,8 +1238,8 @@ export const checkProductPurchase = async ({
       and(
         eq(order.clerkId, userId),
         eq(order.isPaid, true),
-        eq(orderItem.productId, productId)
-      )
+        eq(orderItem.productId, productId),
+      ),
     )
     .limit(1);
 

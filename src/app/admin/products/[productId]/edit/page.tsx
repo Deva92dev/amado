@@ -2,15 +2,10 @@ import { SubmitButton } from "@/components/form/Buttons";
 import CheckboxInput from "@/components/form/CheckboxInput";
 import FormContainer from "@/components/form/FormContainer";
 import FormInput from "@/components/form/FormInput";
-import ImageInputContainer from "@/components/form/ImageInputContainer";
 import MultipleFormInput from "@/components/form/MultipleFormInput";
 import PriceInput from "@/components/form/PriceInput";
 import TextAreaInput from "@/components/form/TextAreaInput";
-import {
-  fetchAdminProductDetails,
-  updateProductAction,
-  updateProductImageAction,
-} from "@/utils/actions";
+import { fetchAdminProductDetails, updateProductAction } from "@/utils/actions";
 
 type EditPageProps = {
   params: Promise<{
@@ -27,15 +22,6 @@ const EditProductPage = async ({ params }: EditPageProps) => {
     <section className="py-16">
       <h1 className="text-2xl font-semibold capitalize mb-8">Update {name}</h1>
       <div className="border p-8 rounded-md">
-        <ImageInputContainer
-          action={updateProductImageAction}
-          name={name}
-          image={product.image}
-          text="update image"
-        >
-          <input type="hidden" name="id" value={productId} />
-          <input type="hidden" name="url" value={product.image} />
-        </ImageInputContainer>
         <FormContainer action={updateProductAction}>
           <div className="grid gap-4 md:grid-cols-2 my-4">
             <input type="hidden" name="id" value={productId} />

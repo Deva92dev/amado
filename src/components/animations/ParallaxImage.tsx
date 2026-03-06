@@ -10,7 +10,6 @@ import {
 import { ReactNode, useRef, useState, useEffect, CSSProperties } from "react";
 import Image from "next/image";
 
-// come handy soon, don't delete
 interface ParallaxImageProps {
   src: string;
   alt: string;
@@ -253,7 +252,7 @@ const ParallaxImage = ({
       if (effects.contrast) parts.push(`contrast(${contrast})`);
       if (effects.hueRotate) parts.push(`hue-rotate(${hueRotate}deg)`);
       return parts.join(" ");
-    }
+    },
   );
 
   // Mouse transforms
@@ -264,26 +263,26 @@ const ParallaxImage = ({
   const mouseXTransform = useTransform(
     mouseXSpring,
     [-1, 1],
-    [-mouseIntensity, mouseIntensity]
+    [-mouseIntensity, mouseIntensity],
   );
   const mouseYTransform = useTransform(
     mouseYSpring,
     [-1, 1],
-    [-mouseIntensity, mouseIntensity]
+    [-mouseIntensity, mouseIntensity],
   );
   const tiltXTransform = useTransform(
     mouseYSpring,
     [-1, 1],
-    [tiltIntensity, -tiltIntensity]
+    [tiltIntensity, -tiltIntensity],
   );
   const tiltYTransform = useTransform(
     mouseXSpring,
     [-1, 1],
-    [-tiltIntensity, tiltIntensity]
+    [-tiltIntensity, tiltIntensity],
   );
   const magneticScale = useTransform(
     [mouseXSpring, mouseYSpring],
-    ([x, y]: number[]) => 1 + Math.abs(x * y) * magneticStrength
+    ([x, y]: number[]) => 1 + Math.abs(x * y) * magneticStrength,
   );
 
   // Consolidated useEffect for all functionality
