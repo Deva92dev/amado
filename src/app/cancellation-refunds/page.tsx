@@ -172,7 +172,7 @@ export default function CancellationRefunds() {
             <div className="container mx-auto px-6">
               <div className="max-w-4xl w-full">
                 <div className="flex items-center flex-wrap gap-2 mb-6 w-full relative z-30 animate-fade-in">
-                  <span className="bg-gradient-to-r from-[hsl(var(--primary))] to-blue-700 text-white text-xs px-4 py-2 rounded-full font-semibold shadow-lg">
+                  <span className="bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(var(--metal-gold))] text-white text-xs px-4 py-2 rounded-full font-semibold shadow-lg">
                     Flexible Policy
                   </span>
                   <div className="flex items-center gap-1 bg-white/20 backdrop-blur-md text-white text-xs px-2 py-2 rounded-full border border-white/30">
@@ -362,7 +362,7 @@ export default function CancellationRefunds() {
         </section>
 
         {/* Refund Processing */}
-        <section className="py-16 bg-gradient-to-r from-[hsl(var(--primary))] to-blue-700 text-white rounded-b-2xl">
+        <section className="py-16 bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(var(--metal-gold))] text-white rounded-b-2xl">
           <div className="container mx-auto px-6 max-w-5xl text-center">
             <h2 className="text-4xl font-extrabold mb-6">
               Refund Processing Information

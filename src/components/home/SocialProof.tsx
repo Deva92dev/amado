@@ -30,8 +30,7 @@ const SocialProof = () => {
           whileHover={{ scale: 1.03 }}
           transition={{ type: "spring", stiffness: 300 }}
           initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
+          animate="visible"
         >
           {socialPosts.map((post) => (
             <SocialProofCard key={post.id} post={post} />

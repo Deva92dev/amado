@@ -183,7 +183,7 @@ const config: Config = {
           boxShadow: "0 0 10px hsla(var(--brand-accent)/0.4)",
           "&:hover": {
             filter: "brightness(0.95)",
-            backgroundColor: "hsl(215, 100%, 38%)",
+            backgroundColor: "hsl(var(--brand-accent-hover))",
           },
         },
 
@@ -278,7 +278,7 @@ const config: Config = {
 
         ".bg-gradient-electric": {
           background:
-            "linear-gradient(45deg, hsl(var(--brand-accent)) 0%, hsl(215 100% 65%) 35%, hsl(200 100% 70%) 70%, hsl(var(--brand-accent)) 100%)",
+            "linear-gradient(45deg, hsl(var(--brand-accent)) 0%, hsl(38 75% 55%) 35%, hsl(34 80% 65%) 70%, hsl(var(--brand-accent)) 100%)",
           backgroundSize: "300% 300%",
           animation: "gradient-shift 8s ease infinite",
         },
@@ -324,7 +324,7 @@ const config: Config = {
         ".btn-gradient-electric": {
           "@apply text-white font-medium rounded-lg px-6 py-3": {},
           background:
-            "linear-gradient(45deg, hsl(var(--brand-accent)) 0%, hsl(215 100% 65%) 35%, hsl(200 100% 70%) 70%, hsl(var(--brand-accent)) 100%)",
+            "linear-gradient(45deg, hsl(var(--brand-accent)) 0%, hsl(38 75% 55%) 35%, hsl(34 80% 65%) 70%, hsl(var(--brand-accent)) 100%)",
           backgroundSize: "300% 300%",
           animation: "gradient-shift 8s ease infinite",
           boxShadow:

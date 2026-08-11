@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { m } from "framer-motion";
+import { m } from "motion/react";
 import { cn } from "@/lib/utils";
 
 type ThumbnailProps = {

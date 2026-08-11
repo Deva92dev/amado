@@ -1,5 +1,3 @@
-import Image from "next/image";
-import MainImage from "@/assets/Main.webp";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 
@@ -11,15 +9,21 @@ export default function Hero() {
   return (
     <section className="relative w-full h-[100dvh] overflow-hidden bg-[hsl(0_0%_100%)]">
       <div className="absolute inset-0 z-0">
-        <Image
-          src={MainImage}
-          alt="Elegant fashion model showcasing contemporary style"
-          fill
-          priority
-          sizes="(max-width: 768px) 100vw, 100vw"
-          quality={60}
-          className="object-cover object-center"
-        />
+        {/* Art-directed cinematic hero: portrait on mobile, landscape on desktop */}
+        <picture>
+          <source
+            media="(max-width: 767px)"
+            srcSet="/hero/hero-mobile.webp"
+            type="image/webp"
+          />
+          <img
+            src="/hero/hero-desktop.webp"
+            alt="Elegant fashion model showcasing contemporary style in cinematic motion"
+            className="w-full h-full object-cover object-center"
+            fetchPriority="high"
+            decoding="async"
+          />
+        </picture>
         {/* Gradient overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent" />
       </div>
@@ -30,7 +34,7 @@ export default function Hero() {
             style={{ textShadow: "0 2px 10px rgba(0,0,0,0.5)" }}
           >
             Redefine Your{" "}
-            <span className="block mt-2 font-bold text-[hsl(215_100%_40%)]">
+            <span className="block mt-2 font-bold text-[hsl(46_80%_62%)]">
               Style
             </span>
           </h1>
@@ -42,7 +46,7 @@ export default function Hero() {
           <div className="flex flex-col sm:flex-row gap-4">
             <Link
               href="/products"
-              className="inline-flex items-center justify-center px-8 py-4 text-base md:text-lg font-bold rounded-xl bg-[hsl(215_100%_40%)] text-white transition-transform duration-200 active:scale-95 touch-manipulation select-none md:hover:scale-105 md:hover:brightness-110"
+              className="inline-flex items-center justify-center px-8 py-4 text-base md:text-lg font-bold rounded-xl bg-[hsl(var(--brand-accent))] text-white transition-transform duration-200 active:scale-95 touch-manipulation select-none md:hover:scale-105 md:hover:brightness-110"
             >
               Shop Now →
             </Link>
@@ -61,7 +65,7 @@ export default function Hero() {
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20">
         <div className="flex flex-col items-center gap-2 md:animate-bounce will-change-transform">
           <div className="w-1 h-12 bg-white/50 rounded-full relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-1/2 bg-[hsl(215_100%_40%)] md:animate-[slide-up_1.5s_infinite]" />
+            <div className="absolute top-0 left-0 w-full h-1/2 bg-[hsl(var(--brand-accent))] md:animate-[slide-up_1.5s_infinite]" />
           </div>
           <span className="text-xs font-bold tracking-wide text-white/70">
             SCROLL

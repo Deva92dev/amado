@@ -1,12 +1,13 @@
+import type { Metadata } from "next";
 import dynamicImport from "next/dynamic";
-import { Metadata } from "next";
 import Hero from "@/components/home/Hero";
+import SocialProof from "@/components/home/SocialProof";
+import { AnimatedSection } from "@/components/home/SectionWrapper";
 import { SocialProofGridSkeleton } from "@/components/skeleton/SocialProofSkeleton";
 import { TrendingProductsSkeleton } from "@/components/skeleton/TrendingProducts";
 import BrandStorySkeleton from "@/components/skeleton/BrandStorySkeleton";
 import FeaturedCollectionSkeleton from "@/components/skeleton/featuredCollectionSkeleton";
 import NewsLetterSkeleton from "@/components/skeleton/NewsLetterSkeleton";
-import { AnimatedSection } from "@/components/home/SectionWrapper";
 
 export const revalidate = 3600;
 export const dynamic = "force-static";
@@ -23,13 +24,6 @@ const BrandStory = dynamicImport(() => import("@/components/home/BrandStory"), {
 const TrendingProducts = dynamicImport(
   () => import("@/components/home/TrendingProducts"),
   { loading: () => <TrendingProductsSkeleton /> },
-);
-
-const SocialProof = dynamicImport(
-  () => import("@/components/home/SocialProof"),
-  {
-    loading: () => <SocialProofGridSkeleton />,
-  },
 );
 
 const NewsLetter = dynamicImport(() => import("@/components/home/NewsLetter"), {
@@ -58,7 +52,6 @@ export default function Home() {
   return (
     <>
       <Hero />
-      {/* Lazy Load the rest as user scrolls */}
       <AnimatedSection fallback={<FeaturedCollectionSkeleton />} delay={0.1}>
         <FeaturedCollection />
       </AnimatedSection>
@@ -71,7 +64,7 @@ export default function Home() {
         <TrendingProducts />
       </AnimatedSection>
 
-      <AnimatedSection hasAsyncData={false} delay={0.4}>
+      <AnimatedSection fallback={<SocialProofGridSkeleton />} hasAsyncData={false}>
         <SocialProof />
       </AnimatedSection>
 

@@ -147,7 +147,7 @@ const MotionCard = ({
     return () => window.removeEventListener("resize", checkMobile);
   }, [mobile.breakPoint]);
 
-  const { ref: inViewRef, inView } = useInView({
+  const { ref: inViewRef } = useInView({
     triggerOnce,
     threshold: isMobile ? Math.max(threshold * 0.5, 0.05) : threshold,
     rootMargin: isMobile ? "10px" : "30px",
@@ -525,7 +525,7 @@ const MotionCard = ({
       ref={combinedRef}
       className={getClassName()}
       initial={entranceVariants.initial}
-      animate={inView ? entranceVariants.animate : entranceVariants.initial}
+      animate={entranceVariants.animate}
       whileHover={hoverVariants}
       whileTap={tapVariants}
       transition={transition}

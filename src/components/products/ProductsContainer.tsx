@@ -50,8 +50,11 @@ const ProductsContainer = async ({ paramsPromise }: ProductsContainerProps) => {
     userId: userId ?? null,
   });
 
-  const initialProducts = sortProducts(initialProductsRaw, sortBy);
-  const totalProducts = initialProducts.length;
+  const sortedProducts = sortProducts(initialProductsRaw, sortBy);
+  const totalProducts = sortedProducts.length;
+
+  // Only serialize the first batch to the client; the rest load via server action.
+  const initialBatch = sortedProducts.slice(0, 6);
 
   const createUrl = (newParams: Record<string, string>) => {
     const params = new URLSearchParams();
@@ -107,17 +110,20 @@ const ProductsContainer = async ({ paramsPromise }: ProductsContainerProps) => {
         <Separator className="mt-4" />
       </section>
       <div>
-        {initialProducts.length === 0 ? (
+        {totalProducts === 0 ? (
           <h5 className="text-2xl mt-12">
             Sorry, no products matched your search...
           </h5>
         ) : (
           <LoadMore
-            initialProducts={initialProducts}
+            initialProducts={initialBatch}
+            total={totalProducts}
             layout={layout}
+            search={search}
             color={color}
             size={size}
             category={category}
+            sortBy={sortBy}
           />
         )}
       </div>

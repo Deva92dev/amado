@@ -490,7 +490,7 @@ const MotionText = ({
         ref={inViewRef}
         className={getEnhancedClassName()}
         initial={shouldAnimate ? { opacity: 0 } : false}
-        animate={shouldAnimate && inView ? { opacity: 1 } : false}
+        animate={shouldAnimate ? { opacity: 1 } : false}
         transition={
           shouldAnimate ? { duration: 0.3, delay: animation.delay } : undefined
         }
@@ -519,13 +519,7 @@ const MotionText = ({
         ref={inViewRef}
         className={getEnhancedClassName()}
         initial={shouldAnimate ? animationVariants.initial : false}
-        animate={
-          shouldAnimate
-            ? inView
-              ? animationVariants.animate
-              : animationVariants.initial
-            : false
-        }
+        animate={shouldAnimate ? animationVariants.animate : false}
         transition={shouldAnimate ? animationVariants.transition : undefined}
       >
         {children}
@@ -540,7 +534,7 @@ const MotionText = ({
       ref={inViewRef}
       className={getEnhancedClassName()}
       initial={shouldAnimate ? "initial" : false}
-      animate={shouldAnimate ? (inView ? "animate" : "initial") : false}
+      animate={shouldAnimate ? "animate" : false}
       variants={{
         initial: {},
         animate: {

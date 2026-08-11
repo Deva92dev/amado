@@ -43,7 +43,6 @@ export const config = {
     "/reviews/:path*",
     "/checkout/:path*",
     "/cart/:path*",
-    "/products/:path*",
     // API & Backend Routes (Always run)
     "/api/:path*",
     "/trpc/:path*",

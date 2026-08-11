@@ -34,7 +34,7 @@ const heroSlides = [
     description:
       "Find your next favorite style from our carefully selected collection",
     gradient:
-      "bg-gradient-to-br from-[hsl(var(--brand-accent))] via-[hsl(var(--sapphire))] to-[hsl(var(--pastel-lavender))]",
+      "bg-gradient-to-br from-[hsl(var(--brand-accent))] via-[hsl(var(--metal-gold))] to-[hsl(var(--pastel-blush))]",
     accent: "text-background/90",
   },
   {

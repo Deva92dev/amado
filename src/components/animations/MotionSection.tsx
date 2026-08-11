@@ -91,7 +91,7 @@ const MotionSection = ({
     return () => window.removeEventListener("resize", checkMobile);
   }, [mobile.breakPoint]);
 
-  const { ref: inViewRef, inView } = useInView({
+  const { ref: inViewRef } = useInView({
     triggerOnce,
     threshold: isMobile
       ? Array.isArray(threshold)
@@ -483,13 +483,7 @@ const MotionSection = ({
       ref={combinedRef}
       style={{ ...getMotionStyle(), ...style }}
       initial={shouldAnimate ? animationVariants.initial : false}
-      animate={
-        shouldAnimate
-          ? inView
-            ? animationVariants.animate
-            : animationVariants.initial
-          : false
-      }
+      animate={shouldAnimate ? animationVariants.animate : false}
       transition={shouldAnimate ? animationVariants.transition : undefined}
       className={getEnhancedClassName()}
     >

@@ -332,6 +332,50 @@ export const fetchAllProducts = async ({
   }));
 };
 
+export async function fetchMoreProducts({
+  offset = 0,
+  limit = 6,
+  sortBy = "name-a-z",
+  search = "",
+  category = "all",
+  color = "",
+  size = "",
+}: {
+  offset?: number;
+  limit?: number;
+  sortBy?: "price-low" | "price-high" | "name-a-z" | "name-z-a";
+  search?: string;
+  category?: string;
+  color?: string;
+  size?: string;
+}) {
+  const userId = await getOptionalAuth();
+  const raw = await fetchAllProducts({
+    search,
+    category,
+    color,
+    size,
+    userId: userId ?? null,
+  });
+
+  const sorted = [...raw].sort((a: any, b: any) => {
+    switch (sortBy) {
+      case "price-low":
+        return a.price - b.price;
+      case "price-high":
+        return b.price - a.price;
+      case "name-a-z":
+        return a.name.localeCompare(b.name);
+      case "name-z-a":
+        return b.name.localeCompare(a.name);
+      default:
+        return 0;
+    }
+  });
+
+  return sorted.slice(offset, offset + limit);
+}
+
 export const countProducts = createCache(
   async ({
     search = "",

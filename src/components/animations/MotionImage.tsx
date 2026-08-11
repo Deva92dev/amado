@@ -128,7 +128,7 @@ const MotionImage = ({
   const [isMobile, setIsMobile] = useState(false);
   const prefersReducedMotion = useReducedMotion();
 
-  const { ref: inViewRef, inView } = useInView({
+  const { ref: inViewRef } = useInView({
     triggerOnce,
     threshold: isMobile
       ? Array.isArray(threshold)
@@ -504,7 +504,7 @@ const MotionImage = ({
       className={`relative overflow-hidden w-full h-full ${getEnhancedClassName()}`}
       initial={shouldAnimate ? animationVariants.initial : {}}
       animate={
-        shouldAnimate && inView && isLoaded
+        shouldAnimate && isLoaded
           ? animationVariants.animate
           : animationVariants.initial
       }

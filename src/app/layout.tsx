@@ -20,14 +20,12 @@ export const playfair = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-playfair-display",
   display: "swap",
-  weight: ["400", "700"],
 });
 
 export const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
   display: "swap",
-  weight: ["400", "700"],
 });
 
 export const metadata: Metadata = {
@@ -77,6 +75,39 @@ export default function RootLayout({
         <meta
           name="description"
           content="Enjoy the different styles with various option at Amado."
+        />
+        {/* Preconnect to image + auth origins to cut connection latency */}
+        <link rel="preconnect" href="https://images.pexels.com" />
+        <link rel="dns-prefetch" href="https://images.pexels.com" />
+        <link rel="preconnect" href="https://img.clerk.com" />
+        {/* Preload the LCP hero image (art-directed per breakpoint) */}
+        <link
+          rel="preload"
+          as="image"
+          href="/hero/hero-desktop.webp"
+          media="(min-width: 768px)"
+          fetchPriority="high"
+        />
+        <link
+          rel="preload"
+          as="image"
+          href="/hero/hero-mobile.webp"
+          media="(max-width: 767px)"
+          fetchPriority="high"
+        />
+        <link
+          rel="preload"
+          as="font"
+          type="font/woff2"
+          href="/_next/static/media/eaead17c7dbfcd5d-s.p.woff2"
+          crossOrigin="anonymous"
+        />
+        <link
+          rel="preload"
+          as="font"
+          type="font/woff2"
+          href="/_next/static/media/e4af272ccee01ff0-s.p.woff2"
+          crossOrigin="anonymous"
         />
       </head>
       <body

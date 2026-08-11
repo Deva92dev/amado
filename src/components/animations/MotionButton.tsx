@@ -176,7 +176,7 @@ const MotionButton = ({
   const rippleId = useRef(0);
   const prefersReducedMotion = useReducedMotion();
 
-  const { ref: inViewRef, inView } = useInView({
+  const { ref: inViewRef } = useInView({
     triggerOnce,
     threshold: isMobile
       ? Array.isArray(threshold)
@@ -677,13 +677,7 @@ const MotionButton = ({
           ref={combinedRef}
           className={getEnhancedClassName()}
           initial={shouldAnimate ? animationVariants.initial : false}
-          animate={
-            shouldAnimate
-              ? inView
-                ? animationVariants.animate
-                : animationVariants.initial
-              : false
-          }
+          animate={shouldAnimate ? animationVariants.animate : false}
           style={{
             x: magneticOffset.x,
             y: magneticOffset.y,
@@ -792,13 +786,7 @@ const MotionButton = ({
       ref={combinedRef}
       className={getEnhancedClassName()}
       initial={shouldAnimate ? animationVariants.initial : false}
-      animate={
-        shouldAnimate
-          ? inView
-            ? animationVariants.animate
-            : animationVariants.initial
-          : false
-      }
+      animate={shouldAnimate ? animationVariants.animate : false}
       style={{
         x: magneticOffset.x,
         y: magneticOffset.y,

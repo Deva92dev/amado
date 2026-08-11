@@ -109,7 +109,7 @@ export default function TermsConditionsPage() {
           <div className="absolute inset-0 flex items-center z-20 px-6 pt-20">
             <div className="container mx-auto max-w-[80rem]">
               <div className="flex flex-wrap gap-4 mb-6 w-full relative z-30 animate-fade-in">
-                <span className="bg-gradient-to-r from-blue-500 to-cyan-600 text-white px-4 py-2 rounded-full shadow-lg font-semibold">
+                <span className="bg-gradient-to-r from-[hsl(var(--brand-accent))] to-[hsl(var(--metal-gold))] text-white px-4 py-2 rounded-full shadow-lg font-semibold">
                   Legal Agreement
                 </span>
                 <div className="flex items-center gap-1 bg-white bg-opacity-20 backdrop-blur-md text-white px-3 py-2 rounded-full border border-white border-opacity-30">
@@ -140,7 +140,7 @@ export default function TermsConditionsPage() {
         {/* Key Terms Overview */}
         <section className="bg-gradient-to-r from-[hsl(var(--features-bg))] to-white py-16">
           <div className="container mx-auto max-w-7xl px-6">
-            <h2 className="text-3xl font-bold mb-10 text-center bg-gradient-to-r from-blue-600 to-cyan-700 bg-clip-text text-transparent">
+            <h2 className="text-3xl font-bold mb-10 text-center bg-gradient-to-r from-[hsl(var(--brand-accent))] to-[hsl(var(--metal-gold))] bg-clip-text text-transparent">
               Key Terms Overview
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -150,7 +150,7 @@ export default function TermsConditionsPage() {
                   className="bg-white bg-opacity-90 rounded-3xl border border-gray-200 shadow-xl p-6 text-center hover:shadow-2xl transition hover:-translate-y-1 animate-fade-in"
                   style={{ animationDelay: `${i * 100}ms` }}
                 >
-                  <div className="mx-auto mb-5 p-4 rounded-xl bg-gradient-to-r from-blue-600 to-cyan-700 shadow-lg inline-flex">
+                  <div className="mx-auto mb-5 p-4 rounded-xl bg-gradient-to-r from-[hsl(var(--brand-accent))] to-[hsl(var(--metal-gold))] shadow-lg inline-flex">
                     <Icon className="w-7 h-7 text-white" />
                   </div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">
@@ -220,7 +220,7 @@ export default function TermsConditionsPage() {
                   className="bg-white rounded-xl border border-gray-200 shadow-md p-6"
                 >
                   <div className="flex items-center gap-4 mb-4">
-                    <Icon className="text-blue-600 w-7 h-7" />
+                    <Icon className="text-brand-accent w-7 h-7" />
                     <h3 className="text-xl font-semibold">{category}</h3>
                   </div>
                   <p className="text-gray-700">{description}</p>
@@ -240,7 +240,7 @@ export default function TermsConditionsPage() {
         </section>
 
         {/* Footer Call to Action */}
-        <section className="bg-gradient-to-r from-blue-700 to-cyan-800 py-20 text-white text-center rounded-b-2xl">
+        <section className="bg-gradient-to-r from-[hsl(38_55%_30%)] to-[hsl(25_45%_22%)] py-20 text-white text-center rounded-b-2xl">
           <div className="container mx-auto max-w-4xl">
             <h2 className="text-4xl font-extrabold mb-6 animate-fade-in">
               Shop Confidently With Amado

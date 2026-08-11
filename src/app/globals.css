@@ -131,7 +131,8 @@
     --radius: 0.5rem;
 
     /* Custom Colors */
-    --brand-accent: 215 100% 40%;
+    --brand-accent: 38 60% 36%;
+    --brand-accent-hover: 38 65% 30%;
     --charcoal: 0 0% 10%;
     --warm-gray: 0 0% 96%;
     --metal-gold: 46 63% 52%;
@@ -199,5 +200,51 @@
     --border: 0 0% 25%;
     --input: 0 0% 18%;
     --ring: var(--ring-brand);
+    --brand-accent: 40 85% 60%;
+    --brand-accent-hover: 40 85% 68%;
+  }
+}
+
+/* --- LIGHTWEIGHT CSS ANIMATIONS (replaces framer-motion above the fold) --- */
+@layer utilities {
+  .animate-page-enter {
+    animation: page-enter 0.5s ease-out both;
+  }
+  .reveal {
+    opacity: 0;
+    transform: translateY(50px);
+    transition:
+      opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+      transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transition-delay: var(--reveal-delay, 0s);
+    will-change: opacity, transform;
+  }
+  .reveal.is-inview {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-page-enter,
+  .reveal,
+  .animate-shimmer,
+  .skeleton,
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

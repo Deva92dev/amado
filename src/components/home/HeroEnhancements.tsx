@@ -28,7 +28,7 @@ export default function HeroEnhancements() {
         factor={0.04}
         className="absolute inset-0 z-10 pointer-events-none hidden md:block"
       >
-        <div className="absolute top-[20%] right-[10%] w-64 h-64 bg-[hsl(215_100%_40%)]/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute top-[20%] right-[10%] w-64 h-64 bg-brand-accent/20 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-[20%] left-[10%] w-48 h-48 bg-[hsl(152_61%_30%)]/20 rounded-full blur-3xl animate-pulse delay-700" />
       </MouseTracker>
     </>

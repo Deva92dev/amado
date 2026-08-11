@@ -29,7 +29,7 @@ const DesktopNavLinks = () => (
         <Link
           href={link.href}
           className="capitalize text-sm font-bold tracking-wide 
-            text-gray-800 dark:text-gray-200 hover:text-[hsl(215_100%_40%)] 
+            text-gray-800 dark:text-gray-200 hover:text-brand-accent 
             transition-colors duration-200"
         >
           {link.label}

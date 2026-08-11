@@ -61,8 +61,7 @@ const TrendingProductsClient = ({
     <m.section
       variants={sectionVariants}
       initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, amount: 0.2 }} // This triggers the animation
+      animate="visible"
       className="relative w-full bg-background text-foreground py-24 md:py-32 overflow-hidden"
       style={{
         background: `

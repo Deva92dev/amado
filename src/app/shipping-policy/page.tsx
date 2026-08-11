@@ -101,7 +101,7 @@ export default function ShippingPolicyPage() {
           <div className="absolute inset-0 flex items-center z-20 pt-16 sm:pt-20 md:pt-24 lg:pt-16">
             <div className="container mx-auto px-6 max-w-4xl">
               <div className="flex flex-wrap gap-4 mb-6 w-full relative z-30 animate-fade-in">
-                <span className="bg-gradient-to-r from-[hsl(var(--primary))] to-blue-700 text-white text-xs px-4 py-2 rounded-full font-semibold shadow-lg">
+                <span className="bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(var(--metal-gold))] text-white text-xs px-4 py-2 rounded-full font-semibold shadow-lg">
                   Trusted Delivery
                 </span>
                 <div className="flex items-center gap-1 bg-white/20 backdrop-blur-md text-white text-xs px-3 py-2 rounded-full border border-white/30">

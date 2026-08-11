@@ -29,7 +29,7 @@ export default function Error({ error, reset }: ErrorProps) {
     <div className="min-h-screen bg-[hsl(var(--background))] flex items-center justify-center px-4">
       <div className="max-w-2xl w-full text-center">
         <div className="mb-8">
-          <div className="w-24 h-24 bg-gradient-to-br from-[hsl(var(--accent))] to-pastel-blue-500 rounded-full flex items-center justify-center mx-auto shadow-2xl">
+          <div className="w-24 h-24 bg-gradient-to-br from-[hsl(var(--accent))] to-hsl(var(--metal-gold)) rounded-full flex items-center justify-center mx-auto shadow-2xl">
             <AlertTriangle size={48} className="text-white" />
           </div>
         </div>

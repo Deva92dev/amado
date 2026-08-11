@@ -1,6 +1,6 @@
 "use client";
 
-import { m } from "framer-motion";
+import { m } from "motion/react";
 import { FeaturedProducts } from "@/utils/types";
 import Product3dCard from "./Product3dCard";
 

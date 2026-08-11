@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "../ui/button";
-import logo from "@/assets/Logo.png";
+import logo from "@/assets/Logo.webp";
 
 const Logo = () => {
   return (
@@ -10,7 +10,6 @@ const Logo = () => {
         <Image
           src={logo}
           alt="Logo of Website"
-          className="bg-blue-400"
           width={32}
           height={32}
         />
